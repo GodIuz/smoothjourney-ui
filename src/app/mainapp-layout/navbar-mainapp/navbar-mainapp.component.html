@@ -1,0 +1,66 @@
+<nav class="navbar">
+  <a routerLink="/mainapp/home" class="logo"> Smooth <b>Journey</b> </a>
+
+  <ul class="nav-links" [class.active]="isMenuOpen">
+    <li>
+      <a
+        routerLink="/mainapp/home"
+        routerLinkActive="active"
+        (click)="toggleMenu()"
+      >
+        Home
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="/mainapp/profile"
+        routerLinkActive="active"
+        (click)="toggleMenu()"
+      >
+        Προφίλ
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="/mainapp/settings"
+        routerLinkActive="active"
+        (click)="toggleMenu()"
+      >
+        Ρυθμίσεις
+      </a>
+    </li>
+
+    <div class="mobile-actions">
+      <button class="review-btn" (click)="onLogout()">Αποσύνδεση</button>
+    </div>
+  </ul>
+
+  <div class="desktop-actions">
+    <div class="user-dropdown-container">
+      <div class="user-trigger" (click)="toggleUserDropdown()">
+        <span>Γεια σου, <strong>Admin</strong>!</span>
+        <i class="fa-solid fa-caret-down"></i>
+      </div>
+
+      <div class="dropdown-menu" *ngIf="isUserDropdownOpen">
+        <a routerLink="/mainapp/profile" (click)="isUserDropdownOpen = false">
+          <i class="fa-solid fa-user"></i> Προφίλ
+        </a>
+
+        <a routerLink="/mainapp/my-trips" (click)="isUserDropdownOpen = false">
+          <i class="fa-solid fa-suitcase-rolling"></i> Τα Ταξίδια μου
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <a (click)="onLogout()" class="dropdown-logout">
+          <i class="fa-solid fa-right-from-bracket"></i> Αποσύνδεση
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="burger" (click)="toggleMenu()">
+    <i class="fa-solid fa-bars"></i>
+  </div>
+</nav>

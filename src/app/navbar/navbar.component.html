@@ -1,0 +1,31 @@
+<nav class="navbar">
+  <a routerLink="/" class="logo">
+    <i class="fa-solid fa-suitcase-rolling"></i> SmoothJourney
+  </a>
+
+  <ul class="nav-links" [class.active]="isMenuOpen">
+    <li *ngFor="let item of navItems">
+      <a [routerLink]="item.link" (click)="isMenuOpen = false">
+        {{ item.label }}
+      </a>
+    </li>
+
+    <div class="mobile-actions">
+      <a routerLink="/login" class="login-btn">Σύνδεση</a>
+      <a routerLink="/review" class="review-btn">Γράψτε Κριτική</a>
+    </div>
+  </ul>
+
+  <div class="desktop-actions">
+    <a routerLink="/login" class="login-btn">Σύνδεση</a>
+    <a routerLink="/review" class="review-btn">Γράψτε Κριτική</a>
+  </div>
+
+  <div class="burger" (click)="toggleMenu()">
+    <i
+      class="fa-solid"
+      [class.fa-bars]="!isMenuOpen"
+      [class.fa-times]="isMenuOpen"
+    ></i>
+  </div>
+</nav>

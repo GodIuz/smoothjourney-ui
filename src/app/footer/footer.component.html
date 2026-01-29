@@ -1,0 +1,38 @@
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-col">
+      <h3>Smooth Journey</h3>
+      <p>
+        Ο απόλυτος οδηγός για τα ταξίδια σας. Ανακαλύψτε, κρίνετε και
+        μοιραστείτε εμπειρίες.
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Εταιρεία</h4>
+      <ul>
+        <li *ngFor="let item of companyLinks">
+          <a [routerLink]="item.link">{{ item.label }}</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Ακολουθήστε μας</h4>
+      <div class="social-icons">
+        <a
+          *ngFor="let social of socialLinks"
+          [href]="social.url"
+          target="_blank"
+          [title]="social.platform"
+        >
+          <i class="fa-brands" [ngClass]="social.icon"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; {{ currentYear }} Smooth Journey. All rights reserved.</p>
+  </div>
+</footer>

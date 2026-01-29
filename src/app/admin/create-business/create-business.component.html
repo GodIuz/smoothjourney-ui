@@ -1,0 +1,267 @@
+<div class="container py-5" [@fadeInUp]>
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-1">
+        {{ isEditMode ? "✏️ Επεξεργασία" : "🚀 Νέα Καταχώρηση" }}
+      </h2>
+      <p class="text-muted">Συμπληρώστε τα στοιχεία της επιχείρησης.</p>
+    </div>
+    <a
+      href="/admin/businesses"
+      class="btn btn-light text-secondary border shadow-sm btn-hover"
+    >
+      <i class="fa fa-arrow-left me-2"></i> Πίσω στη Λίστα
+    </a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+          <div class="card-header bg-white p-4 border-bottom">
+            <h5 class="fw-bold text-primary mb-0">📝 Γενικές Πληροφορίες</h5>
+          </div>
+          <div class="card-body p-4">
+            <div class="form-floating mb-3">
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                placeholder="Name"
+              />
+              <label for="name">Όνομα Επιχείρησης</label>
+              <small
+                class="text-danger"
+                *ngIf="form.get('name')?.touched && form.get('name')?.invalid"
+              >
+                Το όνομα είναι υποχρεωτικό.
+              </small>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select
+                    class="form-select"
+                    id="category"
+                    formControlName="category"
+                  >
+                    <option value="" disabled selected>Επιλέξτε...</option>
+                    <option *ngFor="let cat of categories" [value]="cat">
+                      {{ cat }}
+                    </option>
+                  </select>
+                  <label for="category">Κατηγορία</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select
+                    class="form-select"
+                    id="type"
+                    formControlName="categoryType"
+                  >
+                    <option value="" disabled selected>
+                      Επιλέξτε Υποκατηγορία
+                    </option>
+                    <option *ngFor="let type of availableTypes" [value]="type">
+                      {{ type }}
+                    </option>
+                  </select>
+                  <label for="type">Τύπος</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-floating mb-3">
+              <textarea
+                class="form-control"
+                placeholder="Desc"
+                id="desc"
+                style="height: 120px"
+                formControlName="description"
+              ></textarea>
+              <label for="desc">Περιγραφή</label>
+            </div>
+
+            <div class="form-floating">
+              <input
+                type="text"
+                class="form-control"
+                id="tags"
+                formControlName="moodTags"
+                placeholder="Tags"
+              />
+              <label for="tags">Mood Tags (π.χ. Romantic, Jazz, Sunset)</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+          <div class="card-header bg-white p-4 border-bottom">
+            <h5 class="fw-bold text-primary mb-0">
+              📍 Τοποθεσία & Επικοινωνία
+            </h5>
+          </div>
+          <div class="card-body p-4">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="addr"
+                    formControlName="address"
+                    placeholder="Address"
+                  />
+                  <label for="addr">Διεύθυνση</label>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="city"
+                    formControlName="city"
+                    placeholder="City"
+                  />
+                  <label for="city">Πόλη</label>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="country"
+                    formControlName="country"
+                    placeholder="Country"
+                  />
+                  <label for="country">Χώρα</label>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="phone"
+                    formControlName="phone"
+                    placeholder="Phone"
+                  />
+                  <label for="phone">Τηλέφωνο</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+          <div class="card-body p-4 text-center">
+            <h6 class="fw-bold text-muted mb-3">📸 Φωτογραφία Εξωφύλλου</h6>
+
+            <div
+              class="upload-area p-3 border border-2 border-dashed rounded-3 mb-3"
+              (click)="fileInput.click()"
+            >
+              <input
+                #fileInput
+                type="file"
+                (change)="onFileSelected($event)"
+                hidden
+              />
+
+              <div *ngIf="!previewUrl" class="text-muted py-3">
+                <i class="fa fa-cloud-upload-alt fa-2x mb-2"></i>
+                <p class="mb-0 small">Κλικ για ανέβασμα</p>
+              </div>
+
+              <img
+                *ngIf="previewUrl"
+                [src]="previewUrl"
+                class="img-fluid rounded shadow-sm"
+                style="max-height: 200px; object-fit: cover"
+              />
+            </div>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary w-100"
+              (click)="fileInput.click()"
+            >
+              Επιλογή Αρχείου
+            </button>
+          </div>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="card-body p-4">
+            <h6 class="fw-bold text-muted mb-3">⚙️ Ρυθμίσεις</h6>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted"
+                >Επίπεδο Τιμής</label
+              >
+              <select class="form-select" formControlName="priceLevel">
+                <option [ngValue]="1">€ (Οικονομικό)</option>
+                <option [ngValue]="2">€€ (Μέτριο)</option>
+                <option [ngValue]="3">€€€ (Ακριβό)</option>
+                <option [ngValue]="4">€€€€ (Luxury)</option>
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label small fw-bold text-muted"
+                >Εύρος (Περιγραφή)</label
+              >
+              <select class="form-select" formControlName="priceRange">
+                <option value="Cheap">Cheap</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Expensive">Expensive</option>
+                <option value="Luxury">Luxury</option>
+              </select>
+            </div>
+
+            <hr class="text-muted opacity-25" />
+
+            <div class="form-check form-switch mb-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="hiddenGem"
+                formControlName="isHiddenGem"
+              />
+              <label class="form-check-label fw-bold text-info" for="hiddenGem">
+                <i class="fa fa-gem me-1"></i> Hidden Gem
+              </label>
+            </div>
+
+            <div class="form-check form-switch mb-4">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="scam"
+                formControlName="isSuspectedScam"
+              />
+              <label class="form-check-label fw-bold text-danger" for="scam">
+                <i class="fa fa-exclamation-triangle me-1"></i> Suspected Scam
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary w-100 py-2 fw-bold shadow-sm btn-hover-scale"
+              [disabled]="form.invalid"
+            >
+              <i class="fa fa-save me-2"></i>
+              {{ isEditMode ? "Ενημέρωση" : "Δημιουργία" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,159 @@
+<div class="register-wrapper">
+  <div class="glass-card">
+    <div class="card-header">
+      <h2>Εγγραφή</h2>
+      <p>Ξεκινήστε το ταξίδι σας μαζί μας</p>
+    </div>
+
+    <form #regForm="ngForm" (ngSubmit)="onRegister()">
+      <div class="input-group full-width">
+        <label><i class="fa-solid fa-user"></i> Username</label>
+        <input
+          type="text"
+          [(ngModel)]="registerObj.username"
+          name="username"
+          placeholder="Π.χ. Traveler88"
+          required
+        />
+      </div>
+
+      <div class="row">
+        <div class="input-group">
+          <label><i class="fa-solid fa-signature"></i> Όνομα</label>
+          <input
+            type="text"
+            [(ngModel)]="registerObj.firstName"
+            name="firstName"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label><i class="fa-solid fa-signature"></i> Επώνυμο</label>
+          <input
+            type="text"
+            [(ngModel)]="registerObj.lastName"
+            name="lastName"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="input-group full-width">
+        <label><i class="fa-solid fa-envelope"></i> Email</label>
+        <input
+          type="email"
+          [(ngModel)]="registerObj.email"
+          name="email"
+          placeholder="name@example.com"
+          required
+        />
+      </div>
+
+      <div class="row">
+        <div class="input-group">
+          <label><i class="fa-solid fa-earth-europe"></i> Χώρα</label>
+
+          <div class="select-wrapper">
+            <select
+              [(ngModel)]="registerObj.country"
+              name="country"
+              required
+              class="custom-select"
+            >
+              <option value="" disabled selected>Select Country</option>
+              <option *ngFor="let country of countries" [value]="country">
+                {{ country }}
+              </option>
+            </select>
+            <i class="fa-solid fa-chevron-down select-icon"></i>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label><i class="fa-solid fa-city"></i> Πόλη</label>
+          <input
+            type="text"
+            [(ngModel)]="registerObj.city"
+            name="city"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="row align-center">
+        <div class="input-group">
+          <label><i class="fa-solid fa-calendar"></i> Ημ. Γέννησης</label>
+          <input
+            type="date"
+            [(ngModel)]="registerObj.dateOfBirth"
+            name="dateOfBirth"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label><i class="fa-solid fa-venus-mars"></i> Φύλο</label>
+          <div class="gender-selector">
+            <label class="gender-option">
+              <input
+                type="radio"
+                [(ngModel)]="registerObj.gender"
+                name="gender"
+                value="Male"
+              />
+              <span>Άνδρας</span>
+            </label>
+            <label class="gender-option">
+              <input
+                type="radio"
+                [(ngModel)]="registerObj.gender"
+                name="gender"
+                value="Female"
+              />
+              <span>Γυναίκα</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="input-group">
+          <label><i class="fa-solid fa-lock"></i> Κωδικός</label>
+          <input
+            type="password"
+            [(ngModel)]="registerObj.password"
+            name="password"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label><i class="fa-solid fa-check-double"></i> Επιβεβαίωση</label>
+          <input
+            type="password"
+            [(ngModel)]="registerObj.confirmPassword"
+            name="confirmPassword"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-msg">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" class="success-msg">
+        <i class="fa-solid fa-check-circle"></i> {{ successMessage }}
+      </div>
+
+      <button type="submit" class="btn-submit">
+        {{ isLoading ? "Δημιουργία Λογαριασμού" : "Επεξεργασία..." }}
+      </button>
+
+      <div class="login-link">
+        Έχετε ήδη λογαριασμό; <a routerLink="/login">Σύνδεση</a>
+      </div>
+    </form>
+  </div>
+</div>

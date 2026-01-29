@@ -1,0 +1,223 @@
+<div class="hero-section">
+  <div class="hero-overlay">
+    <div class="hero-content">
+      <h1>Το μέλλον του ταξιδιού είναι εδώ</h1>
+      <p>Σχεδιάστε το τέλειο ταξίδι με τη δύναμη της Τεχνητής Νοημοσύνης.</p>
+
+      <div class="hero-buttons">
+        <button class="hero-btn primary" [routerLink]="['/mainapp/ai-planner']">
+          Δοκιμή AI Planner
+        </button>
+        <button class="hero-btn secondary" [routerLink]="['/mainapp/explore']">
+          Εξερεύνηση
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-container">
+  <div class="section-header">
+    <h2>Ταξιδέψτε ανάλογα τη διάθεση</h2>
+    <p>Ανακαλύψτε προορισμούς που ταιριάζουν στο vibe σας</p>
+  </div>
+
+  <div class="vibes-grid">
+    <div
+      class="vibe-card"
+      *ngFor="let vibe of travelVibes"
+      [style.backgroundImage]="'url(' + vibe.img + ')'"
+    >
+      <div class="vibe-overlay">
+        <h3>{{ vibe.title }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-container" *ngIf="topBusinesses.length > 0">
+  <div class="section-header">
+    <h2>Οι αγαπημένοι της κοινότητας</h2>
+    <p>Οι επιχειρήσεις με την υψηλότερη βαθμολογία.</p>
+  </div>
+
+  <div class="top-rated-grid">
+    <div
+      class="business-card"
+      *ngFor="let biz of topBusinesses"
+      [routerLink]="['/business', biz.id]"
+    >
+      <div class="biz-img" [style.backgroundImage]="'url(' + biz.image + ')'">
+        <div class="biz-category">{{ biz.category }}</div>
+        <div class="biz-price">{{ biz.priceLevel }}</div>
+      </div>
+
+      <div class="biz-info">
+        <div class="biz-header">
+          <h3>{{ biz.name }}</h3>
+          <div class="biz-rating">
+            <i class="fa-solid fa-star"></i> {{ biz.rating }}
+          </div>
+        </div>
+
+        <p class="biz-location">
+          <i class="fa-solid fa-location-dot"></i> {{ biz.location }}
+        </p>
+
+        <div class="biz-footer">
+          <span>{{ biz.reviews }} αξιολογήσεις</span>
+          <a class="view-btn"
+            >Δείτε περισσότερα <i class="fa-solid fa-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-container">
+  <div class="section-header">
+    <h2>Επιλέξτε τον τρόπο σχεδίασης</h2>
+    <p>Αυτόματα με AI ή χειροκίνητα με τον δικό σας ρυθμό;</p>
+  </div>
+
+  <div class="planner-grid">
+    <div
+      class="planner-card"
+      *ngFor="let option of plannerOptions"
+      [style.background]="option.color"
+    >
+      <div class="card-content">
+        <div class="icon-box">
+          <i class="fa-solid" [ngClass]="option.icon"></i>
+        </div>
+        <h3>{{ option.title }}</h3>
+        <p>{{ option.desc }}</p>
+
+        <button class="planner-btn" [routerLink]="[option.route]">
+          {{ option.action }} <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <i class="fa-solid big-bg-icon" [ngClass]="option.icon"></i>
+    </div>
+  </div>
+</div>
+
+<div class="ai-section">
+  <div class="section-container">
+    <div class="section-header">
+      <h2><i class="fa-solid fa-microchip"></i> AI Δυνατότητες</h2>
+      <p>Η τεχνολογία στην υπηρεσία του ταξιδιώτη</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card large">
+        <div class="text-side">
+          <div class="badge purple">AI ANALYSIS</div>
+          <h3>Reviews Summary</h3>
+          <p>
+            Μην χάνετε χρόνο διαβάζοντας ατελείωτα σχόλια. Το SmoothJourney
+            αναλύει εκατοντάδες κριτικές και σας δίνει την ουσία.
+          </p>
+
+          <div class="fake-summary">
+            <i class="fa-solid fa-robot"></i>
+            <span
+              >"Εξαιρετική τοποθεσία και φαγητό, αλλά αργό σέρβις. Ιδανικό για
+              ζευγάρια, όχι για βιαστικούς."</span
+            >
+          </div>
+        </div>
+        <div
+          class="img-side"
+          style="
+            background-image: url('https://images.unsplash.com/photo-1555421689-491a97ff2040?q=80&w=800');
+          "
+        ></div>
+      </div>
+
+      <div class="feature-card">
+        <div class="badge green">SMART RECS</div>
+        <h3>Προσωποποιημένες Προτάσεις</h3>
+        <p>
+          Το σύστημα μαθαίνει από εσάς. Σας προτείνουμε μέρη που ταιριάζουν στο
+          προφίλ σας.
+        </p>
+        <div class="icon-float"><i class="fa-solid fa-bullseye"></i></div>
+      </div>
+
+      <div class="feature-card dark">
+        <div class="badge">COMMUNITY</div>
+        <h3>Η γνώμη σας μετράει</h3>
+        <p>
+          Βοηθήστε την κοινότητα και εκπαιδεύστε το AI γράφοντας τη δική σας
+          κριτική.
+        </p>
+
+        <button class="review-btn" [routerLink]="['/reviews/create']">
+          Γράψτε Κριτική
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-container">
+  <div class="section-header">
+    <h2>Συχνές Ερωτήσεις</h2>
+    <p>Όλα όσα πρέπει να γνωρίζετε</p>
+  </div>
+
+  <div class="faq-container">
+    <div
+      class="faq-item"
+      *ngFor="let faq of faqs; let i = index"
+      [class.active]="openFaqIndex === i"
+      (click)="toggleFaq(i)"
+    >
+      <div class="faq-question">
+        <h3>{{ faq.question }}</h3>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+
+      <div class="faq-answer">
+        <p>{{ faq.answer }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<button
+  class="scroll-top-btn"
+  [class.show]="showScrollBtn"
+  (click)="scrollToTop()"
+  title="Επιστροφή στην κορυφή"
+>
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<div class="cookie-banner" *ngIf="showCookieBanner">
+  <div class="cookie-content">
+    <div class="cookie-text">
+      <i class="fa-solid fa-cookie-bite"></i>
+      <p>
+        Χρησιμοποιούμε cookies για να βελτιώσουμε την εμπειρία σας και τις AI
+        λειτουργίες.
+      </p>
+      <p>
+        Χρησιμοποιούμε cookies για να βελτιώσουμε την εμπειρία σας.
+        <a [routerLink]="['/cookie-policy']" class="cookie-link"
+          >Διαβάστε την Πολιτική Cookies</a
+        >.
+      </p>
+    </div>
+    <div class="cookie-buttons">
+      <button class="cookie-btn accept" (click)="acceptCookies()">
+        Αποδοχή
+      </button>
+      <button class="cookie-btn decline" (click)="declineCookies()">
+        Όχι, ευχαριστώ
+      </button>
+    </div>
+  </div>
+</div>

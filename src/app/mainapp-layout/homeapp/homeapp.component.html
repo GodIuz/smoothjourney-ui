@@ -1,0 +1,98 @@
+<div class="main-container">
+  <section class="hero">
+    <h1>Πού θέλεις να πας σήμερα;</h1>
+    <div class="search-wrapper">
+      <div class="search-input">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Αναζήτηση..." />
+      </div>
+      <button class="search-btn">Αναζήτηση</button>
+    </div>
+  </section>
+
+  <section class="categories-section">
+    <div class="category-pill" *ngFor="let cat of categories">
+      <div class="icon-box"><i [class]="cat.icon"></i></div>
+      <span>{{ cat.name }}</span>
+    </div>
+  </section>
+
+  <section class="content-row" *ngIf="hotels.length > 0">
+    <div class="row-header">
+      <h2><i class="fa-solid fa-star"></i> Κορυφαία Ξενοδοχεία</h2>
+    </div>
+
+    <div class="scroll-container">
+      <div class="card" *ngFor="let item of hotels">
+        <div class="card-image hotel-bg">
+          <div class="heart-icon"><i class="fa-regular fa-heart"></i></div>
+          <span class="price-badge" *ngIf="item.priceLevel">{{
+            item.priceLevel
+          }}</span>
+        </div>
+
+        <div class="card-content">
+          <h3>{{ item.name }}</h3>
+          <p class="location">
+            <i class="fa-solid fa-location-dot"></i> {{ item.location }}
+          </p>
+
+          <div class="rating-box">
+            <div class="stars">
+              <i
+                class="fa-solid fa-star"
+                *ngFor="let s of getStars(item.rating)"
+              ></i>
+            </div>
+            <span class="rating-num">{{ item.rating }}</span>
+            <span class="reviews">
+              ({{ item["reviewCount"] || item["reviews"] || 0 }} σχόλια)
+            </span>
+          </div>
+          <button class="action-btn">Δες Τιμές</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-row" *ngIf="restaurants.length > 0">
+    <div class="row-header">
+      <h2><i class="fa-solid fa-utensils"></i> Γεύσεις που ξεχωρίζουν</h2>
+    </div>
+
+    <div class="scroll-container">
+      <div class="card" *ngFor="let item of restaurants">
+        <div class="card-image food-bg">
+          <div class="heart-icon"><i class="fa-regular fa-heart"></i></div>
+        </div>
+
+        <div class="card-content">
+          <h3>{{ item.name }}</h3>
+          <p class="location">
+            <i class="fa-solid fa-location-dot"></i> {{ item.location }}
+          </p>
+
+          <div class="rating-box">
+            <div class="stars">
+              <i
+                class="fa-solid fa-circle"
+                *ngFor="let s of getStars(item.rating)"
+                style="font-size: 8px; color: #34e0a1"
+              ></i>
+            </div>
+            <span class="rating-num">{{ item.rating }}</span>
+          </div>
+
+          <button class="action-btn outline">Δες Κριτικές</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div
+    *ngIf="hotels.length === 0 && restaurants.length === 0"
+    style="text-align: center; padding: 50px; color: #888"
+  >
+    <p>Φόρτωση δεδομένων ή δεν βρέθηκαν επιχειρήσεις...</p>
+  </div>
+</div>

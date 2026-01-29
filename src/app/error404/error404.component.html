@@ -1,0 +1,29 @@
+<div class="error-container">
+  <div class="error-content">
+    <div class="error-code">404</div>
+    <h1>Χάσαμε τον δρόμο...</h1>
+    <p>
+      Φαίνεται πως αυτή η σελίδα αποφάσισε να πάει ένα ταξίδι μόνη της. Ακόμα
+      και το AI μας δυσκολεύεται να την εντοπίσει στον χάρτη.
+    </p>
+
+    <div class="error-actions">
+      <button class="primary-btn" routerLink="/">
+        <i class="fa-solid fa-house"></i> Επιστροφή
+      </button>
+      <button class="secondary-btn" (click)="goBack()">
+        <i class="fa-solid fa-arrow-left"></i> Πίσω
+      </button>
+    </div>
+  </div>
+
+  <div class="error-visual">
+    <div class="icon-stack">
+      <i class="fa-solid fa-earth-europe planet-icon"></i>
+      <div class="orbit">
+        <i class="fa-solid fa-plane plane-icon"></i>
+      </div>
+      <div class="question-mark">?</div>
+    </div>
+  </div>
+</div>

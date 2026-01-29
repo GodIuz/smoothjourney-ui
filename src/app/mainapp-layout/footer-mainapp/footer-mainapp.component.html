@@ -1,0 +1,25 @@
+<footer class="footer">
+  <div class="footer-container">
+    <div class="copyright">
+      &copy; {{ currentYear }} <strong>Smooth Journey</strong>. All Rights
+      Reserved.
+    </div>
+
+    <div class="social-links">
+      <a
+        *ngFor="let social of socialNetworks"
+        [href]="social.url"
+        target="_blank"
+        [attr.aria-label]="social.platform"
+      >
+        <i [class]="social.icon"></i>
+      </a>
+    </div>
+
+    <div class="footer-links">
+      <a *ngFor="let link of infoLinks" [routerLink]="link.route">
+        {{ link.label }}
+      </a>
+    </div>
+  </div>
+</footer>

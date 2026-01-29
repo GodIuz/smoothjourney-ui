@@ -1,0 +1,50 @@
+<div class="login-container">
+  <div class="login-box">
+    <h2>Καλώς ήρθατε</h2>
+    <p>Συνδεθείτε για να συνεχίσετε</p>
+
+    <form (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label>Email</label>
+        <input
+          type="email"
+          [(ngModel)]="loginObj.email"
+          name="email"
+          required
+          placeholder="name@example.com"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Κωδικός</label>
+        <input
+          type="password"
+          [(ngModel)]="loginObj.password"
+          name="password"
+          required
+          placeholder="********"
+        />
+      </div>
+
+      <div class="options">
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe" />
+          Να με θυμάσαι
+        </label>
+        <a routerLink="/forgot-password" class="forgot-link"
+          >Ξεχάσατε τον κωδικό;</a
+        >
+      </div>
+
+      <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+
+      <button type="submit" [disabled]="isLoading" class="btn-login">
+        {{ isLoading ? "Σύνδεση..." : "Σύνδεση" }}
+      </button>
+    </form>
+
+    <p class="register-text">
+      Δεν έχετε λογαριασμό; <a routerLink="/register">Εγγραφείτε εδώ</a>
+    </p>
+  </div>
+</div>

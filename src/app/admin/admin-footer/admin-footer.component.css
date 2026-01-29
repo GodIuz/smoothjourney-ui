@@ -1,0 +1,100 @@
+.footer-section {
+  background: #ffffff;
+  border-top: 1px solid #eaecf4;
+  padding: 1rem 2rem;
+  margin-top: auto;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.02);
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+}
+
+.footer-left {
+  display: flex;
+  gap: 15px;
+  color: #858796;
+  font-size: 0.9rem;
+}
+
+.brand-link {
+  color: #4e73df;
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.3s ease;
+}
+
+.brand-link:hover {
+  color: #224abe;
+  text-decoration: underline;
+}
+
+.heart {
+  color: #e74a3b;
+  animation: heartbeat 1.5s infinite;
+  display: inline-block;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.footer-link {
+  color: #858796;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.footer-link:hover {
+  color: #5a5c69;
+  font-weight: 600;
+}
+
+.version-badge {
+  background-color: #f8f9fc;
+  color: #b7b9cc;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border: 1px solid #eaecf4;
+  letter-spacing: 0.5px;
+}
+
+/* --- Animations --- */
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .footer-left {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .footer-right {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

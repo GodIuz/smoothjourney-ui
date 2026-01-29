@@ -1,0 +1,121 @@
+/* --- Γενικό Κουτί Sidebar --- */
+.sidebar-container {
+  width: 260px; /* Σταθερό πλάτος */
+  height: 100vh; /* Ύψος όλη η οθόνη */
+  background-color: #1a1a1a; /* Σκούρο Μαύρο/Γκρι */
+  color: #e0e0e0; /* Ανοιχτό γκρι κείμενο */
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #333; /* Λεπτή γραμμή δεξιά */
+  position: fixed; /* Καρφωμένο αριστερά */
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Header (Logo) --- */
+.sidebar-header {
+  padding: 25px 20px;
+  text-align: center;
+  border-bottom: 1px solid #333;
+  background-color: #151515; /* Λίγο πιο σκούρο από το υπόλοιπο */
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.sidebar-header b {
+  color: #34e0a1; /* Το πράσινο Brand Color */
+}
+
+.sidebar-header small {
+  color: #888;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* --- Menu (Λίστα) --- */
+.sidebar-menu {
+  list-style: none; /* Σβήνει τις τελείες (bullets) */
+  padding: 0;
+  margin: 20px 0;
+  flex-grow: 1; /* Πιάνει όσο χώρο περισσεύει */
+  overflow-y: auto; /* Scroll αν είναι πολλά τα links */
+}
+
+/* Επικεφαλίδες (π.χ. ΔΙΑΧΕΙΡΙΣΗ) */
+.menu-header {
+  padding: 15px 25px 10px 25px;
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Links */
+.sidebar-menu li a {
+  display: flex;
+  align-items: center;
+  padding: 12px 25px;
+  color: #a0a0a0;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent; /* Κρυφή γραμμή αριστερά */
+}
+
+.sidebar-menu li a i {
+  width: 25px; /* Σταθερό πλάτος για στοίχιση */
+  font-size: 1.1rem;
+  margin-right: 10px;
+}
+
+/* Hover Effect (Όταν περνάει το ποντίκι) */
+.sidebar-menu li a:hover {
+  background-color: rgba(255, 255, 255, 0.05); /* Ελαφρύ άσπρισμα */
+  color: #fff;
+}
+
+/* Active State (Όταν είσαι στη σελίδα) */
+.sidebar-menu li a.active {
+  background-color: rgba(52, 224, 161, 0.1); /* Αχνό πράσινο φόντο */
+  color: #34e0a1; /* Πράσινα γράμματα */
+  border-left-color: #34e0a1; /* Πράσινη μπάρα αριστερά */
+}
+
+/* --- Footer (Logout) --- */
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid #333;
+  background-color: #151515;
+}
+
+.logout-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  color: #ff6b6b; /* Κόκκινο */
+  text-decoration: none;
+  border: 1px solid #ff6b6b;
+  border-radius: 5px;
+  transition: all 0.3s;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.logout-link:hover {
+  background-color: #ff6b6b;
+  color: white;
+  cursor: pointer;
+}
