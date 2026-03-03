@@ -35,16 +35,12 @@
           <tr *ngFor="let b of businesses">
             <td class="ps-4">
               <img
-                [src]="
-                  b.imageUrl
-                    ? 'https://localhost:7000' + b.imageUrl
-                    : 'assets/images/placeholder.jpg'
-                "
+                [src]="getImageUrl(b.imageUrl)"
+                (error)="handleImageError($event)"
                 class="rounded object-fit-cover shadow-sm"
                 width="60"
                 height="40"
                 alt="cover"
-                onerror="this.src = 'assets/images/placeholder.jpg'"
               />
             </td>
 

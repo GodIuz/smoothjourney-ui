@@ -1,0 +1,92 @@
+.form-control:focus,
+.form-select:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+  background-color: #fff;
+}
+
+.form-floating > label {
+  color: #9ca3af;
+}
+
+.form-control,
+.form-select {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+textarea {
+  resize: none;
+}
+
+.card {
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+  background-color: #ffffff;
+}
+
+.card:hover {
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.01) !important;
+  transform: translateY(-2px);
+}
+
+.card-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.btn-hover-scale {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.btn-hover-scale:active {
+  transform: scale(0.98);
+}
+
+.btn-light {
+  background-color: #fff;
+  border-color: #e5e7eb;
+  color: #4b5563;
+  transition: all 0.2s;
+}
+
+.btn-light:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.form-check-input {
+  width: 3em;
+  height: 1.5em;
+  cursor: pointer;
+  border-color: #d1d5db;
+}
+
+.form-check-input:checked {
+  background-color: #10b981;
+  border-color: #10b981;
+}
+
+.form-check-input:checked[formControlName="isSuspectedScam"] {
+  background-color: #ef4444;
+  border-color: #ef4444;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+.img-fluid {
+  max-height: 250px;
+  object-fit: cover;
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  padding: 4px;
+  background: #fff;
+}

@@ -251,14 +251,35 @@
               </label>
             </div>
 
-            <button
-              type="submit"
-              class="btn btn-primary w-100 py-2 fw-bold shadow-sm btn-hover-scale"
-              [disabled]="form.invalid"
-            >
-              <i class="fa fa-save me-2"></i>
-              {{ isEditMode ? "Ενημέρωση" : "Δημιουργία" }}
-            </button>
+            <div class="mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary w-100 py-3 fw-bold shadow-sm btn-hover-scale d-flex align-items-center justify-content-center gap-2"
+                [class.opacity-50]="form.invalid"
+                [class.btn-warning]="form.invalid && form.touched"
+                [class.btn-primary]="!form.invalid"
+              >
+                <i
+                  class="fa"
+                  [ngClass]="isEditMode ? 'fa-sync-alt' : 'fa-save'"
+                ></i>
+
+                <span>{{
+                  isEditMode
+                    ? "Ενημέρωση Καταχώρησης"
+                    : "Δημιουργία Καταχώρησης"
+                }}</span>
+              </button>
+
+              <div
+                *ngIf="form.invalid && form.touched"
+                class="text-center mt-2 text-danger small fade-in"
+              >
+                <i class="fa fa-exclamation-circle me-1"></i>
+                Η φόρμα δεν είναι έτοιμη. Ελέγξτε τα πεδία με κόκκινο
+                περίγραμμα.
+              </div>
+            </div>
           </div>
         </div>
       </div>

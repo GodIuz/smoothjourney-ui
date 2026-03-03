@@ -1,1 +1,180 @@
-<p>edit-business works!</p>
+<div class="container py-5">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-1">✏️ Επεξεργασία Επιχείρησης</h2>
+      <p class="text-muted">ID: {{ businessId }}</p>
+    </div>
+    <a routerLink="/admin/businesses" class="btn btn-light border shadow-sm">
+      <i class="fa fa-arrow-left me-2"></i> Πίσω
+    </a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+          <div class="card-body p-4">
+            <h5 class="fw-bold text-primary mb-3">Βασικά Στοιχεία</h5>
+
+            <div class="form-floating mb-3">
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+              />
+              <label for="name">Όνομα</label>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select class="form-select" formControlName="category">
+                    <option *ngFor="let cat of categories" [value]="cat">
+                      {{ cat }}
+                    </option>
+                  </select>
+                  <label>Κατηγορία</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select class="form-select" formControlName="categoryType">
+                    <option *ngFor="let type of availableTypes" [value]="type">
+                      {{ type }}
+                    </option>
+                  </select>
+                  <label>Τύπος</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-floating mt-3">
+              <textarea
+                class="form-control"
+                style="height: 100px"
+                formControlName="description"
+              ></textarea>
+              <label>Περιγραφή</label>
+            </div>
+
+            <div class="form-floating mt-3">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="moodTags"
+              />
+              <label>Mood Tags</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="card-body p-4">
+            <h5 class="fw-bold text-primary mb-3">Τοποθεσία</h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <input
+                  type="text"
+                  class="form-control p-3"
+                  placeholder="Διεύθυνση"
+                  formControlName="address"
+                />
+              </div>
+              <div class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control p-3"
+                  placeholder="Πόλη"
+                  formControlName="city"
+                />
+              </div>
+              <div class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control p-3"
+                  placeholder="Χώρα"
+                  formControlName="country"
+                />
+              </div>
+              <div class="col-12">
+                <input
+                  type="text"
+                  class="form-control p-3"
+                  placeholder="Τηλέφωνο"
+                  formControlName="phone"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+          <div class="card-body p-4 text-center">
+            <h6 class="fw-bold text-muted mb-3">Εικόνα Εξωφύλλου</h6>
+            <div class="mb-3" *ngIf="previewUrl">
+              <img [src]="previewUrl" class="img-fluid rounded shadow-sm" />
+            </div>
+            <input
+              type="file"
+              (change)="onFileSelected($event)"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="card-body p-4">
+            <label class="form-label fw-bold">Επίπεδο Τιμής</label>
+            <select class="form-select mb-3" formControlName="priceLevel">
+              <option [ngValue]="1">€ (Οικονομικό)</option>
+              <option [ngValue]="2">€€ (Μέτριο)</option>
+              <option [ngValue]="3">€€€ (Ακριβό)</option>
+              <option [ngValue]="4">€€€€ (Luxury)</option>
+            </select>
+
+            <div class="form-check form-switch mb-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                formControlName="isHiddenGem"
+              />
+              <label class="form-check-label">Hidden Gem</label>
+            </div>
+            <div class="form-check form-switch mb-4">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                formControlName="isSuspectedScam"
+              />
+              <label class="form-check-label text-danger">Suspected Scam</label>
+            </div>
+
+            <div class="mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary w-100 py-3 fw-bold shadow-sm btn-hover-scale d-flex align-items-center justify-content-center gap-2"
+                [class.opacity-50]="form.invalid"
+                [style.cursor]="form.invalid ? 'not-allowed' : 'pointer'"
+              >
+                <i class="fa fa-sync-alt"></i>
+
+                <span>Ενημέρωση</span>
+              </button>
+
+              <div
+                *ngIf="form.invalid && form.touched"
+                class="text-center mt-2 text-danger small fade-in"
+              >
+                <i class="fa fa-exclamation-circle me-1"></i>
+                Διορθώστε τα κοκκινισμένα πεδία για να συνεχίσετε.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

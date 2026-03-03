@@ -28,12 +28,26 @@ export class CreateBusinessComponent implements OnInit {
   businessId: number | null = null;
   previewUrl: string | null = null;
   businesses: any[] = [];
-  
-  categories = ['Επιχείρηση', 'Αξιοθέατο'];
+   
+   categories = ['Επιχείρηση', 'Αξιοθέατο'];
   
   typesMap: any = {
-    'Επιχείρηση': ['Ξενοδοχείo', 'Ενοικιαζόμενα Δωμάτια-Διαμερίσματα', 'Τουριστικές Κατοικίες', 'Τουριστικά Γραφεία', 'Διοργανωτές Περιηγήσεων', 'Γραφεία Ενοικίασης Οχημάτων', 'Εστιατόριο', 'Καφετέρια', 'Μπαρ', 'Κέντρα Διασκέδασης', 'Ταξί', 'Τουριστικά Λεωφορεία', 'Κρουαζιέρες', 'Ενοικιάσεις Σκαφών', 'Αεροπορικές Εταιρείες','Τουριστικά Είδη', 'Τοπικά Προϊόντα', 'Σουβενίρ'],
-    'Αξιοθέατο': ['Αρχαία Mνημεία', 'Kάστρα', 'Παλάτια', 'Ιστορικές Τοποθεσίες', 'Αγάλματα', 'Μνημεία','Εκκλησίες', 'Καθεδρικοί Ναοί', 'Μοναστήρια', 'Ιεροί Χώροι', 'Παραλίες', 'Εθνικά πάρκα','Δάση','Λίμνες','Σπήλαια', 'Λόφοι','Μουσεία', 'Πινακοθήκες', 'Βιβλιοθήκες', 'Θέατρα', 'Πλατείες', 'Γέφυρες', 'Ουρανοξύστες', 'Πύργοι Παρατήρησης', 'Γραφικές Γειτονιές', 'Φάροι', 'Πάρκα Αναψυχής', 'Ζωολογικοί Κήποι','Ενυδρεία','Εμπορικά Κέντρα','Selfie Museums', 'Χώροι Ευεξίας (Spa)'],
+    'Επιχείρηση': [
+        'Ξενοδοχείo', 'Ενοικιαζόμενα Δωμάτια-Διαμερίσματα', 'Τουριστικές Κατοικίες', 
+        'Τουριστικά Γραφεία', 'Διοργανωτές Περιηγήσεων', 'Γραφεία Ενοικίασης Οχημάτων', 
+        'Εστιατόριο', 'Καφετέρια', 'Μπαρ', 'Κέντρα Διασκέδασης', 
+        'Ταξί', 'Τουριστικά Λεωφορεία', 'Κρουαζιέρες', 'Ενοικιάσεις Σκαφών', 
+        'Αεροπορικές Εταιρείες', 'Τουριστικά Είδη', 'Τοπικά Προϊόντα', 'Σουβενίρ'
+    ],
+    'Αξιοθέατο': [
+        'Αρχαία Mνημεία', 'Kάστρα', 'Παλάτια', 'Ιστορικές Τοποθεσίες', 
+        'Αγάλματα', 'Μνημεία', 'Εκκλησίες', 'Καθεδρικοί Ναοί', 'Μοναστήρια', 'Ιεροί Χώροι', 
+        'Παραλίες', 'Εθνικά πάρκα', 'Δάση', 'Λίμνες', 'Σπήλαια', 'Λόφοι', 
+        'Μουσεία', 'Πινακοθήκες', 'Βιβλιοθήκες', 'Θέατρα', 'Πλατείες', 
+        'Γέφυρες', 'Ουρανοξύστες', 'Πύργοι Παρατήρησης', 'Γραφικές Γειτονιές', 
+        'Φάροι', 'Πάρκα Αναψυχής', 'Ζωολογικοί Κήποι', 'Ενυδρεία', 
+        'Εμπορικά Κέντρα', 'Selfie Museums', 'Χώροι Ευεξίας (Spa)'
+    ],
   };
   
   availableTypes: string[] = [];
@@ -50,17 +64,13 @@ export class CreateBusinessComponent implements OnInit {
       category: ['', Validators.required],
       categoryType: ['', Validators.required],
       moodTags: ['', Validators.required],
-      
       address: ['', Validators.required],
       city: ['', Validators.required],
       country: ['', Validators.required],
       phone: ['', Validators.required],
-      
       priceRange: ['Moderate', Validators.required],
       priceLevel: [2, Validators.required],
-      
       description: ['', [Validators.required, Validators.maxLength(500)]],
-      
       isHiddenGem: [false],
       isSuspectedScam: [false],
       
@@ -69,27 +79,34 @@ export class CreateBusinessComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.get('category')?.valueChanges.subscribe(cat => {
-      this.availableTypes = this.typesMap[cat] || [];
-      this.form.get('categoryType')?.setValue('');
+    this.form.get('category')?.valueChanges.subscribe(selectedCategory => {
+        this.availableTypes = this.typesMap[selectedCategory] || [];
+        const currentType = this.form.get('categoryType')?.value;
+        if (!this.availableTypes.includes(currentType)) {
+            this.form.get('categoryType')?.setValue('');
+        }
     });
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.businessId = +idParam;
       this.isEditMode = true;
-      this.businessId = +id;
       
-      this.businessService.getById(this.businessId).subscribe(data => {
-        if (data.category) {
-            this.availableTypes = this.typesMap[data.category] || [];
-        }
+      this.businessService.getById(this.businessId).subscribe({
+        next: (data) => {
+          if (data.category) {
+             this.availableTypes = this.typesMap[data.category] || [];
+          }
+          
+          this.form.patchValue(data);
         
-        this.form.patchValue(data);
-        
-        if (data.coverPhoto) { 
-            this.previewUrl = 'https://localhost:7000' + data.coverPhoto;
-        } else if (data.imageUrl) {
-            this.previewUrl = 'https://localhost:7000' + data.imageUrl;
+          if (data.imageUrl) {
+              this.previewUrl = 'https://localhost:7000' + data.imageUrl; 
+          }
+        },
+        error: (err) => {
+          console.error('❌ Το ID δεν βρέθηκε:', err);
+          this.router.navigate(['/admin/businesses']); 
         }
       });
     }
@@ -101,6 +118,7 @@ export class CreateBusinessComponent implements OnInit {
       this.photoService.uploadPhoto(file).subscribe({
         next: (res) => {
           this.form.patchValue({ imageUrl: res.url });
+          // Προσοχή στο Port (7001 ή 7000 ανάλογα το backend σου)
           this.previewUrl = 'https://localhost:7000' + res.url;
         },
         error: (err) => alert('Το ανέβασμα απέτυχε!')
@@ -110,7 +128,8 @@ export class CreateBusinessComponent implements OnInit {
 
   onSubmit() {
     if (this.form.invalid) {
-      this.form.markAllAsTouched();
+      this.form.markAllAsTouched(); 
+      alert('Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία (κοκκινισμένα).');
       return;
     }
 
