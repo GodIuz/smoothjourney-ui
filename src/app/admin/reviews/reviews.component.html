@@ -1,1 +1,90 @@
-<p>reviews works!</p>
+<div class="container-fluid py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-0">⭐ Διαχείριση Κριτικών</h2>
+      <p class="text-muted small mt-1">Ελέγξτε τις αξιολογήσεις των χρηστών.</p>
+    </div>
+    <span class="badge bg-warning text-dark fs-6 shadow-sm"
+      >{{ reviews.length }} Κριτικές</span
+    >
+  </div>
+
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-warning" role="status"></div>
+  </div>
+
+  <div *ngIf="!isLoading" class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table mb-0 align-middle">
+        <thead class="bg-light">
+          <tr>
+            <th class="ps-4">Επιχείρηση</th>
+            <th>Χρήστης</th>
+            <th>Βαθμολογία</th>
+            <th style="width: 40%">Σχόλιο</th>
+            <th>Ημερομηνία</th>
+            <th class="text-end pe-4">Ενέργειες</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let review of reviews">
+            <td class="ps-4 fw-bold text-primary">
+              <i class="bi bi-shop me-2"></i> {{ review.businessName }}
+            </td>
+
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="avatar-circle bg-secondary text-white me-2">
+                  {{ review.userName }}
+                </div>
+                <span class="text-dark fw-medium">{{ review.userName }}</span>
+              </div>
+            </td>
+
+            <td>
+              <div class="d-flex text-warning">
+                <i
+                  class="bi bi-star-fill"
+                  *ngFor="let s of getStars(review.rating)"
+                ></i>
+                <span class="ms-2 text-muted small fw-bold"
+                  >({{ review.rating }})</span
+                >
+              </div>
+            </td>
+
+            <td>
+              <div
+                class="text-muted fst-italic comment-box"
+                title="{{ review.comment }}"
+              >
+                "{{ review.comment }}"
+              </div>
+            </td>
+
+            <td class="text-muted small">
+              {{ review.createdDate | date: "dd/MM/yyyy" }}
+            </td>
+
+            <td class="text-end pe-4">
+              <button
+                class="btn btn-sm btn-outline-danger"
+                (click)="onDelete(review.reviewId)"
+                title="Διαγραφή Κριτικής"
+              >
+                🗑️
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div
+    *ngIf="!isLoading && reviews.length === 0"
+    class="text-center py-5 text-muted"
+  >
+    <h4>📭 Καμία κριτική ακόμα!</h4>
+  </div>
+</div>

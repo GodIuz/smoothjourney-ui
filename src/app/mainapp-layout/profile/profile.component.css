@@ -1,0 +1,123 @@
+/* --- Layout & Cover --- */
+.profile-header {
+  position: relative;
+  margin-bottom: 3.5rem;
+}
+
+.profile-cover {
+  height: 200px;
+  background: linear-gradient(
+    120deg,
+    #4e73df,
+    #224abe
+  ); /* Το αγαπημένο σου μπλε */
+  border-radius: 0 0 1.5rem 1.5rem; /* Πιο στρογγυλεμένο κάτω μέρος */
+  box-shadow: 0 4px 15px rgba(78, 115, 223, 0.2);
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* --- Avatar --- */
+.profile-avatar-container {
+  position: absolute;
+  bottom: -50px;
+  left: 2rem;
+  display: flex;
+  align-items: end;
+}
+
+.profile-avatar {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  background-color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Πιο έντονη σκιά για βάθος */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #4e73df;
+  z-index: 2;
+}
+
+/* --- Navigation Pills (Left Sidebar) --- */
+.nav-pills .nav-link {
+  color: #5a5c69;
+  font-weight: 600;
+  padding: 0.85rem 1.2rem;
+  border-radius: 0.75rem; /* Στρογγυλεμένα tabs */
+  transition: all 0.2s ease;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: #f8f9fc;
+  color: #4e73df;
+  transform: translateX(4px); /* Μικρή κίνηση δεξιά στο hover */
+}
+
+.nav-pills .nav-link.active {
+  background-color: #4e73df;
+  color: white;
+  box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3);
+}
+
+/* --- Cards General --- */
+.card {
+  border-radius: 1rem;
+  background-color: #fff;
+}
+
+/* --- Typography & Utilities --- */
+.info-label {
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #b7b9cc;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.2rem;
+  display: block;
+}
+
+.info-value {
+  color: #2e303e;
+  font-weight: 500;
+  font-size: 1.05rem;
+}
+
+.ls-1 {
+  letter-spacing: 1px;
+}
+
+/* Helper για μέγεθος εικονιδίων Material */
+.icon-xs {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+.icon-sm {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* --- Angular Material Tweaks --- */
+/* Βεβαιώνει ότι τα πεδία πιάνουν όλο το πλάτος στις στήλες τους */
+mat-form-field {
+  width: 100%;
+}
+
+/* Border dashed για το empty state των reviews */
+.border-dashed {
+  border-style: dashed !important;
+}
+
+/* Προσαρμογή του Datepicker toggle για να είναι align σωστά */
+.mat-datepicker-toggle {
+  color: #858796;
+}

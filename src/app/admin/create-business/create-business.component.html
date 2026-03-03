@@ -206,6 +206,7 @@
                 >Επίπεδο Τιμής</label
               >
               <select class="form-select" formControlName="priceLevel">
+                <option [ngValue]="0">0 (Free)</option>
                 <option [ngValue]="1">€ (Οικονομικό)</option>
                 <option [ngValue]="2">€€ (Μέτριο)</option>
                 <option [ngValue]="3">€€€ (Ακριβό)</option>
@@ -218,6 +219,7 @@
                 >Εύρος (Περιγραφή)</label
               >
               <select class="form-select" formControlName="priceRange">
+                <option value="Free">Free</option>
                 <option value="Cheap">Cheap</option>
                 <option value="Moderate">Moderate</option>
                 <option value="Expensive">Expensive</option>

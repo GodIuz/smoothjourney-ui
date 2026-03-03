@@ -11,34 +11,60 @@
         Home
       </a>
     </li>
-    <li>
-      <a
-        routerLink="/mainapp/profile"
-        routerLinkActive="active"
-        (click)="toggleMenu()"
-      >
-        Προφίλ
-      </a>
-    </li>
-    <li>
-      <a
-        routerLink="/mainapp/settings"
-        routerLinkActive="active"
-        (click)="toggleMenu()"
-      >
-        Ρυθμίσεις
-      </a>
-    </li>
 
-    <div class="mobile-actions">
-      <button class="review-btn" (click)="onLogout()">Αποσύνδεση</button>
+    <div class="nav-item-container">
+      <div class="dropdown tools-nav-dropdown">
+        <button class="nav-link-btn" type="button">
+          <i class="fa-solid fa-toolbox me-1"></i>
+          Εργαλεία
+          <i class="fa-solid fa-chevron-down ms-1 icon-small"></i>
+        </button>
+
+        <ul class="dropdown-content">
+          <li>
+            <a
+              routerLink="/mainapp/ai-planner"
+              routerLinkActive="active"
+              class="drop-link"
+            >
+              <div class="drop-icon"><i class="fa-solid fa-robot"></i></div>
+              <div class="drop-text">
+                <strong>AI Planner</strong>
+                <span>Έξυπνος προγραμματισμός</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider" />
+          </li>
+          <li>
+            <a
+              routerLink="/mainapp/trip-maker"
+              routerLinkActive="active"
+              class="drop-link"
+            >
+              <div class="drop-icon">
+                <i class="fa-solid fa-map-location-dot"></i>
+              </div>
+              <div class="drop-text">
+                <strong>Trip Maker</strong>
+                <span>Δημιουργία διαδρομής</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   </ul>
 
   <div class="desktop-actions">
     <div class="user-dropdown-container">
       <div class="user-trigger" (click)="toggleUserDropdown()">
-        <span>Γεια σου, <strong>Admin</strong>!</span>
+        <span
+          >Γεια σου, <strong>{{ username }}</strong
+          >!</span
+        >
+
         <i class="fa-solid fa-caret-down"></i>
       </div>
 
@@ -47,13 +73,20 @@
           <i class="fa-solid fa-user"></i> Προφίλ
         </a>
 
+        <a
+          routerLink="/mainapp/favourites"
+          (click)="isUserDropdownOpen = false"
+        >
+          <i class="fa-solid fa-heart"></i> Αγαπημένα
+        </a>
+
         <a routerLink="/mainapp/my-trips" (click)="isUserDropdownOpen = false">
           <i class="fa-solid fa-suitcase-rolling"></i> Τα Ταξίδια μου
         </a>
 
         <div class="dropdown-divider"></div>
 
-        <a (click)="onLogout()" class="dropdown-logout">
+        <a (click)="onLogout()" class="dropdown-logout" style="cursor: pointer">
           <i class="fa-solid fa-right-from-bracket"></i> Αποσύνδεση
         </a>
       </div>

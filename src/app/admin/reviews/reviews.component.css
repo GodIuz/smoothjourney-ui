@@ -1,0 +1,53 @@
+.container-fluid {
+  background-color: #f8f9fc;
+  min-height: 100vh;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+  overflow: hidden;
+}
+
+.table thead th {
+  background-color: #f8f9fc;
+  color: #858796;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #e3e6f0;
+  padding: 1rem;
+}
+
+.table tbody td {
+  padding: 1rem;
+  color: #5a5c69;
+}
+
+.avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.comment-box {
+  max-width: 350px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: help;
+}
+
+.btn-outline-danger:hover {
+  background-color: #e74a3b;
+  color: white;
+  transform: scale(1.05);
+}

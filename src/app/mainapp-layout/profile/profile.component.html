@@ -1,0 +1,320 @@
+<div class="container pb-5">
+  <div class="profile-header">
+    <div class="profile-cover"></div>
+
+    <div class="profile-avatar-container">
+      <div class="profile-avatar">
+        <span *ngIf="user.firstName && user.lastName">
+          {{ user.firstName.charAt(0) | uppercase
+          }}{{ user.lastName.charAt(0) | uppercase }}
+        </span>
+        <span *ngIf="!user.firstName || !user.lastName">
+          {{ user.userName?.charAt(0) | uppercase }}
+        </span>
+      </div>
+
+      <div class="ms-4 mb-2 text-white d-none d-md-block text-shadow">
+        <h2 class="fw-bold mb-0">{{ user.userName }}</h2>
+        <span class="badge bg-light text-dark shadow-sm">{{
+          user.role || "Member"
+        }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4 px-2">
+    <div class="col-lg-3 mb-4">
+      <div class="card border-0 shadow-sm p-3">
+        <div class="nav flex-column nav-pills gap-2">
+          <button
+            class="nav-link text-start d-flex align-items-center"
+            [class.active]="activeTab === 'overview'"
+            (click)="setActiveTab('overview')"
+          >
+            <mat-icon class="me-2 icon-sm">person</mat-icon> Επισκόπηση
+          </button>
+          <button
+            class="nav-link text-start d-flex align-items-center"
+            [class.active]="activeTab === 'edit'"
+            (click)="setActiveTab('edit')"
+          >
+            <mat-icon class="me-2 icon-sm">edit</mat-icon> Επεξεργασία
+          </button>
+          <button
+            class="nav-link text-start d-flex align-items-center"
+            [class.active]="activeTab === 'security'"
+            (click)="setActiveTab('security')"
+          >
+            <mat-icon class="me-2 icon-sm">lock</mat-icon> Ασφάλεια
+          </button>
+          <button
+            class="nav-link text-start d-flex align-items-center"
+            [class.active]="activeTab === 'reviews'"
+            (click)="setActiveTab('reviews')"
+          >
+            <mat-icon class="me-2 icon-sm">star</mat-icon> Οι Κριτικές μου
+          </button>
+        </div>
+      </div>
+
+      <div class="card border-0 mt-3 p-4 shadow-sm text-center">
+        <div class="text-muted small text-uppercase fw-bold ls-1">
+          Ημερομηνια Εγγραφης
+        </div>
+
+        <div class="fs-5 fw-bold text-primary mt-1" *ngIf="user.registeredOn">
+          {{ user.registeredOn | date: "dd MMM yyyy" }}
+        </div>
+
+        <div class="fs-5 text-muted mt-1" *ngIf="!user.registeredOn">-</div>
+      </div>
+
+      <div class="col-lg-9">
+        <div
+          *ngIf="activeTab === 'overview'"
+          class="card border-0 shadow-sm p-4 animate__animated animate__fadeIn"
+        >
+          <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
+            <h4 class="fw-bold text-primary mb-0">👤 Τα Στοιχεία μου</h4>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="info-label">Ονοματεπώνυμο</label>
+                <div class="info-value fs-5">
+                  {{ user.firstName || "-" }} {{ user.lastName }}
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="info-label">Email</label>
+                <div class="info-value text-break">{{ user.email }}</div>
+              </div>
+              <div class="mb-3">
+                <label class="info-label">Φύλο</label>
+                <div class="info-value">{{ user.gender || "-" }}</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="info-label">Τοποθεσία</label>
+                <div class="info-value">
+                  <mat-icon class="icon-xs text-muted me-1"
+                    >location_on</mat-icon
+                  >
+                  {{ user.city || "-"
+                  }}<span *ngIf="user.city && user.country">, </span
+                  >{{ user.country }}
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="info-label">Ημ. Γέννησης</label>
+                <div class="info-value">
+                  {{ user.dateOfBirth | date: "longDate" }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          *ngIf="activeTab === 'edit'"
+          class="card border-0 shadow-sm p-4 animate__animated animate__fadeIn"
+        >
+          <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
+            <h4 class="fw-bold text-primary mb-0">✏️ Επεξεργασία Προφίλ</h4>
+          </div>
+
+          <form (ngSubmit)="updateProfile()">
+            <p class="text-uppercase text-muted fw-bold small mb-3 ls-1">
+              Προσωπικα Στοιχεια
+            </p>
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Όνομα</mat-label>
+                  <input
+                    matInput
+                    [(ngModel)]="user.firstName"
+                    name="firstName"
+                    placeholder="Όνομα"
+                  />
+                  <mat-icon matSuffix class="text-muted">person</mat-icon>
+                </mat-form-field>
+              </div>
+              <div class="col-md-6 mb-2">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Επώνυμο</mat-label>
+                  <input
+                    matInput
+                    [(ngModel)]="user.lastName"
+                    name="lastName"
+                    placeholder="Επώνυμο"
+                  />
+                  <mat-icon matSuffix class="text-muted"
+                    >person_outline</mat-icon
+                  >
+                </mat-form-field>
+              </div>
+            </div>
+
+            <p class="text-uppercase text-muted fw-bold small mb-3 ls-1 mt-2">
+              Τοποθεσια
+            </p>
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Πόλη</mat-label>
+                  <input
+                    matInput
+                    [(ngModel)]="user.city"
+                    name="city"
+                    placeholder="Πόλη"
+                  />
+                  <mat-icon matSuffix class="text-muted"
+                    >location_city</mat-icon
+                  >
+                </mat-form-field>
+              </div>
+              <div class="col-md-6 mb-2">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Χώρα</mat-label>
+                  <input
+                    matInput
+                    [(ngModel)]="user.country"
+                    name="country"
+                    placeholder="Χώρα"
+                  />
+                  <mat-icon matSuffix class="text-muted">public</mat-icon>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <p class="text-uppercase text-muted fw-bold small mb-3 ls-1 mt-2">
+              Λοιπα Στοιχεια
+            </p>
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Φύλο</mat-label>
+                  <mat-select [(ngModel)]="user.gender" name="gender">
+                    <mat-option value="Male">Άνδρας</mat-option>
+                    <mat-option value="Female">Γυναίκα</mat-option>
+                    <mat-option value="Other">Άλλο</mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix class="text-muted">wc</mat-icon>
+                </mat-form-field>
+              </div>
+              <div class="col-md-6 mb-2">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Ημερομηνία Γέννησης</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="picker"
+                    [(ngModel)]="user.dateOfBirth"
+                    name="dob"
+                  />
+                  <mat-datepicker-toggle
+                    matIconSuffix
+                    [for]="picker"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-3">
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="isLoading"
+                class="px-4 py-1"
+              >
+                <span
+                  *ngIf="isLoading"
+                  class="spinner-border spinner-border-sm me-2"
+                ></span>
+                <mat-icon class="me-2 icon-sm" *ngIf="!isLoading"
+                  >save</mat-icon
+                >
+                Αποθήκευση
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div
+          *ngIf="activeTab === 'security'"
+          class="card border-0 shadow-sm p-4 animate__animated animate__fadeIn"
+        >
+          <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
+            <h4 class="fw-bold text-danger mb-0">🔒 Ασφάλεια Λογαριασμού</h4>
+          </div>
+
+          <p class="text-muted mb-4">
+            Ενημερώστε τον κωδικό πρόσβασής σας για να διατηρήσετε τον
+            λογαριασμό σας ασφαλή.
+          </p>
+
+          <form>
+            <div class="mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Τρέχων Κωδικός</mat-label>
+                <input matInput type="password" name="currPass" />
+                <mat-icon matSuffix class="text-muted">vpn_key</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Νέος Κωδικός</mat-label>
+                  <input matInput type="password" name="newPass" />
+                  <mat-icon matSuffix class="text-muted">lock</mat-icon>
+                </mat-form-field>
+              </div>
+              <div class="col-md-6 mb-2">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Επιβεβαίωση</mat-label>
+                  <input matInput type="password" name="confPass" />
+                  <mat-icon matSuffix class="text-muted">lock_reset</mat-icon>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-2">
+              <button mat-flat-button color="warn" class="px-4 py-1">
+                <mat-icon class="me-2 icon-sm">lock_reset</mat-icon> Αλλαγή
+                Κωδικού
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div
+          *ngIf="activeTab === 'reviews'"
+          class="card border-0 shadow-sm p-4 animate__animated animate__fadeIn"
+        >
+          <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
+            <h4 class="fw-bold text-warning mb-0">⭐ Οι Κριτικές μου</h4>
+          </div>
+
+          <div class="text-center py-5 bg-light rounded border border-dashed">
+            <mat-icon class="text-muted display-4 mb-3">rate_review</mat-icon>
+            <p class="text-muted fw-medium">Δεν έχετε γράψει ακόμα κριτικές.</p>
+
+            <a
+              routerLink="/mainapp/home"
+              mat-stroked-button
+              color="primary"
+              class="mt-2"
+            >
+              Ανακαλύψτε Επιχειρήσεις
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

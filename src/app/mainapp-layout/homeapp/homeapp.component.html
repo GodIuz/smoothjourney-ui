@@ -1,98 +1,212 @@
 <div class="main-container">
   <section class="hero">
-    <h1>Πού θέλεις να πας σήμερα;</h1>
+    <h1>Ανακάλυψε τον κόσμο</h1>
     <div class="search-wrapper">
       <div class="search-input">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Αναζήτηση..." />
+        <input
+          type="text"
+          placeholder="Αναζήτηση με όνομα επιχείρησης..."
+          [(ngModel)]="searchTerm"
+          (input)="applyFilters()"
+        />
       </div>
-      <button class="search-btn">Αναζήτηση</button>
+      <button class="search-btn" (click)="applyFilters()">Go</button>
     </div>
   </section>
 
-  <section class="categories-section">
-    <div class="category-pill" *ngFor="let cat of categories">
-      <div class="icon-box"><i [class]="cat.icon"></i></div>
-      <span>{{ cat.name }}</span>
-    </div>
-  </section>
+  <div class="layout-wrapper">
+    <aside class="sidebar">
+      <div class="filters-container">
+        <h4 class="mb-4"><i class="fa-solid fa-filter me-2"></i> Φίλτρα</h4>
 
-  <section class="content-row" *ngIf="hotels.length > 0">
-    <div class="row-header">
-      <h2><i class="fa-solid fa-star"></i> Κορυφαία Ξενοδοχεία</h2>
-    </div>
-
-    <div class="scroll-container">
-      <div class="card" *ngFor="let item of hotels">
-        <div class="card-image hotel-bg">
-          <div class="heart-icon"><i class="fa-regular fa-heart"></i></div>
-          <span class="price-badge" *ngIf="item.priceLevel">{{
-            item.priceLevel
-          }}</span>
+        <div class="filter-group mb-4">
+          <label class="filter-label"
+            ><i class="fa-solid fa-wand-magic-sparkles me-2"></i
+            >Discovery</label
+          >
+          <div
+            class="gem-switch-wrapper"
+            (click)="toggleHiddenGems()"
+            [class.active]="showHiddenGems"
+          >
+            <div class="gem-icon">
+              <i class="fa-solid fa-gem"></i>
+            </div>
+            <div class="gem-text">
+              <strong>Hidden Gems</strong>
+              <span>Μόνο "κρυμμένα διαμάντια"</span>
+            </div>
+            <div class="form-check form-switch ms-auto">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [checked]="showHiddenGems"
+                readonly
+              />
+            </div>
+          </div>
         </div>
 
-        <div class="card-content">
-          <h3>{{ item.name }}</h3>
-          <p class="location">
-            <i class="fa-solid fa-location-dot"></i> {{ item.location }}
-          </p>
+        <div class="filter-group">
+          <label>Ταξινόμηση</label>
+          <select
+            class="custom-select"
+            [(ngModel)]="currentSort"
+            (change)="applyFilters()"
+          >
+            <option value="rating_desc">⭐ Βαθμολογία</option>
+            <option value="price_asc">€ Φθηνά πρώτα</option>
+            <option value="price_desc">€ Ακριβά πρώτα</option>
+            <option value="newest">📅 Νεότερα</option>
+          </select>
+        </div>
 
-          <div class="rating-box">
-            <div class="stars">
-              <i
-                class="fa-solid fa-star"
-                *ngFor="let s of getStars(item.rating)"
-              ></i>
+        <div class="filter-group" *ngIf="countries.length > 0">
+          <label>Χώρα</label>
+          <div class="checkbox-list">
+            <div class="custom-check" *ngFor="let c of countries">
+              <input
+                type="checkbox"
+                [id]="c"
+                [(ngModel)]="selectedFilters.countries[c]"
+                (change)="applyFilters()"
+              />
+              <label [for]="c">{{ c }}</label>
             </div>
-            <span class="rating-num">{{ item.rating }}</span>
-            <span class="reviews">
-              ({{ item["reviewCount"] || item["reviews"] || 0 }} σχόλια)
+          </div>
+        </div>
+
+        <div class="filter-group" *ngIf="categoryTypes.length > 0">
+          <label>Είδος / Κουζίνα</label>
+          <div class="checkbox-list">
+            <div class="custom-check" *ngFor="let t of categoryTypes">
+              <input
+                type="checkbox"
+                [id]="t"
+                [(ngModel)]="selectedFilters.categoryTypes[t]"
+                (change)="applyFilters()"
+              />
+              <label [for]="t">{{ t }}</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-group" *ngIf="cities.length > 0">
+          <label>Πόλη</label>
+          <div class="checkbox-list">
+            <div class="custom-check" *ngFor="let city of cities">
+              <input
+                type="checkbox"
+                [id]="city"
+                [(ngModel)]="selectedFilters.cities[city]"
+                (change)="applyFilters()"
+              />
+              <label [for]="city">{{ city }}</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label>Τιμή</label>
+          <div class="price-row">
+            <button
+              *ngFor="let p of [1, 2, 3, 4, 5]"
+              [class.active]="selectedFilters.priceLevel === p"
+              (click)="
+                selectedFilters.priceLevel =
+                  selectedFilters.priceLevel === p ? null : p;
+                applyFilters()
+              "
+            >
+              {{ "€".repeat(p) }}
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-group" *ngIf="moodTags.length > 0">
+          <label>Mood</label>
+          <div class="tags-row">
+            <span
+              *ngFor="let tag of moodTags"
+              class="tag-badge"
+              [class.active]="selectedFilters.moods[tag]"
+              (click)="
+                selectedFilters.moods[tag] = !selectedFilters.moods[tag];
+                applyFilters()
+              "
+            >
+              {{ tag }}
             </span>
           </div>
-          <button class="action-btn">Δες Τιμές</button>
         </div>
       </div>
-    </div>
-  </section>
+    </aside>
 
-  <section class="content-row" *ngIf="restaurants.length > 0">
-    <div class="row-header">
-      <h2><i class="fa-solid fa-utensils"></i> Γεύσεις που ξεχωρίζουν</h2>
-    </div>
+    <main class="content-area">
+      <h3 class="results-title">
+        Αποτελέσματα ({{ filteredBusinesses.length }})
+      </h3>
 
-    <div class="scroll-container">
-      <div class="card" *ngFor="let item of restaurants">
-        <div class="card-image food-bg">
-          <div class="heart-icon"><i class="fa-regular fa-heart"></i></div>
-        </div>
-
-        <div class="card-content">
-          <h3>{{ item.name }}</h3>
-          <p class="location">
-            <i class="fa-solid fa-location-dot"></i> {{ item.location }}
-          </p>
-
-          <div class="rating-box">
-            <div class="stars">
+      <div class="cards-grid">
+        <div class="business-card" *ngFor="let item of filteredBusinesses">
+          <div
+            class="card-image"
+            [style.background-image]="'url(' + getImageUrl(item.imageUrl) + ')'"
+          >
+            <div
+              class="heart-icon"
+              (click)="toggleFavorite($event, item.businessId)"
+            >
               <i
-                class="fa-solid fa-circle"
-                *ngFor="let s of getStars(item.rating)"
-                style="font-size: 8px; color: #34e0a1"
+                [class]="
+                  isFavorite(item.businessId)
+                    ? 'fa-solid fa-heart text-danger'
+                    : 'fa-regular fa-heart'
+                "
               ></i>
             </div>
-            <span class="rating-num">{{ item.rating }}</span>
+            <span class="price-badge" *ngIf="item.priceLevel">{{
+              getPriceSymbol(item.priceLevel)
+            }}</span>
           </div>
 
-          <button class="action-btn outline">Δες Κριτικές</button>
+          <div class="card-info">
+            <h4>{{ item.name }}</h4>
+            <p class="location">
+              <i class="fa-solid fa-location-dot"></i> {{ item.city }},
+              {{ item.country }}
+            </p>
+
+            <p class="type-tag" *ngIf="item.categoryType">
+              {{ item.categoryType }}
+            </p>
+
+            <div class="rating-row">
+              <div class="stars">
+                <i
+                  class="fa-solid fa-star"
+                  *ngFor="let s of getStars(item.calculatedRating)"
+                ></i>
+              </div>
+              <span class="rating-val">{{
+                item.calculatedRating | number: "1.1-1"
+              }}</span>
+            </div>
+
+            <button
+              [routerLink]="['/mainapp/business', item.name]"
+              class="view-btn"
+            >
+              Λεπτομέρειες
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <div
-    *ngIf="hotels.length === 0 && restaurants.length === 0"
-    style="text-align: center; padding: 50px; color: #888"
-  >
-    <p>Φόρτωση δεδομένων ή δεν βρέθηκαν επιχειρήσεις...</p>
+      <div *ngIf="filteredBusinesses.length === 0" class="no-results">
+        <p>Δεν βρέθηκαν αποτελέσματα.</p>
+      </div>
+    </main>
   </div>
 </div>

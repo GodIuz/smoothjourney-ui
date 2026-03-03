@@ -1,0 +1,80 @@
+<div class="main-container">
+  <div class="header-section">
+    <h1><i class="fa-solid fa-heart text-danger me-2"></i> Τα Αγαπημένα μου</h1>
+    <p>Οι επιχειρήσεις που ξεχώρισες για την επόμενη έξοδό σου.</p>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-success" role="status"></div>
+    <p class="mt-2 text-muted">Φόρτωση αγαπημένων...</p>
+  </div>
+
+  <div *ngIf="!isLoading && favBusinesses.length === 0" class="empty-state">
+    <i class="fa-regular fa-heart"></i>
+    <h3>Δεν έχεις αγαπημένα ακόμα</h3>
+    <p>Πήγαινε στην αρχική και πάτα την καρδούλα σε όποιο μαγαζί σου αρέσει!</p>
+    <a routerLink="/mainapp/home" class="btn btn-success mt-3 fw-bold px-4"
+      >Εξερεύνηση</a
+    >
+  </div>
+
+  <div class="grid-container" *ngIf="!isLoading && favBusinesses.length > 0">
+    <div class="card" *ngFor="let item of favBusinesses">
+      <div
+        class="card-image"
+        [style.background-image]="'url(' + getImageUrl(item.imageUrl) + ')'"
+      >
+        <div
+          class="remove-icon"
+          (click)="removeFavorite($event, item.businessId)"
+          title="Αφαίρεση"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </div>
+
+        <span class="price-badge" *ngIf="item.priceLevel">
+          {{ getPriceSymbol(+item.priceLevel) }}
+        </span>
+      </div>
+
+      <div class="card-content">
+        <h3>{{ item.name }}</h3>
+        <p class="location">
+          <i class="fa-solid fa-location-dot"></i>
+          {{ item.city || item.location }}
+        </p>
+
+        <div class="rating-box">
+          <div class="stars">
+            <ng-container *ngIf="getBusinessRating(item) > 0">
+              <i
+                class="fa-solid fa-star text-warning"
+                *ngFor="let s of getStars(getBusinessRating(item))"
+              ></i>
+            </ng-container>
+            <ng-container *ngIf="getBusinessRating(item) === 0">
+              <i
+                class="fa-regular fa-star text-secondary"
+                *ngFor="let s of [1, 2, 3, 4, 5]"
+              ></i>
+            </ng-container>
+          </div>
+          <span class="rating-num ms-1">
+            {{
+              getBusinessRating(item) === 0
+                ? "0"
+                : (getBusinessRating(item) | number: "1.2-2")
+            }}/5
+          </span>
+        </div>
+
+        <button
+          [routerLink]="['/mainapp/business', item.name]"
+          class="action-btn outline"
+        >
+          Λεπτομέρειες
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

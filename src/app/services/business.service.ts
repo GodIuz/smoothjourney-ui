@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Business {
-[x: string]: any;
+  [x: string]: any;
   id: number;
   name: string;
   category: string;
@@ -15,46 +15,68 @@ export interface Business {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BusinessService {
-  private apiUrl = 'https://localhost:7000/Business'; 
+  private apiUrl = 'https://localhost:7000';
 
-  possibleBadges = ['Best for Couples', 'Solo Traveler Pick', 'Luxury & Spa', 'Budget Friendly', 'Top Location', 'Sunset View'];
-  
+  possibleBadges = [
+    'Best for Couples',
+    'Solo Traveler Pick',
+    'Luxury & Spa',
+    'Budget Friendly',
+    'Top Location',
+    'Sunset View',
+  ];
+
   possibleSummaries = [
     'Εξαιρετική τοποθεσία κοντά στο κέντρο. Οι επισκέπτες λατρεύουν το πρωινό και την καθαριότητα.',
     'Ιδανικό για χαλάρωση. Ησυχία, άνετα κρεβάτια και πολύ φιλικό προσωπικό.',
     'Μοντέρνα αισθητική και γρήγορο WiFi. Τέλεια επιλογή για digital nomads.',
-    'Μαγευτική θέα και ρομαντική ατμόσφαιρα. Λίγο ακριβό, αλλά αξίζει κάθε ευρώ.'
+    'Μαγευτική θέα και ρομαντική ατμόσφαιρα. Λίγο ακριβό, αλλά αξίζει κάθε ευρώ.',
   ];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getTopBusinesses(): Observable<Business[]> {
-    return this.http.get<Business[]>(`${this.apiUrl}/top-rated`);
+    return this.http.get<Business[]>(`${this.apiUrl}/Business/top-rated`);
   }
 
   getFeaturedAccommodations(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/accommodation/featured`);
+    return this.http.get<any[]>(
+      `${this.apiUrl}/Business/accommodation/featured`,
+    );
   }
 
- getAllBusinesses(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/all`);
+  getAllBusinesses(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Business/all`);
   }
 
   createBusiness(data: FormData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/create-business`, data);
+    return this.http.post(`${this.apiUrl}/Business/create-business`, data);
   }
 
   deleteBusiness(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.apiUrl}/Business/${id}`);
   }
 
-  getById(id: number) { return this.http.get<any>(`${this.apiUrl}/${id}`); }
+  getById(id: number) {
+    return this.http.get<any>(`${this.apiUrl}/Business/${id}`);
+  }
 
-  update(id: number, data: any) { return this.http.put(`${this.apiUrl}/${id}`, data); }
+  delete(id: number) {
+    return this.http.delete(`${this.apiUrl}/Business/${id}`);
+  }
 
-  delete(id: number) { return this.http.delete(`${this.apiUrl}/${id}`); }
-  
+  toggleFavorite(businessId: number) {
+    return this.http.post(`${this.apiUrl}/Favourites/toggle/${businessId}`, {});
+  }
+
+  getMyFavorites() {
+    return this.http.get<any[]>(`${this.apiUrl}/Favourites`);
+  }
+
+  getFavoriteIds() {
+    return this.http.get<number[]>(`${this.apiUrl}/Favourites/ids`);
+  }
 }

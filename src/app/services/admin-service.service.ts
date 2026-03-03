@@ -3,14 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AdminService {
   private baseUrl = 'https://localhost:7000';
 
-  constructor(private http: HttpClient) { }
-  
+  constructor(private http: HttpClient) {}
+
   updateBusiness(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/Business/Update/${id}`, data);
+    return this.http.put(`${this.baseUrl}/Admin/update/${id}`, data);
   }
 }

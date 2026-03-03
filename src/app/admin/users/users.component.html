@@ -1,1 +1,301 @@
-<p>users works!</p>
+<div class="container-fluid py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-0">👥 Διαχείριση Χρηστών</h2>
+      <p class="text-muted small mt-1">
+        Επεξεργασία, Προαγωγή και Διαγραφή χρηστών.
+      </p>
+    </div>
+    <span class="badge bg-primary fs-6 shadow-sm"
+      >{{ users.length }} Εγγεγραμμένοι</span
+    >
+  </div>
+
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+
+  <div *ngIf="!isLoading" class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table mb-0 text-nowrap align-middle">
+        <thead class="bg-light">
+          <tr>
+            <th class="ps-4">User Info</th>
+            <th>Role</th>
+            <th>Contact</th>
+            <th>Full Name</th>
+            <th>Location</th>
+            <th>Bio Data</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td class="ps-4">
+              <div class="d-flex align-items-center">
+                <div
+                  class="avatar-circle text-white me-2"
+                  [ngClass]="user.role === 'Admin' ? 'bg-danger' : 'bg-primary'"
+                >
+                  <span
+                    *ngIf="user.firstName && user.lastName"
+                    style="font-size: 0.85rem"
+                  >
+                    {{ user.firstName.charAt(0) | uppercase
+                    }}{{ user.lastName.charAt(0) | uppercase }}
+                  </span>
+                  <span *ngIf="!user.firstName || !user.lastName">
+                    {{ user.userName?.charAt(0) | uppercase }}
+                  </span>
+                </div>
+                <div>
+                  <div class="fw-bold text-dark">{{ user.userName }}</div>
+                  <small
+                    class="text-muted"
+                    *ngIf="user.firstName && user.lastName"
+                  >
+                    {{ user.firstName }} {{ user.lastName }}
+                  </small>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <span
+                class="badge rounded-pill"
+                [ngClass]="user.role === 'Admin' ? 'bg-danger' : 'bg-success'"
+              >
+                {{ user.role || "User" }}
+              </span>
+            </td>
+
+            <td class="text-muted">{{ user.email }}</td>
+
+            <td>{{ user.firstName }} {{ user.lastName }}</td>
+
+            <td>
+              <div *ngIf="user.city || user.country">
+                {{ user.city }}<span *ngIf="user.city && user.country">, </span
+                >{{ user.country }}
+              </div>
+              <span *ngIf="!user.city && !user.country" class="text-muted"
+                >-</span
+              >
+            </td>
+
+            <td>
+              <small class="d-block text-muted"
+                >Born: {{ user.dateOfBirth | date: "dd/MM/yyyy" }}</small
+              >
+              <small class="d-block text-muted"
+                >Gen: {{ user.gender || "-" }}</small
+              >
+            </td>
+
+            <td class="text-end pe-4">
+              <button
+                class="btn btn-action btn-outline-primary me-2"
+                (click)="openEditModal(user)"
+                title="Επεξεργασία"
+              >
+                ✏️
+              </button>
+
+              <button
+                *ngIf="user.role !== 'Admin'"
+                class="btn btn-action btn-outline-warning me-2"
+                (click)="makeAdmin(user)"
+                title="Προαγωγή σε Admin"
+              >
+                👑
+              </button>
+
+              <button
+                class="btn btn-action btn-outline-danger"
+                (click)="onDelete(user.userId)"
+                title="Διαγραφή"
+              >
+                🗑️
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  [class.show]="editingUser"
+  [style.display]="editingUser ? 'block' : 'none'"
+  tabindex="-1"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg" *ngIf="editingUser">
+      <div class="modal-header bg-primary text-white px-4">
+        <div>
+          <h5 class="modal-title fw-bold mb-1">✏️ Επεξεργασία Προφίλ</h5>
+          <p class="mb-0 small opacity-75">
+            Χρήστης: {{ editingUser.userName }}
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="closeEditModal()"
+        ></button>
+      </div>
+
+      <div class="modal-body p-4 bg-light-subtle">
+        <form>
+          <h6 class="text-primary fw-bold mb-3 text-uppercase small ls-1">
+            👤 Προσωπικα Στοιχεια
+          </h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-bold small text-muted"
+                >First Name</label
+              >
+              <div class="input-group">
+                <span class="input-group-text bg-white text-muted"
+                  ><i class="bi bi-person"></i
+                ></span>
+                <input
+                  type="text"
+                  class="form-control fw-medium"
+                  [(ngModel)]="editingUser.firstName"
+                  name="firstName"
+                  placeholder="Όνομα"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold small text-muted"
+                >Last Name</label
+              >
+              <div class="input-group">
+                <span class="input-group-text bg-white text-muted"
+                  ><i class="bi bi-person-fill"></i
+                ></span>
+                <input
+                  type="text"
+                  class="form-control fw-medium"
+                  [(ngModel)]="editingUser.lastName"
+                  name="lastName"
+                  placeholder="Επώνυμο"
+                />
+              </div>
+            </div>
+          </div>
+
+          <h6 class="text-primary fw-bold mb-3 text-uppercase small ls-1">
+            📍 Τοποθεσια & Επαφη
+          </h6>
+          <div class="row g-3 mb-3">
+            <div class="col-12">
+              <label class="form-label fw-bold small text-muted"
+                >Email Address</label
+              >
+              <div class="input-group">
+                <span class="input-group-text bg-white text-muted">✉️</span>
+                <input
+                  type="email"
+                  class="form-control fw-medium"
+                  [(ngModel)]="editingUser.email"
+                  name="email"
+                  placeholder="name@example.com"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold small text-muted">City</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white text-muted">🏙️</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="editingUser.city"
+                  name="city"
+                  placeholder="Πόλη"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold small text-muted">Country</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white text-muted">🌍</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="editingUser.country"
+                  name="country"
+                  placeholder="Χώρα"
+                />
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-4 text-muted opacity-25" />
+
+          <div class="row g-3 align-items-end">
+            <div class="col-md-6">
+              <label class="form-label fw-bold small text-muted">Gender</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white text-muted">⚧</span>
+                <select
+                  class="form-select fw-medium pointer"
+                  [(ngModel)]="editingUser.gender"
+                  name="gender"
+                >
+                  <option value="" disabled>Επιλογή φύλου</option>
+                  <option value="Male">Άνδρας (Male)</option>
+                  <option value="Female">Γυναίκα (Female)</option>
+                  <option value="Other">Άλλο (Other)</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold small text-muted"
+                >Date of Birth</label
+              >
+              <div class="input-group">
+                <span class="input-group-text bg-white text-muted">📅</span>
+                <input
+                  type="date"
+                  class="form-control fw-medium pointer text-muted"
+                  [(ngModel)]="editingUser.dateOfBirth"
+                  name="dob"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="modal-footer bg-light px-4 py-3 border-top-0 rounded-bottom-4"
+      >
+        <button
+          type="button"
+          class="btn btn-outline-secondary px-3 fw-medium"
+          (click)="closeEditModal()"
+        >
+          Ακύρωση
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary px-4 fw-bold shadow-sm"
+          (click)="saveUser()"
+        >
+          💾 Αποθήκευση Αλλαγών
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal-backdrop fade show"
+  *ngIf="editingUser"
+  style="background-color: rgba(0, 0, 0, 0.6)"
+></div>

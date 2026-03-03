@@ -1,0 +1,44 @@
+.trip-maker-wrapper {
+  display: flex;
+  background: #121212;
+  min-height: 100vh;
+}
+.trip-sidebar {
+  width: 350px;
+  background: #1a1a1a;
+  border-right: 1px solid #333;
+}
+.content-area {
+  flex: 1;
+}
+
+.btn-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.btn-circle:hover {
+  transform: scale(1.1);
+}
+
+.business-card {
+  transition: 0.3s;
+}
+.business-card:hover {
+  border-color: #28a745;
+  background: #222;
+}
+
+.itinerary-item {
+  padding: 10px;
+  background: #222;
+  border-radius: 5px;
+  margin-top: 5px;
+  color: #ccc;
+  font-size: 0.85rem;
+}
