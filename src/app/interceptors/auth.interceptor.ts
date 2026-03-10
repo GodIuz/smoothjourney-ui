@@ -71,6 +71,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           );
         }
       }
+      document.dispatchEvent(new CustomEvent('token-refresh-end'));
       return throwError(() => error);
     }),
   );

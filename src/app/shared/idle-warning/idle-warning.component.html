@@ -1,0 +1,12 @@
+<div class="idle-overlay" *ngIf="isVisible">
+  <div class="idle-modal">
+    <div class="icon">⌛</div>
+    <h3>Αδράνεια Λογαριασμού</h3>
+    <p>Φαίνεται ότι είστε ανενεργός. Η συνεδρία σας λήγει σε:</p>
+    <div class="timer">{{ countdown }}s</div>
+    <div class="actions">
+      <button class="stay-btn" (click)="stay()">Παραμονή</button>
+      <button class="logout-btn" (click)="logout()">Αποσύνδεση</button>
+    </div>
+  </div>
+</div>
