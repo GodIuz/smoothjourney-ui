@@ -1,111 +1,270 @@
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  signal,
+  computed,
+  inject,
+} from '@angular/core';
+import {
+  HttpClient,
+  HttpClientModule,
+  HttpHeaders,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-trip-maker',
   imports: [CommonModule, FormsModule],
+  standalone: true,
   templateUrl: './trip-maker.component.html',
   styleUrl: './trip-maker.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TripMakerComponent implements OnInit {
-  tripId: number | null = null;
-  tripName: string = '';
-  selectedCity: string = '';
-  totalBudget: number = 0;
-  startDate: string = '';
-  endDate: string = '';
-  cities: string[] = [
-    'Αθήνα',
-    'Ηράκλειο',
-    'Θεσσαλονίκη',
-    'Πειραιάς',
-    'Ρόδος',
-    'Χανιά',
-  ];
-  filteredBusinesses: any[] = [];
-  selectedItems: any[] = [];
-  currentCost: number = 0;
+  private http = inject(HttpClient);
 
-  priceEstimation: { [key: number]: number } = { 1: 10, 2: 20, 3: 40, 4: 80 };
+  // Το port είναι 7000 όπως μου ζήτησες
+  private apiUrl = 'https://localhost:7000';
 
-  constructor(private http: HttpClient) {}
+  currentStep = signal(1);
+  isTransitioning = signal(false);
+  isSaving = signal(false);
+  isLoadingBusinesses = signal(false);
 
-  ngOnInit(): void {}
+  notification = signal<{
+    message: string;
+    type: 'success' | 'error' | 'warning';
+  } | null>(null);
 
-  onCityChange() {
-    if (!this.selectedCity) return;
-    this.http
-      .get<any[]>(`https://localhost:7000/Business/city/${this.selectedCity}`)
-      .subscribe((data) => {
-        this.filteredBusinesses = data;
-      });
+  tripData = {
+    tripId: 0,
+    title: '',
+    city: '',
+    startDate: '',
+    endDate: '',
+    totalBudget: 0,
+  };
+
+  availableCities: string[] = [];
+  allBusinesses: any[] = [];
+  availableBusinesses: any[] = [];
+  selectedItems = signal<any[]>([]);
+
+  currentCost = computed(() => {
+    return this.selectedItems().reduce(
+      (acc, item) => acc + (item.estimatedCost || 0),
+      0,
+    );
+  });
+
+  budgetPercent = computed(() => {
+    if (this.tripData.totalBudget <= 0) return 0;
+    return Math.round((this.currentCost() / this.tripData.totalBudget) * 100);
+  });
+
+  remainingBudget = computed(() => {
+    return this.tripData.totalBudget - this.currentCost();
+  });
+
+  completedCount = computed(() => {
+    return this.selectedItems().filter((i) => i.visited).length;
+  });
+
+  ngOnInit() {
+    this.http.get<any[]>(`${this.apiUrl}/Business/all`).subscribe({
+      next: (data) => {
+        console.log('Όλα τα μαγαζιά φορτώθηκαν επιτυχώς:', data);
+        this.allBusinesses = data;
+
+        const cities = data
+          .map((b) => b.city)
+          .filter((c) => c && c.trim() !== '');
+        this.availableCities = [...new Set(cities)].sort();
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Σφάλμα φόρτωσης επιχειρήσεων:', err);
+        this.allBusinesses = [];
+      },
+    });
   }
 
-  startNewTrip() {
-    if (
-      !this.tripName ||
-      !this.selectedCity ||
-      !this.startDate ||
-      !this.endDate
-    ) {
-      Swal.fire('Προσοχή', 'Συμπληρώστε όλα τα πεδία!', 'warning');
+  showNotif(
+    message: string,
+    type: 'success' | 'error' | 'warning' = 'success',
+  ) {
+    this.notification.set({ message, type });
+    if (type === 'success') {
+      setTimeout(() => this.closeNotification(), 3000);
+    }
+  }
+
+  closeNotification() {
+    this.notification.set(null);
+  }
+
+  goToStep(step: number) {
+    this.isTransitioning.set(true);
+    setTimeout(() => {
+      this.currentStep.set(step);
+      this.isTransitioning.set(false);
+    }, 500);
+  }
+
+  isSetupValid() {
+    return (
+      this.tripData.title &&
+      this.tripData.city &&
+      this.tripData.totalBudget > 0 &&
+      this.tripData.startDate &&
+      this.tripData.endDate
+    );
+  }
+
+  proceedToStep3() {
+    if (!this.tripData.city) {
+      this.showNotif('Παρακαλώ επιλέξτε πόλη!', 'warning');
       return;
     }
 
-    const dto = {
-      title: this.tripName,
-      startDate: this.startDate,
-      endDate: this.endDate,
-      totalBudget: this.totalBudget,
-      city: this.selectedCity,
-    };
+    this.isLoadingBusinesses.set(true);
+    this.goToStep(3);
 
-    this.http
-      .post<any>('https://localhost:7000/Trips/create-manual', dto)
-      .subscribe({
-        next: (res) => {
-          this.tripId = res.tripId;
-          Swal.fire(
-            'Επιτυχία',
-            'Το ταξίδι δημιουργήθηκε. Προσθέστε δραστηριότητες!',
-            'success',
-          );
-        },
-      });
+    this.availableBusinesses = this.allBusinesses.filter(
+      (b) =>
+        b.city && b.city.toLowerCase() === this.tripData.city.toLowerCase(),
+    );
+
+    this.isLoadingBusinesses.set(false);
+
+    if (this.availableBusinesses.length === 0) {
+      this.showNotif(
+        `Δεν βρέθηκαν επιχειρήσεις για: ${this.tripData.city}.`,
+        'warning',
+      );
+    }
   }
 
-  addItem(business: any) {
-    if (!this.tripId) {
-      Swal.fire('Προσοχή', 'Ξεκινήστε πρώτα το ταξίδι!', 'info');
+  calculateEstimatedCost(business: any): number {
+    const moodTags = (business.moodTags || '').toLowerCase();
+    const category = (business.category || '').toLowerCase();
+    const categoryType = (business.categoryType || '').toLowerCase();
+    const city = (business.city || this.tripData.city).toLowerCase();
+
+    const isLuxury = moodTags.includes('luxury');
+    const isHotelOrRestaurant =
+      category.includes('hotel') ||
+      category.includes('ξενοδοχείο') ||
+      categoryType.includes('hotel') ||
+      categoryType.includes('ξενοδοχείο') ||
+      category.includes('restaurant') ||
+      category.includes('εστιατόριο') ||
+      categoryType.includes('restaurant') ||
+      categoryType.includes('εστιατόριο');
+
+    if (isLuxury && isHotelOrRestaurant) {
+      if (city.includes('αθήνα')) return 500;
+      if (city.includes('θεσσαλονίκη')) return 450;
+      if (city.includes('ηράκλειο') || city.includes('χανιά')) return 400;
+      if (city.includes('ρόδος')) return 350;
+      return 300;
+    }
+
+    return business.priceRange ? business.priceRange.length * 15 : 20;
+  }
+
+  addItemLocally(business: any) {
+    const cost = this.calculateEstimatedCost(business);
+
+    this.selectedItems.update((prev) => [
+      ...prev,
+      { ...business, estimatedCost: cost, visited: false },
+    ]);
+
+    if (this.budgetPercent() > 100) {
+      this.showNotif(
+        'Προσοχή: Μόλις ξεπεράσατε τον προϋπολογισμό σας!',
+        'warning',
+      );
+    }
+  }
+
+  removeItemLocally(index: number) {
+    this.selectedItems.update((prev) => {
+      const updatedList = [...prev];
+      updatedList.splice(index, 1);
+      return updatedList;
+    });
+  }
+
+  async saveEntireTripAndProceed() {
+    if (this.selectedItems().length === 0) {
+      this.showNotif('Προσθέστε τουλάχιστον μία δραστηριότητα!', 'warning');
       return;
     }
 
-    const cost = this.priceEstimation[business.priceRange?.length] || 15;
-    const itemDto = {
-      title: business.name,
-      description: business.categoryType,
-      scheduledTime: this.startDate,
-      cost: cost,
-      businessId: business.businessId,
-    };
+    this.isSaving.set(true);
 
-    this.http
-      .post<any>(
-        `https://localhost:7000/Trips/${this.tripId}/add-item`,
-        itemDto,
-      )
-      .subscribe({
-        next: (res) => {
-          this.selectedItems.push(business);
-          this.currentCost = res.newCurrentCost;
-        },
-      });
+    try {
+      const token =
+        localStorage.getItem('token') || localStorage.getItem('jwt');
+      let headers = new HttpHeaders();
+      if (token) {
+        headers = headers.set('Authorization', `Bearer ${token}`);
+      }
+
+      const tripDto = {
+        title: this.tripData.title,
+        city: this.tripData.city,
+        startDate: this.tripData.startDate,
+        endDate: this.tripData.endDate,
+        totalBudget: this.tripData.totalBudget,
+      };
+
+      const tripRes = await firstValueFrom(
+        this.http.post<any>(`${this.apiUrl}/Trips/create-manual`, tripDto, {
+          headers,
+        }),
+      );
+
+      const savedTripId = tripRes.tripId;
+      this.tripData.tripId = savedTripId;
+      for (const item of this.selectedItems()) {
+        const itemDto = {
+          tripId: savedTripId,
+          businessId: item.businessId,
+          title: item.name,
+          description: item.categoryType || 'Δραστηριότητα',
+          scheduledTime: this.tripData.startDate,
+          cost: item.estimatedCost,
+        };
+
+        await firstValueFrom(
+          this.http.post<any>(`${this.apiUrl}/Trips/add-item`, itemDto, {
+            headers,
+          }),
+        );
+      }
+
+      this.showNotif('Το ταξίδι αποθηκεύτηκε επιτυχώς!', 'success');
+      this.goToStep(4);
+    } catch (error: any) {
+      console.error('Σφάλμα:', error);
+      this.showNotif(
+        'Πρόβλημα κατά την αποθήκευση: ' + (error.error || error.statusText),
+        'error',
+      );
+    } finally {
+      this.isSaving.set(false);
+    }
   }
 
-  getImageUrl(url: string) {
-    return url || 'assets/default-trip.jpg';
+  toggleVisited(index: number) {
+    const current = this.selectedItems();
+    current[index].visited = !current[index].visited;
+    this.selectedItems.set([...current]);
   }
 }

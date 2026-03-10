@@ -1,112 +1,337 @@
-<div class="trip-maker-wrapper">
-  <aside class="trip-sidebar">
-    <div class="p-4">
-      <h4 class="text-white mb-4">
-        <i class="fa-solid fa-suitcase me-2"></i>Trip Planner
-      </h4>
+<div class="presentation-wrapper">
+  <div class="blob"></div>
+  <div class="blob2"></div>
 
-      <div *ngIf="!tripId">
-        <div class="mb-3">
-          <label class="text-muted small">Πόλη Προορισμού</label>
-          <select
-            [(ngModel)]="selectedCity"
-            (change)="onCityChange()"
-            class="form-select bg-dark text-white border-secondary"
-          >
-            <option value="">Επιλέξτε Πόλη...</option>
-            <option *ngFor="let city of cities" [value]="city">
-              {{ city }}
-            </option>
-          </select>
+  <!-- Ειδοποιήσεις -->
+  @if (notification(); as note) {
+    <div class="notification-overlay" (click)="closeNotification()">
+      <div
+        class="notification-box"
+        [class]="note.type"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="notif-icon">
+          @if (note.type === "success") {
+            <i class="fa-solid fa-circle-check"></i>
+          }
+          @if (note.type === "error") {
+            <i class="fa-solid fa-circle-xmark"></i>
+          }
+          @if (note.type === "warning") {
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          }
         </div>
+        <div class="notif-content">
+          <strong>{{
+            note.type === "success"
+              ? "Επιτυχία"
+              : note.type === "error"
+                ? "Σφάλμα Backend"
+                : "Προσοχή"
+          }}</strong>
+          <p>{{ note.message }}</p>
+        </div>
+        <button class="notif-close" (click)="closeNotification()">
+          &times;
+        </button>
+      </div>
+    </div>
+  }
 
-        <div class="mb-3">
-          <label class="text-muted small">Τίτλος Ταξιδιού</label>
+  <!-- ΒΗΜΑ 1: WELCOME SLIDE -->
+  @if (currentStep() === 1) {
+    <div class="slide" [class.fade-out]="isTransitioning()">
+      <div class="hero-content text-center m-auto max-w-2xl mx-auto">
+        <span class="top-tag">SmoothJourney Designer</span>
+        <h1 class="main-title">
+          Σχεδιάστε το <br /><span class="highlight">Επόμενο Ταξίδι</span>
+        </h1>
+        <p class="subtitle mb-10 opacity-80 text-lg">
+          Η απόλυτη εμπειρία οργάνωσης. Επιλέξτε τα αγαπημένα σας μέρη και
+          ελέγξτε τον προϋπολογισμό σας ζωντανά.
+        </p>
+        <button class="action-btn big" (click)="goToStep(2)">
+          Ξεκινήστε Τώρα <i class="fa-solid fa-chevron-right ml-3"></i>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ΒΗΜΑ 2: TRIP SETUP -->
+  @if (currentStep() === 2) {
+    <div class="slide" [class.fade-out]="isTransitioning()">
+      <h2 class="slide-heading-basic">01. Βασικές Πληροφορίες</h2>
+      <p class="mb-8 opacity-70">
+        Δημιουργήστε το κεντρικό πλάνο του ταξιδιού σας.
+      </p>
+
+      <div class="setup-grid">
+        <div class="input-group">
+          <label>Τίτλος Ταξιδιού</label>
           <input
             type="text"
-            [(ngModel)]="tripName"
-            class="form-control bg-dark text-white border-secondary"
+            [(ngModel)]="tripData.title"
+            placeholder="π.χ. Weekend Getaway"
           />
         </div>
 
-        <div class="row mb-3">
-          <div class="col">
-            <input
-              type="date"
-              [(ngModel)]="startDate"
-              class="form-control bg-dark text-white"
-            />
-          </div>
-          <div class="col">
-            <input
-              type="date"
-              [(ngModel)]="endDate"
-              class="form-control bg-dark text-white"
-            />
-          </div>
+        <div class="input-group">
+          <label>Πόλη Αναζήτησης</label>
+          <select [(ngModel)]="tripData.city">
+            <option value="">Επιλέξτε Πόλη...</option>
+            @for (city of availableCities; track city) {
+              <option [value]="city">{{ city }}</option>
+            }
+          </select>
         </div>
 
+        <div class="input-group">
+          <label>Ημερομηνία Έναρξης</label>
+          <input type="date" [(ngModel)]="tripData.startDate" />
+        </div>
+        <div class="input-group">
+          <label>Ημερομηνία Λήξης</label>
+          <input type="date" [(ngModel)]="tripData.endDate" />
+        </div>
+        <div class="input-group col-span-2">
+          <label>Συνολικό Budget (€)</label>
+          <input type="number" [(ngModel)]="tripData.totalBudget" />
+        </div>
+      </div>
+
+      <div class="mt-auto flex justify-end">
         <button
-          class="btn btn-success w-100"
-          (click)="startNewTrip()"
-          [disabled]="!selectedCity"
+          class="action-btn flex items-center gap-2"
+          [disabled]="!isSetupValid()"
+          (click)="proceedToStep3()"
         >
-          Δημιουργία & Έναρξη
+          Επιλογή Δραστηριοτήτων <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
-
-      <div *ngIf="tripId" class="mt-4">
-        <div
-          class="budget-card p-3 rounded bg-dark border-start border-success border-4"
-        >
-          <div class="d-flex justify-content-between text-white">
-            <span>Κόστος:</span>
-            <strong>{{ currentCost }}€ / {{ totalBudget }}€</strong>
-          </div>
-          <div class="progress mt-2" style="height: 8px">
-            <div
-              class="progress-bar bg-success"
-              [style.width.%]="(currentCost / totalBudget) * 100"
-            ></div>
-          </div>
-        </div>
-
-        <div class="itinerary mt-4">
-          <h6 class="text-muted small">
-            Η ΔΙΑΔΡΟΜΗ ΣΟΥ ΣΤΗΝ {{ selectedCity | uppercase }}
-          </h6>
-          <div class="itinerary-item" *ngFor="let item of selectedItems">
-            {{ item.name }}
-          </div>
-        </div>
-      </div>
     </div>
-  </aside>
+  }
 
-  <main class="content-area p-4">
-    <div class="row g-4" *ngIf="selectedCity; else noCity">
-      <div class="col-md-4" *ngFor="let b of filteredBusinesses">
-        <div class="card business-card bg-dark text-white border-secondary">
-          <div
-            class="card-body d-flex justify-content-between align-items-center"
-          >
-            <div>
-              <h6 class="mb-0">{{ b.name }}</h6>
-              <small class="text-success">{{ b.priceRange }}</small>
+  <!-- ΒΗΜΑ 3: ITEM SELECTION -->
+  @if (currentStep() === 3) {
+    <div class="slide wide" [class.fade-out]="isTransitioning()">
+      <div class="selection-container-new">
+        <!-- ΑΡΙΣΤΕΡΗ ΣΤΗΛΗ -->
+        <div class="left-col">
+          <h2 class="slide-heading">02. Σχεδιασμός Διαδρομής</h2>
+          <p class="text-sm opacity-80 mb-6">
+            Τα μαγαζιά της πόλης <strong>{{ tripData.city }}</strong
+            >. Προσθέστε όσα επιθυμείτε.
+          </p>
+
+          <div class="mini-budget-inline">
+            <div class="budget-text">
+              Συνολικό Κόστος {{ currentCost() }}€ / {{ tripData.totalBudget }}€
             </div>
-            <button class="btn btn-circle btn-success" (click)="addItem(b)">
-              <i class="fa-solid fa-plus"></i>
-            </button>
+            <div class="mini-bar-bg">
+              <div
+                class="fill"
+                [style.width.%]="budgetPercent() > 100 ? 100 : budgetPercent()"
+                [class.danger]="budgetPercent() > 100"
+              ></div>
+            </div>
           </div>
+
+          <!-- Λίστα Επιχειρήσεων -->
+          <div class="business-scroll mt-6">
+            @if (isLoadingBusinesses()) {
+              <div class="empty-state">
+                <i
+                  class="fa-solid fa-circle-notch fa-spin text-emerald-500"
+                ></i>
+                <h3>Φόρτωση από Backend...</h3>
+                <p>
+                  Αναζήτηση επιχειρήσεων στην πόλη
+                  <strong>{{ tripData.city }}</strong
+                  >.
+                </p>
+              </div>
+            } @else if (availableBusinesses.length > 0) {
+              @for (b of availableBusinesses; track b.businessId) {
+                <div class="b-card transition-all duration-300">
+                  <div class="b-info">
+                    <strong class="block text-lg mb-2">{{ b.name }}</strong>
+                    <small
+                      class="text-slate-500 font-bold uppercase text-xs tracking-wider"
+                      >{{ b.categoryType }} • {{ b.priceRange }}</small
+                    >
+                  </div>
+                  <button
+                    class="add-circle transition-all"
+                    (click)="addItemLocally(b)"
+                  >
+                    <i class="fa-solid fa-plus"></i>
+                  </button>
+                </div>
+              }
+            } @else {
+              <div class="empty-state">
+                <i class="fa-solid fa-shop-slash"></i>
+                <h3>Κανένα Αποτέλεσμα</h3>
+                <p>
+                  Δεν βρέθηκαν επιχειρήσεις για την πόλη
+                  <strong>{{ tripData.city }}</strong
+                  >.
+                </p>
+                <button class="btn-outline mt-4" (click)="goToStep(2)">
+                  Πίσω στις Ρυθμίσεις
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- ΔΕΞΙΑ ΣΤΗΛΗ: Live Itinerary & ΑΠΟΘΗΚΕΥΣΗ -->
+        <div class="current-itinerary relative flex flex-col">
+          <h6
+            class="uppercase text-xs font-black tracking-widest text-slate-500 mb-6"
+          >
+            Η Διαδρομη σου
+          </h6>
+
+          <div class="iti-scroll flex-grow overflow-y-auto pr-2 h-[400px]">
+            @for (item of selectedItems(); track $index) {
+              <div class="iti-item group">
+                <span class="font-medium text-[17px] flex-grow truncate">{{
+                  item.name
+                }}</span>
+                <div class="flex items-center gap-3">
+                  <span class="text-[15px] font-medium text-slate-600"
+                    >{{ item.estimatedCost }}€</span
+                  >
+                  <button
+                    class="remove-btn opacity-0 group-hover:opacity-100 transition-opacity"
+                    (click)="removeItemLocally($index)"
+                    title="Αφαίρεση"
+                  >
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+            }
+            @if (selectedItems().length === 0) {
+              <p class="text-sm text-slate-600 mt-2">
+                Δεν έχετε προσθέσει καμία δραστηριότητα.
+              </p>
+            }
+          </div>
+
+          <button
+            class="action-btn w-100 mt-6 flex justify-center items-center gap-3"
+            [disabled]="isSaving()"
+            (click)="saveEntireTripAndProceed()"
+          >
+            @if (isSaving()) {
+              <i class="fa-solid fa-circle-notch fa-spin"></i> Αποθήκευση...
+            } @else {
+              ΟΛΟΚΛΗΡΩΣΗ &<br />ΑΠΟΘΗΚΕΥΣΗ
+              <i class="fa-solid fa-cloud-arrow-up text-xl ml-1"></i>
+            }
+          </button>
         </div>
       </div>
     </div>
-    <ng-template #noCity>
-      <div class="text-center text-muted mt-5">
-        <h5>
-          Επιλέξτε πρώτα μια πόλη από το μενού για να δείτε τις επιχειρήσεις.
-        </h5>
+  }
+
+  <!-- ΒΗΜΑ 4: LIVE TRACKER & CHECKLIST -->
+  @if (currentStep() === 4) {
+    <div class="slide" [class.fade-out]="isTransitioning()">
+      <h2 class="slide-heading-basic">03. Live Trip Tracker</h2>
+
+      <div class="dashboard-layout">
+        <div class="stats-panel flex flex-col gap-6">
+          <div class="stat-box shadow-xl">
+            <label class="text-xs uppercase font-bold text-emerald-400"
+              >Budget Status</label
+            >
+            <div
+              class="big-val mt-2"
+              [class.text-red-400]="remainingBudget() < 0"
+            >
+              {{ remainingBudget() }}€
+            </div>
+            <small class="opacity-50 uppercase tracking-widest text-[10px]"
+              >Υπόλοιπο Προϋπολογισμού</small
+            >
+          </div>
+
+          <div
+            class="progress-ring-card bg-slate-50 p-8 rounded-3xl flex flex-col items-center shadow-inner"
+          >
+            <div
+              class="progress-ring"
+              [style.--p]="budgetPercent() > 100 ? 100 : budgetPercent()"
+              [class.danger]="budgetPercent() > 100"
+            >
+              <span class="text-3xl font-black">{{ budgetPercent() }}%</span>
+            </div>
+            <p
+              class="mt-4 font-bold text-slate-500 uppercase text-xs tracking-widest"
+            >
+              Χρήση Budget
+            </p>
+          </div>
+        </div>
+
+        <div class="tracker-list">
+          <div class="flex justify-between items-center mb-6">
+            <h6
+              class="uppercase text-xs font-black tracking-widest text-slate-400"
+            >
+              Live Check-in
+            </h6>
+            <span class="text-xs bg-slate-100 px-2 py-1 rounded-full font-bold"
+              >{{ completedCount() }}/{{ selectedItems().length }}</span
+            >
+          </div>
+
+          <div class="scroll-list h-[400px] overflow-y-auto pr-2">
+            @for (item of selectedItems(); track $index; let i = $index) {
+              <div
+                class="tracker-item cursor-pointer"
+                [class.checked]="item.visited"
+                (click)="toggleVisited(i)"
+              >
+                <div class="item-meta">
+                  <strong class="text-lg block">{{ item.name }}</strong>
+                  <div class="flex items-center gap-2 mt-2">
+                    <span
+                      class="text-xs px-2 py-1 rounded bg-white text-slate-500 font-bold border"
+                      >{{ item.categoryType }}</span
+                    >
+                    <small class="font-bold text-emerald-600"
+                      >{{ item.estimatedCost }}€</small
+                    >
+                  </div>
+                </div>
+                <button
+                  class="check-box flex items-center justify-center transition-all"
+                  [class.active]="item.visited"
+                >
+                  <i class="fa-solid fa-check"></i>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
       </div>
-    </ng-template>
-  </main>
+
+      <div
+        class="footer-actions mt-auto pt-10 border-t flex justify-between items-center"
+      >
+        <button class="btn-outline transition-colors" (click)="goToStep(1)">
+          <i class="fa-solid fa-rotate-left mr-2"></i> Νέο Ταξίδι
+        </button>
+        <div class="flex gap-4">
+          <button class="action-btn px-10">
+            Share Trip <i class="fa-solid fa-share-nodes ml-2"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

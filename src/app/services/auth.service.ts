@@ -71,4 +71,8 @@ export class AuthService {
     };
     return this.http.post<any>(`${this.baseUrl}/reset-password`, resetObj);
   }
+
+  refreshToken(payload: { refreshToken: string }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/refresh-token`, payload);
+  }
 }

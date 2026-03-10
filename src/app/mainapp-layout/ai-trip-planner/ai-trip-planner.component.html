@@ -1,1 +1,114 @@
-<p>ai-trip-planner works!</p>
+<div class="ai-wrapper">
+  <section class="setup-card">
+    <h1 class="title">
+      ✨ SmoothJourney <span class="ai-gradient">AI Planner</span>
+    </h1>
+
+    <div class="input-grid">
+      <div class="field">
+        <label>Προορισμός</label>
+        <input type="text" [(ngModel)]="city" placeholder="π.χ. Αθήνα" />
+      </div>
+      <div class="field">
+        <label>Mood</label>
+        <select [(ngModel)]="selectedMood">
+          <option value="Luxury">Luxury & Elegant</option>
+          <option value="Culture">Culture & Heritage</option>
+          <option value="Relax">Relax & Nature</option>
+          <option value="Nightlife">Vibe & Nightlife</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Budget (€)</label>
+        <input type="number" [(ngModel)]="maxBudget" />
+      </div>
+      <div class="field">
+        <label>Άτομα 👥</label>
+        <input type="number" [(ngModel)]="numberOfPeople" min="1" />
+      </div>
+      <div class="field">
+        <label>Έναρξη</label>
+        <input type="date" [(ngModel)]="startDate" />
+      </div>
+      <div class="field">
+        <label>Λήξη</label>
+        <input type="date" [(ngModel)]="endDate" />
+      </div>
+    </div>
+
+    <button
+      class="gen-btn"
+      [disabled]="isPlanning() || !city"
+      (click)="generateTrip()"
+    >
+      @if (isPlanning()) {
+        <span class="spinner-flex">
+          <i class="fa-solid fa-robot fa-bounce"></i> Το AI σχεδιάζει για
+          {{ numberOfPeople }} άτομα...
+        </span>
+      } @else {
+        Δημιουργία Πλάνου
+      }
+    </button>
+  </section>
+
+  @if (aiPlan()) {
+    <div class="budget-dashboard" [class.danger]="isOverBudget()">
+      <div class="stats">
+        <div class="stat-item">
+          <small>ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ ({{ numberOfPeople }} άτομα)</small>
+          <p>{{ totalAiCost() }}€</p>
+        </div>
+        <div class="stat-item text-right">
+          <small>ΟΡΙΟ BUDGET</small>
+          <p>{{ maxBudget }}€</p>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div
+          class="fill"
+          [style.width.%]="(totalAiCost() / maxBudget) * 100"
+        ></div>
+      </div>
+      <button class="save-btn" (click)="saveFullTrip()" [disabled]="isSaving()">
+        @if (isSaving()) {
+          <i class="fa-solid fa-circle-notch fa-spin"></i> Αποθήκευση...
+        } @else {
+          <i class="fa-solid fa-cloud-arrow-up"></i> Αποθήκευση στη Βάση
+        }
+      </button>
+    </div>
+
+    <div class="itinerary-list animate-fade-in">
+      @for (day of aiPlan().days; track day.day) {
+        <div class="day-section">
+          <h3 class="day-badge">ΗΜΕΡΑ {{ day.day }}</h3>
+          <div class="activities-grid">
+            @for (act of day.activities; track $index) {
+              <div class="activity-card">
+                <div class="time-tag">{{ act.time }}</div>
+                <div class="activity-details">
+                  <h4 class="activity-title">{{ act.title }}</h4>
+                  <p class="activity-desc">{{ act.description }}</p>
+                  <div class="activity-meta">
+                    <span class="price-tag">
+                      <i class="fa-solid fa-euro-sign"></i>
+                      {{ act.estimatedCost }}€
+                    </span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (showSuccess()) {
+    <div class="success-toast animate-fade-in">
+      <i class="fa-solid fa-circle-check"></i>
+      <span>Το ταξίδι για {{ numberOfPeople }} άτομα αποθηκεύτηκε!</span>
+    </div>
+  }
+</div>

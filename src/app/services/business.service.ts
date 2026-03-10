@@ -20,22 +20,6 @@ export interface Business {
 export class BusinessService {
   private apiUrl = 'https://localhost:7000';
 
-  possibleBadges = [
-    'Best for Couples',
-    'Solo Traveler Pick',
-    'Luxury & Spa',
-    'Budget Friendly',
-    'Top Location',
-    'Sunset View',
-  ];
-
-  possibleSummaries = [
-    'Εξαιρετική τοποθεσία κοντά στο κέντρο. Οι επισκέπτες λατρεύουν το πρωινό και την καθαριότητα.',
-    'Ιδανικό για χαλάρωση. Ησυχία, άνετα κρεβάτια και πολύ φιλικό προσωπικό.',
-    'Μοντέρνα αισθητική και γρήγορο WiFi. Τέλεια επιλογή για digital nomads.',
-    'Μαγευτική θέα και ρομαντική ατμόσφαιρα. Λίγο ακριβό, αλλά αξίζει κάθε ευρώ.',
-  ];
-
   constructor(private http: HttpClient) {}
 
   getTopBusinesses(): Observable<Business[]> {
