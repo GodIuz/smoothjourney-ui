@@ -1,0 +1,140 @@
+<div class="sj-details-layout">
+  <div class="sj-loading-state" *ngIf="isLoading">
+    <div class="spinner-ring"></div>
+    <p>Φόρτωση του προγράμματός σας...</p>
+  </div>
+
+  <div class="sj-error-state" *ngIf="!isLoading && (!trip || hasError)">
+    <i class="fa-solid fa-map-location-dot fa-4x mb-4 text-muted"></i>
+    <h3 class="text-white">Το ταξίδι δεν βρέθηκε!</h3>
+    <p class="text-white-50">
+      Δεν μπορέσαμε να εντοπίσουμε αυτόν τον προορισμό.
+    </p>
+    <a routerLink="/mainapp/my-trips" class="sj-btn-primary mt-3">
+      <i class="fa-solid fa-arrow-left me-2"></i> Επιστροφή στα Ταξίδια
+    </a>
+  </div>
+
+  <ng-container *ngIf="!isLoading && trip">
+    <div
+      class="sj-hero-section"
+      [style.background-image]="'url(' + getImageUrl(trip.imageUrl) + ')'"
+    >
+      <div class="sj-hero-overlay"></div>
+
+      <a routerLink="/mainapp/my-trips" class="sj-btn-back">
+        <i class="fa-solid fa-arrow-left-long"></i>
+      </a>
+
+      <div class="container sj-hero-content text-center">
+        <h1 class="sj-hero-title">{{ trip.destination }}</h1>
+        <p class="sj-hero-dates">
+          <i class="fa-regular fa-calendar-days me-2"></i>
+          {{ trip.startDate | date: "dd MMM yyyy" }} -
+          {{ trip.endDate | date: "dd MMM yyyy" }}
+        </p>
+
+        <div class="sj-hero-badges mt-4">
+          <span class="sj-glass-badge">
+            <i class="fa-solid fa-masks-theater text-success me-2"></i
+            >{{ trip.mood }}
+          </span>
+          <span class="sj-glass-badge">
+            <i class="fa-solid fa-wallet text-success me-2"></i
+            >{{ trip.totalBudget }}€
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container sj-content-wrapper py-5">
+      <div class="sj-timeline-panel">
+        <div class="sj-panel-header mb-5">
+          <h2 class="sj-panel-title">
+            Αναλυτικό Πρόγραμμα <span class="title-dot">.</span>
+          </h2>
+          <p class="sj-panel-subtext">Το χρονολόγιο των δραστηριοτήτων σας</p>
+        </div>
+
+        <div class="sj-timeline-container">
+          <div
+            class="sj-day-group"
+            *ngFor="let dayGroup of getActivitiesByDay(trip)"
+          >
+            <div class="sj-day-header">
+              <span class="sj-day-badge">Ημέρα {{ dayGroup.day }}</span>
+            </div>
+
+            <div class="sj-timeline">
+              <div
+                class="sj-timeline-item"
+                *ngFor="let activity of dayGroup.activities"
+              >
+                <div class="sj-timeline-marker"></div>
+
+                <div class="sj-activity-card d-flex gap-3 align-items-center">
+                  <div
+                    class="sj-activity-img-wrapper"
+                    *ngIf="activity.businessId"
+                  >
+                    <img
+                      [src]="getImageUrl(activity.imageUrl)"
+                      [alt]="activity.businessName"
+                      class="sj-activity-img"
+                    />
+                  </div>
+
+                  <div class="sj-activity-info flex-grow-1">
+                    <div
+                      class="d-flex justify-content-between align-items-start mb-2"
+                    >
+                      <span class="sj-time-badge">{{ activity.time }}</span>
+                      <span class="sj-category-tag">{{
+                        activity.businessCategoryType
+                      }}</span>
+                    </div>
+
+                    <h4 class="sj-activity-title mb-1">
+                      <a
+                        *ngIf="activity.businessId"
+                        [routerLink]="[
+                          '/mainapp/business',
+                          activity.businessId,
+                        ]"
+                        class="sj-business-link"
+                      >
+                        {{ activity.businessName }}
+                      </a>
+                      <span *ngIf="!activity.businessId">{{
+                        activity.businessName
+                      }}</span>
+                    </h4>
+
+                    <p
+                      class="sj-activity-notes mb-0 mt-2"
+                      *ngIf="activity.notes"
+                    >
+                      <i class="fa-solid fa-quote-left me-2 opacity-50"></i
+                      >{{ activity.notes }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sj-empty-timeline" *ngIf="trip.activities.length === 0">
+            <div class="sj-empty-icon-wrapper">
+              <i class="fa-solid fa-box-open sj-empty-icon"></i>
+              <div class="sj-icon-glow"></div>
+            </div>
+            <h3 class="text-white mt-4">Ο χάρτης είναι κενός</h3>
+            <p class="text-white-50">
+              Δεν έχουν προστεθεί δραστηριότητες σε αυτό το ταξίδι ακόμα.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

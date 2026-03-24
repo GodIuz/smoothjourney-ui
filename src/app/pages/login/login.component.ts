@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +12,12 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private http = inject(HttpClient);
+  returnUrl: string = '/mainapp/home';
+
   loginObj = {
     email: '',
     password: '',
@@ -21,40 +27,48 @@ export class LoginComponent {
   isLoading: boolean = false;
   errorMessage: string = '';
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-  ) {}
+  constructor(private auth: AuthService) {}
+
+  ngOnInit(): void {
+    this.returnUrl =
+      this.route.snapshot.queryParams['returnUrl'] || '/mainapp/home';
+  }
 
   onLogin() {
     this.isLoading = true;
+    this.errorMessage = '';
+
     this.auth.login(this.loginObj).subscribe({
       next: (res) => {
-        console.log('Ο Ρόλος που ήρθε είναι:', res.role);
+        console.log('Σύνδεση επιτυχής. Ρόλος:', res.role);
         this.auth.storeToken(res.token, this.rememberMe);
-        this.isLoading = true;
         localStorage.setItem('token', res.token);
         localStorage.setItem('role', res.role);
 
-        if (res.userName) {
-          this.auth.setUsername(res.userName);
-        } else if (res.username) {
-          this.auth.setUsername(res.username);
+        if (res.userName || res.username) {
+          this.auth.setUsername(res.userName || res.username);
         }
 
-        console.log('Ρόλος χρήστη:', res.role);
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'];
         const roleLower = res.role.toString().toLowerCase();
 
-        if (roleLower === 'admin') {
-          console.log('Μπαίνω ως Admin...');
+        if (returnUrl) {
+          console.log('Ανακατεύθυνση στο προηγούμενο URL:', returnUrl);
+          this.router.navigateByUrl(returnUrl);
+        } else if (roleLower === 'admin') {
+          console.log('Είσοδος ως Admin...');
           this.router.navigate(['/admin/dashboard']);
         } else {
-          console.log('Μπαίνω ως Κανονικός Χρήστης...');
+          console.log('Είσοδος ως Χρήστης...');
           this.router.navigate(['/mainapp/home']);
         }
+
+        this.isLoading = false;
       },
       error: (err) => {
-        this.errorMessage = err.error || 'Κάτι πήγε στραβά.';
+        console.error('Σφάλμα σύνδεσης:', err);
+        this.errorMessage =
+          err.error?.message || err.error || 'Λάθος στοιχεία σύνδεσης.';
         this.isLoading = false;
       },
     });

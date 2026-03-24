@@ -15,13 +15,21 @@ export class NavbarMainappComponent implements OnInit {
   username: string = '';
   isMenuOpen = false;
   isUserDropdownOpen = false;
-
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
+  isMobileUserDropdownOpen = false;
 
   toggleUserDropdown() {
     this.isUserDropdownOpen = !this.isUserDropdownOpen;
+  }
+
+  toggleMobileUserDropdown() {
+    this.isMobileUserDropdownOpen = !this.isMobileUserDropdownOpen;
+  }
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+    if (!this.isMenuOpen) {
+      this.isMobileUserDropdownOpen = false;
+    }
   }
 
   onLogout() {

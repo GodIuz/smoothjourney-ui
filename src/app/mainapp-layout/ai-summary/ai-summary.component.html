@@ -1,0 +1,19 @@
+<div class="ai-card" [ngClass]="{ 'error-border': hasError }">
+  <div class="ai-badge"><span class="sparkle">✨</span> AI Insights</div>
+
+  <div class="content-area">
+    <div *ngIf="isLoading" class="skeleton-loader">
+      <div class="line long"></div>
+      <div class="line medium"></div>
+      <div class="line short"></div>
+    </div>
+
+    <div *ngIf="!isLoading && summary" class="summary-box">
+      <p class="summary-text">{{ summary }}</p>
+    </div>
+
+    <div *ngIf="!isLoading && hasError" class="error-msg">
+      Δεν ήταν δυνατή η αυτόματη ανάλυση των κριτικών.
+    </div>
+  </div>
+</div>

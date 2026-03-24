@@ -26,6 +26,7 @@
               routerLink="/mainapp/ai-planner"
               routerLinkActive="active"
               class="drop-link"
+              (click)="toggleMenu()"
             >
               <div class="drop-icon"><i class="fa-solid fa-robot"></i></div>
               <div class="drop-text">
@@ -42,6 +43,7 @@
               routerLink="/mainapp/trip-maker"
               routerLinkActive="active"
               class="drop-link"
+              (click)="toggleMenu()"
             >
               <div class="drop-icon">
                 <i class="fa-solid fa-map-location-dot"></i>
@@ -55,6 +57,57 @@
         </ul>
       </div>
     </div>
+
+    <li class="mobile-user-menu">
+      <div
+        class="user-trigger mobile-trigger"
+        (click)="toggleMobileUserDropdown()"
+      >
+        <span
+          >Γεια σου, <strong>{{ username }}</strong
+          >!</span
+        >
+        <i
+          class="fa-solid"
+          [ngClass]="
+            isMobileUserDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'
+          "
+        ></i>
+      </div>
+
+      <ul
+        class="mobile-dropdown-content"
+        [class.open]="isMobileUserDropdownOpen"
+      >
+        <li>
+          <a routerLink="/mainapp/profile" (click)="toggleMenu()">
+            <i class="fa-solid fa-user"></i> Προφίλ
+          </a>
+        </li>
+        <li>
+          <a routerLink="/mainapp/favourites" (click)="toggleMenu()">
+            <i class="fa-solid fa-heart"></i> Αγαπημένα
+          </a>
+        </li>
+        <li>
+          <a routerLink="/mainapp/my-trips" (click)="toggleMenu()">
+            <i class="fa-solid fa-suitcase-rolling"></i> Τα Ταξίδια μου
+          </a>
+        </li>
+        <li>
+          <hr class="dropdown-divider" />
+        </li>
+        <li>
+          <a
+            (click)="onLogout(); toggleMenu()"
+            class="dropdown-logout"
+            style="cursor: pointer"
+          >
+            <i class="fa-solid fa-right-from-bracket"></i> Αποσύνδεση
+          </a>
+        </li>
+      </ul>
+    </li>
   </ul>
 
   <div class="desktop-actions">
@@ -64,7 +117,6 @@
           >Γεια σου, <strong>{{ username }}</strong
           >!</span
         >
-
         <i class="fa-solid fa-caret-down"></i>
       </div>
 

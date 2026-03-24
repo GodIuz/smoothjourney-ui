@@ -2,7 +2,6 @@
   <div class="blob"></div>
   <div class="blob2"></div>
 
-  <!-- Ειδοποιήσεις -->
   @if (notification(); as note) {
     <div class="notification-overlay" (click)="closeNotification()">
       <div
@@ -38,7 +37,6 @@
     </div>
   }
 
-  <!-- ΒΗΜΑ 1: WELCOME SLIDE -->
   @if (currentStep() === 1) {
     <div class="slide" [class.fade-out]="isTransitioning()">
       <div class="hero-content text-center m-auto max-w-2xl mx-auto">
@@ -57,7 +55,6 @@
     </div>
   }
 
-  <!-- ΒΗΜΑ 2: TRIP SETUP -->
   @if (currentStep() === 2) {
     <div class="slide" [class.fade-out]="isTransitioning()">
       <h2 class="slide-heading-basic">01. Βασικές Πληροφορίες</h2>
@@ -89,13 +86,36 @@
           <label>Ημερομηνία Έναρξης</label>
           <input type="date" [(ngModel)]="tripData.startDate" />
         </div>
+
         <div class="input-group">
           <label>Ημερομηνία Λήξης</label>
           <input type="date" [(ngModel)]="tripData.endDate" />
         </div>
-        <div class="input-group col-span-2">
+
+        <div class="input-group">
           <label>Συνολικό Budget (€)</label>
           <input type="number" [(ngModel)]="tripData.totalBudget" />
+        </div>
+
+        <div class="input-group">
+          <label>Διάθεση (Mood)</label>
+          <select [(ngModel)]="tripData.mood">
+            <option value="Relax">🌿 Χαλαρωτικό</option>
+            <option value="Culture">🏛️ Πολιτισμός</option>
+            <option value="Luxury">💎 Πολυτέλεια</option>
+            <option value="Foodie">🍷 Γαστρονομία</option>
+            <option value="Nightlife">🎉 Νυχτερινή Ζωή</option>
+            <option value="Urban">🏙️ Αστική</option>
+          </select>
+        </div>
+
+        <div class="input-group col-span-2">
+          <label>Περιγραφή / Σημειώσεις</label>
+          <textarea
+            rows="2"
+            [(ngModel)]="tripData.description"
+            placeholder="Γράψτε μερικά λόγια για τον σκοπό του ταξιδιού..."
+          ></textarea>
         </div>
       </div>
 
@@ -111,11 +131,9 @@
     </div>
   }
 
-  <!-- ΒΗΜΑ 3: ITEM SELECTION -->
   @if (currentStep() === 3) {
     <div class="slide wide" [class.fade-out]="isTransitioning()">
       <div class="selection-container-new">
-        <!-- ΑΡΙΣΤΕΡΗ ΣΤΗΛΗ -->
         <div class="left-col">
           <h2 class="slide-heading">02. Σχεδιασμός Διαδρομής</h2>
           <p class="text-sm opacity-80 mb-6">
@@ -136,7 +154,6 @@
             </div>
           </div>
 
-          <!-- Λίστα Επιχειρήσεων -->
           <div class="business-scroll mt-6">
             @if (isLoadingBusinesses()) {
               <div class="empty-state">
@@ -185,7 +202,6 @@
           </div>
         </div>
 
-        <!-- ΔΕΞΙΑ ΣΤΗΛΗ: Live Itinerary & ΑΠΟΘΗΚΕΥΣΗ -->
         <div class="current-itinerary relative flex flex-col">
           <h6
             class="uppercase text-xs font-black tracking-widest text-slate-500 mb-6"
@@ -237,7 +253,6 @@
     </div>
   }
 
-  <!-- ΒΗΜΑ 4: LIVE TRACKER & CHECKLIST -->
   @if (currentStep() === 4) {
     <div class="slide" [class.fade-out]="isTransitioning()">
       <h2 class="slide-heading-basic">03. Live Trip Tracker</h2>

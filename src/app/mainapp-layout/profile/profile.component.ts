@@ -3,39 +3,26 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProfileService } from '../../services/profile.service';
 import { RouterModule } from '@angular/router';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-profile',
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatButtonModule,
-    MatIconModule,
-  ],
+  imports: [CommonModule, FormsModule, RouterModule],
   standalone: true,
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
 export class ProfileComponent implements OnInit {
   private profileService = inject(ProfileService);
-
+  private http = inject(HttpClient);
+  myReviews: any[] = [];
   user: any = {};
   isLoading = false;
   activeTab: string = 'overview';
-
+  isLoadingReviews = false;
+  isLoadingPassword = false;
+  reviewsLoaded = false;
+  private apiUrl = 'https://localhost:7000';
   passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' };
 
   ngOnInit() {
@@ -89,5 +76,69 @@ export class ProfileComponent implements OnInit {
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
+    if (tab === 'reviews' && !this.reviewsLoaded) {
+      this.loadMyReviews();
+    }
+  }
+
+  loadMyReviews() {
+    this.isLoadingReviews = true;
+    this.http.get<any[]>(`${this.apiUrl}/Reviews/my-reviews`).subscribe({
+      next: (data) => {
+        this.myReviews = data;
+        this.isLoadingReviews = false;
+        this.reviewsLoaded = true;
+      },
+      error: (err) => {
+        console.error('❌ Σφάλμα κατά τη φόρτωση των κριτικών:', err);
+        this.isLoadingReviews = false;
+      },
+    });
+  }
+
+  getStarsArray(): number[] {
+    return [1, 2, 3, 4, 5];
+  }
+
+  changePassword() {
+    // 1. Έλεγχος αν τα πεδία είναι γεμάτα
+    if (
+      !this.passwordData.currentPassword ||
+      !this.passwordData.newPassword ||
+      !this.passwordData.confirmPassword
+    ) {
+      alert('Παρακαλώ συμπληρώστε όλα τα πεδία.');
+      return;
+    }
+
+    // 2. Έλεγχος αν ταυτίζονται οι νέοι κωδικοί
+    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
+      alert('Ο νέος κωδικός και η επιβεβαίωση δεν ταιριάζουν!');
+      return;
+    }
+
+    this.isLoadingPassword = true;
+
+    const payload = {
+      currentPassword: this.passwordData.currentPassword,
+      newPassword: this.passwordData.newPassword,
+    };
+
+    this.http.post(`${this.apiUrl}/Auth/change-password`, payload).subscribe({
+      next: (res: any) => {
+        alert('Ο κωδικός σας άλλαξε επιτυχώς!');
+        this.passwordData = {
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        };
+        this.isLoadingPassword = false;
+      },
+      error: (err) => {
+        console.error('Σφάλμα:', err);
+        alert(err.error?.message || 'Σφάλμα κατά την αλλαγή κωδικού.');
+        this.isLoadingPassword = false;
+      },
+    });
   }
 }

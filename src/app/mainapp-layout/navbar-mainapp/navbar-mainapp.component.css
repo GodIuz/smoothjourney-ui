@@ -202,7 +202,6 @@
   color: white !important;
 }
 
-/* --- RESPONSIVE (MOBILE) --- */
 .burger {
   display: none;
   cursor: pointer;
@@ -290,4 +289,75 @@
   .burger {
     display: block;
   }
+}
+
+/* --- Κρύβουμε το Mobile User Menu στο Desktop --- */
+.mobile-user-menu {
+  display: none;
+}
+
+/* --- ΠΡΟΣΘΗΚΕΣ ΓΙΑ TO MOBILE MENU ΣΤΟ @MEDIA QUERY --- */
+@media (max-width: 768px) {
+  /* Εμφάνιση του Mobile User Menu */
+  .mobile-user-menu {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-top: 1px solid #333; /* Διαχωριστική γραμμή από τα Εργαλεία */
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+
+  .mobile-trigger {
+    justify-content: center; /* Κεντράρισμα του "Γεια σου χρήστη" */
+    padding: 15px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Το μενού που ανοίγει από κάτω (Αρχικά κρυμμένο) */
+  .mobile-dropdown-content {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+    background-color: rgba(
+      255,
+      255,
+      255,
+      0.03
+    ); /* Ελαφρύ φόντο για να ξεχωρίζει */
+    width: 100%;
+  }
+
+  /* Όταν προστίθεται η κλάση .open μέσω TypeScript, εμφανίζεται */
+  .mobile-dropdown-content.open {
+    display: block;
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  /* Τα links του Mobile User Menu */
+  .mobile-dropdown-content li a {
+    display: flex;
+    padding: 15px 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #e0e0e0;
+    transition: color 0.3s;
+  }
+
+  .mobile-dropdown-content li a:hover {
+    color: #34e0a1;
+  }
+
+  .mobile-dropdown-content .dropdown-logout {
+    color: #ff4d4d !important;
+  }
+}
+.mobile-dropdown-content .dropdown-logout:hover {
+  background-color: #ff4d4d !important;
 }

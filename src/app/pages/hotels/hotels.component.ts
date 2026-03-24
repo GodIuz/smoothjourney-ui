@@ -1,58 +1,59 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { BusinessService } from '../../services/business.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-hotels',
   imports: [CommonModule, RouterModule],
   templateUrl: './hotels.component.html',
-  styleUrl: './hotels.component.css'
+  styleUrl: './hotels.component.css',
 })
 export class HotelsComponent implements OnInit {
-accommodations: any[] = [];
-  isLoading = true;
+  private http = inject(HttpClient);
+  private apiUrl = 'https://localhost:7000';
 
-  possibleBadges = ['Best for Couples', 'Solo Traveler Pick', 'Luxury & Spa', 'Budget Friendly', 'Top Location', 'Sunset View'];
-  
-  possibleSummaries = [
-    'Εξαιρετική τοποθεσία κοντά στο κέντρο. Οι επισκέπτες λατρεύουν το πρωινό και την καθαριότητα.',
-    'Ιδανικό για χαλάρωση. Ησυχία, άνετα κρεβάτια και πολύ φιλικό προσωπικό.',
-    'Μοντέρνα αισθητική και γρήγορο WiFi. Τέλεια επιλογή για digital nomads.',
-    'Μαγευτική θέα και ρομαντική ατμόσφαιρα. Λίγο ακριβό, αλλά αξίζει κάθε ευρώ.'
-  ];
+  pageInfo = {
+    title: 'Διαμονή',
+    subtitle:
+      'Βρείτε τα καλύτερα ξενοδοχεία και καταλύματα για τη διαμονή σας.',
+    icon: 'fa-bed',
+    apiCategory: 'accommodation',
+  };
 
-  constructor(private businessService: BusinessService, private router: Router) {}
+  businesses: any[] = [];
+  isLoading: boolean = true;
 
   ngOnInit() {
-    this.businessService.getFeaturedAccommodations().subscribe({
-      next: (data) => {
-        this.accommodations = data.map(biz => ({
-          ...biz,
-          type: biz.category,
-          aiBadge: this.getRandomItem(this.possibleBadges),
-          aiSummary: this.getRandomItem(this.possibleSummaries),
-          matchScore: Math.floor(Math.random() * (99 - 85 + 1)) + 85
-        }));
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching accommodations:', err);
-        this.isLoading = false;
-      }
-    });
+    this.fetchBusinesses();
   }
 
-  getRandomItem(arr: string[]) {
-    return arr[Math.floor(Math.random() * arr.length)];
+  fetchBusinesses() {
+    this.isLoading = true;
+    this.http
+      .get<
+        any[]
+      >(`${this.apiUrl}/Business/category/${this.pageInfo.apiCategory}`)
+      .subscribe({
+        next: (data) => {
+          this.businesses = data;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Σφάλμα φόρτωσης επιχειρήσεων:', err);
+          this.businesses = [];
+          this.isLoading = false;
+        },
+      });
   }
 
-  addToPlan(item: any) {
-  const confirmAction = confirm(`Μετάβαση στην εφαρμογή για προσθήκη του "${item.name}";`);
-  
-    if (confirmAction) {
-      const mainAppUrl = 'http://localhost:56486/'; 
-      window.location.href = `${mainAppUrl}/login?pendingItem=${item.id}`;
+  getImageUrl(path: string | undefined): string {
+    if (!path || path.trim() === '') {
+      return 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80';
     }
+    if (path.startsWith('http')) return path;
+    const cleanPath = path.replace(/\\/g, '/');
+    return `${this.apiUrl}${cleanPath.startsWith('/') ? '' : '/'}${cleanPath}`;
   }
 }

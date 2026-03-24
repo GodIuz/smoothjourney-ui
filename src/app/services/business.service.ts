@@ -63,4 +63,10 @@ export class BusinessService {
   getFavoriteIds() {
     return this.http.get<number[]>(`${this.apiUrl}/Favourites/ids`);
   }
+
+  getReviewSummary(businessId: number): Observable<{ summary: string }> {
+    return this.http.get<{ summary: string }>(
+      `${this.apiUrl}/Business/${businessId}/summary`,
+    );
+  }
 }

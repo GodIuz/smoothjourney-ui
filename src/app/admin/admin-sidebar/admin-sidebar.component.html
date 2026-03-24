@@ -6,7 +6,7 @@
 
   <ul class="sidebar-menu">
     <li>
-      <a href="/admin/dashboard" routerLinkActive="active">
+      <a routerLink="/admin/dashboard" routerLinkActive="active">
         <i class="fa-solid fa-gauge-high"></i>
         <span>Dashboard</span>
       </a>
@@ -15,38 +15,36 @@
     <li class="menu-header">ΔΙΑΧΕΙΡΙΣΗ</li>
 
     <li>
-      <a href="/admin/users" routerLinkActive="active">
+      <a routerLink="/admin/users" routerLinkActive="active">
         <i class="fa-solid fa-users"></i>
         <span>Χρήστες</span>
       </a>
     </li>
 
     <li>
-      <a href="/admin/businesses" routerLinkActive="active">
+      <a routerLink="/admin/businesses" routerLinkActive="active">
         <i class="fa-solid fa-hotel"></i>
         <span>Επιχειρήσεις</span>
       </a>
     </li>
 
     <li>
-      <a href="/admin/reviews" routerLinkActive="active">
+      <a routerLink="/admin/reviews" routerLinkActive="active">
         <i class="fa-solid fa-comments"></i>
         <span>Κριτικές</span>
       </a>
     </li>
 
-    <li class="menu-header">ΣΥΣΤΗΜΑ</li>
-
     <li>
-      <a href="/admin/settings" routerLinkActive="active">
-        <i class="fa-solid fa-gear"></i>
-        <span>Ρυθμίσεις</span>
+      <a routerLink="/admin/messages" routerLinkActive="active">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Μηνύματα</span>
       </a>
     </li>
   </ul>
 
   <div class="sidebar-footer">
-    <a href="/login" class="logout-link">
+    <a (click)="logout()" class="logout-link" style="cursor: pointer">
       <i class="fa-solid fa-right-from-bracket"></i> Αποσύνδεση
     </a>
   </div>

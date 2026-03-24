@@ -1,53 +1,78 @@
-.container-fluid {
-  background-color: #f8f9fc;
-  min-height: 100vh;
-}
-
-.card {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-  overflow: hidden;
+.admin-main-content {
+  padding-left: 20px;
+  width: 100%;
 }
 
 .table thead th {
-  background-color: #f8f9fc;
-  color: #858796;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
   font-weight: 700;
-  font-size: 0.85rem;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid #e3e6f0;
-  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .table tbody td {
-  padding: 1rem;
-  color: #5a5c69;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.rating-badge {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.rating-high {
+  background: #ecfdf5;
+  color: #10b981;
+}
+.rating-mid {
+  background: #fffbeb;
+  color: #f59e0b;
+}
+.rating-low {
+  background: #fef2f2;
+  color: #ef4444;
 }
 
 .avatar-circle {
   width: 32px;
   height: 32px;
+  background: #64748b;
+  color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
   font-size: 0.8rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
 }
 
-.comment-box {
-  max-width: 350px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: help;
+.bg-danger-soft {
+  background-color: rgba(239, 68, 68, 0.1);
+  font-size: 0.7rem;
 }
 
-.btn-outline-danger:hover {
-  background-color: #e74a3b;
-  color: white;
-  transform: scale(1.05);
+.text-truncate-2 {
+  display: -webkit-box;
+  .text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  background-color: rgba(239, 68, 68, 0.02) !important;
+}
+
+.stat-box {
+  min-width: 120px;
+  text-align: center;
+}
+
+.card {
+  border: 1px solid #e2e8f0;
 }

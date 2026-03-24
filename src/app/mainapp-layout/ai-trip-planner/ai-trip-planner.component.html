@@ -1,114 +1,222 @@
-<div class="ai-wrapper">
-  <section class="setup-card">
-    <h1 class="title">
-      ✨ SmoothJourney <span class="ai-gradient">AI Planner</span>
-    </h1>
+<div class="presentation-wrapper">
+  <div class="blob"></div>
+  <div class="blob2"></div>
 
-    <div class="input-grid">
-      <div class="field">
-        <label>Προορισμός</label>
-        <input type="text" [(ngModel)]="city" placeholder="π.χ. Αθήνα" />
-      </div>
-      <div class="field">
-        <label>Mood</label>
-        <select [(ngModel)]="selectedMood">
-          <option value="Luxury">Luxury & Elegant</option>
-          <option value="Culture">Culture & Heritage</option>
-          <option value="Relax">Relax & Nature</option>
-          <option value="Nightlife">Vibe & Nightlife</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Budget (€)</label>
-        <input type="number" [(ngModel)]="maxBudget" />
-      </div>
-      <div class="field">
-        <label>Άτομα 👥</label>
-        <input type="number" [(ngModel)]="numberOfPeople" min="1" />
-      </div>
-      <div class="field">
-        <label>Έναρξη</label>
-        <input type="date" [(ngModel)]="startDate" />
-      </div>
-      <div class="field">
-        <label>Λήξη</label>
-        <input type="date" [(ngModel)]="endDate" />
-      </div>
-    </div>
-
-    <button
-      class="gen-btn"
-      [disabled]="isPlanning() || !city"
-      (click)="generateTrip()"
-    >
-      @if (isPlanning()) {
-        <span class="spinner-flex">
-          <i class="fa-solid fa-robot fa-bounce"></i> Το AI σχεδιάζει για
-          {{ numberOfPeople }} άτομα...
-        </span>
-      } @else {
-        Δημιουργία Πλάνου
-      }
-    </button>
-  </section>
-
-  @if (aiPlan()) {
-    <div class="budget-dashboard" [class.danger]="isOverBudget()">
-      <div class="stats">
-        <div class="stat-item">
-          <small>ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ ({{ numberOfPeople }} άτομα)</small>
-          <p>{{ totalAiCost() }}€</p>
+  @if (notification(); as note) {
+    <div class="notification-overlay" (click)="closeNotification()">
+      <div
+        class="notification-box"
+        [class]="note.type"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="notif-icon">
+          @if (note.type === "success") {
+            <i class="fa-solid fa-circle-check"></i>
+          }
+          @if (note.type === "error") {
+            <i class="fa-solid fa-circle-xmark"></i>
+          }
+          @if (note.type === "warning") {
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          }
         </div>
-        <div class="stat-item text-right">
-          <small>ΟΡΙΟ BUDGET</small>
-          <p>{{ maxBudget }}€</p>
+        <div class="notif-content">
+          <strong>{{
+            note.type === "success"
+              ? "Επιτυχία"
+              : note.type === "error"
+                ? "Σφάλμα"
+                : "Προσοχή"
+          }}</strong>
+          <p>{{ note.message }}</p>
         </div>
+        <button class="notif-close" (click)="closeNotification()">
+          &times;
+        </button>
       </div>
-      <div class="progress-bar">
-        <div
-          class="fill"
-          [style.width.%]="(totalAiCost() / maxBudget) * 100"
-        ></div>
-      </div>
-      <button class="save-btn" (click)="saveFullTrip()" [disabled]="isSaving()">
-        @if (isSaving()) {
-          <i class="fa-solid fa-circle-notch fa-spin"></i> Αποθήκευση...
-        } @else {
-          <i class="fa-solid fa-cloud-arrow-up"></i> Αποθήκευση στη Βάση
-        }
-      </button>
-    </div>
-
-    <div class="itinerary-list animate-fade-in">
-      @for (day of aiPlan().days; track day.day) {
-        <div class="day-section">
-          <h3 class="day-badge">ΗΜΕΡΑ {{ day.day }}</h3>
-          <div class="activities-grid">
-            @for (act of day.activities; track $index) {
-              <div class="activity-card">
-                <div class="time-tag">{{ act.time }}</div>
-                <div class="activity-details">
-                  <h4 class="activity-title">{{ act.title }}</h4>
-                  <p class="activity-desc">{{ act.description }}</p>
-                  <div class="activity-meta">
-                    <span class="price-tag">
-                      <i class="fa-solid fa-euro-sign"></i>
-                      {{ act.estimatedCost }}€
-                    </span>
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      }
     </div>
   }
 
-  @if (showSuccess()) {
-    <div class="success-toast animate-fade-in">
-      <i class="fa-solid fa-circle-check"></i>
-      <span>Το ταξίδι για {{ numberOfPeople }} άτομα αποθηκεύτηκε!</span>
+  @if (currentStep() === 1) {
+    <div class="slide" [class.fade-out]="isTransitioning()">
+      <div class="hero-content text-center m-auto max-w-2xl mx-auto">
+        <span class="top-tag"
+          ><i class="fa-solid fa-robot me-2"></i> AI TRIP PLANNER</span
+        >
+        <h1 class="main-title">
+          Αφήστε την <br /><span class="highlight">Τεχνητή Νοημοσύνη</span> να
+          σχεδιάσει
+        </h1>
+        <p class="subtitle mb-10 opacity-80 text-lg">
+          Πείτε μας τον προορισμό και τη διάθεσή σας, και ο έξυπνος αλγόριθμός
+          μας θα δημιουργήσει το τέλειο δρομολόγιο σε δευτερόλεπτα.
+        </p>
+        <button class="action-btn big" (click)="goToStep(2)">
+          Ξεκινήστε Τώρα <i class="fa-solid fa-chevron-right ml-3"></i>
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (currentStep() === 2) {
+    <div class="slide" [class.fade-out]="isTransitioning()">
+      <h2 class="slide-heading-basic">01. Παράμετροι AI</h2>
+      <p class="mb-8 opacity-70">
+        Δώστε τα δεδομένα στο AI για να χτίσει το πρόγραμμά σας.
+      </p>
+
+      <div class="setup-grid">
+        <div class="input-group">
+          <label>Τίτλος Ταξιδιού</label>
+          <input
+            type="text"
+            [(ngModel)]="tripData.title"
+            placeholder="π.χ. Weekend Getaway"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Πόλη Αναζήτησης</label>
+          <select [(ngModel)]="tripData.city">
+            <option value="">Επιλέξτε Πόλη...</option>
+            @for (city of availableCities; track city) {
+              <option [value]="city">{{ city }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>Ημερομηνία Έναρξης</label>
+          <input type="date" [(ngModel)]="tripData.startDate" />
+        </div>
+        <div class="input-group">
+          <label>Ημερομηνία Λήξης</label>
+          <input type="date" [(ngModel)]="tripData.endDate" />
+        </div>
+
+        <div class="input-group">
+          <label>Συνολικό Budget (€)</label>
+          <input type="number" [(ngModel)]="tripData.totalBudget" />
+        </div>
+
+        <div class="input-group">
+          <label>Διάθεση (Mood)</label>
+          <select [(ngModel)]="tripData.mood">
+            <option value="Relax">🌿 Χαλαρωτικό</option>
+            <option value="Culture">🏛️ Πολιτισμός</option>
+            <option value="Luxury">💎 Πολυτέλεια</option>
+            <option value="Foodie">🍷 Γαστρονομία</option>
+            <option value="Nightlife">🎉 Νυχτερινή Ζωή</option>
+            <option value="Urban">🏙️ Αστική</option>
+          </select>
+        </div>
+
+        <div class="input-group col-span-2">
+          <label>Περιγραφή / Σημειώσεις</label>
+          <textarea
+            rows="2"
+            [(ngModel)]="tripData.description"
+            placeholder="Σημειώσεις που θα αποθηκευτούν στο προφίλ του ταξιδιού..."
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="mt-auto flex justify-end">
+        <button
+          class="action-btn flex items-center gap-2"
+          [disabled]="!isSetupValid()"
+          (click)="generateAiTrip()"
+        >
+          Δημιουργία με AI <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (currentStep() === 3) {
+    <div
+      class="slide flex-col items-center justify-center text-center"
+      [class.fade-out]="isTransitioning()"
+    >
+      <div class="ai-loader mb-6">
+        <i class="fa-solid fa-microchip fa-4x text-emerald-500 fa-bounce"></i>
+      </div>
+      <h2 class="slide-heading-basic border-none pl-0 mb-4">
+        Το AI αναλύει τα δεδομένα...
+      </h2>
+      <p class="text-lg opacity-70 max-w-2xl mx-auto">
+        Σαρώνουμε τις καλύτερες επιχειρήσεις στην πόλη
+        <strong>{{ tripData.city }}</strong> με βάση τη διάθεση "<strong>{{
+          tripData.mood
+        }}</strong
+        >". Αυτό μπορεί να διαρκέσει μερικά δευτερόλεπτα.
+      </p>
+    </div>
+  }
+
+  @if (currentStep() === 4) {
+    <div class="slide wide" [class.fade-out]="isTransitioning()">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="slide-heading mb-0">02. Προτεινόμενο Πρόγραμμα</h2>
+        <div class="flex gap-4">
+          <button class="btn-outline" (click)="goToStep(2)">
+            <i class="fa-solid fa-rotate-left me-2"></i> Αλλαγή Παραμέτρων
+          </button>
+          <button
+            class="action-btn"
+            [disabled]="isSaving()"
+            (click)="saveAiTrip()"
+          >
+            @if (isSaving()) {
+              <i class="fa-solid fa-circle-notch fa-spin me-2"></i>
+              Αποθήκευση...
+            } @else {
+              Αποθήκευση Ταξιδιού
+              <i class="fa-solid fa-cloud-arrow-up ms-2"></i>
+            }
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="ai-itinerary-scroll overflow-y-auto pr-4 h-[550px]"
+        *ngIf="generatedPlan"
+      >
+        @for (day of generatedPlan.days; track day.day) {
+          <div class="ai-day-card mb-6">
+            <h4 class="text-xl font-bold text-emerald-500 mb-4">
+              <i class="fa-solid fa-sun me-2"></i> Ημέρα {{ day.day }}
+            </h4>
+
+            <div class="grid grid-cols-2 gap-4">
+              @for (act of day.activities; track act.title) {
+                <div class="iti-item m-0">
+                  <div class="flex-grow">
+                    <div class="flex justify-between items-start mb-1">
+                      <span
+                        class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded font-bold"
+                        >{{ act.time }}</span
+                      >
+                      <span
+                        *ngIf="act.businessId"
+                        class="text-xs text-emerald-600 font-bold"
+                        ><i class="fa-solid fa-check-circle me-1"></i>
+                        Ταυτοποιήθηκε</span
+                      >
+                    </div>
+                    <strong class="text-lg block text-slate-800">{{
+                      act.title
+                    }}</strong>
+                    <p class="text-sm text-slate-500 mt-2 mb-0 italic">
+                      {{ act.description }}
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
     </div>
   }
 </div>

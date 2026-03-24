@@ -32,6 +32,7 @@ import { MyTripsComponent } from './mainapp-layout/my-trips/my-trips.component';
 import { FavouritesComponent } from './mainapp-layout/favourites/favourites.component';
 import { TripMakerComponent } from './trip-maker/trip-maker.component';
 import { AiTripPlannerComponent } from './mainapp-layout/ai-trip-planner/ai-trip-planner.component';
+import { TripDetailsComponent } from './mainapp-layout/trip-details/trip-details.component';
 
 export const routes: Routes = [
   {
@@ -44,6 +45,8 @@ export const routes: Routes = [
       { path: 'businesses/create', component: CreateBusinessComponent },
       { path: 'businesses/edit/:id', component: EditBusinessComponent },
       { path: 'users', component: UsersComponent },
+      { path: 'privacy-policy', component: PrivacyPolicyComponent },
+      { path: 'terms', component: TermsComponent },
       { path: 'reviews', component: ReviewsComponent },
       { path: '404', component: Error404Component },
       { path: '**', redirectTo: '404' },
@@ -67,9 +70,21 @@ export const routes: Routes = [
         component: AiTripPlannerComponent,
         pathMatch: 'full',
       },
+      {
+        path: 'trip/:name',
+        component: TripDetailsComponent,
+        pathMatch: 'full',
+      },
       { path: 'trip-maker', component: TripMakerComponent, pathMatch: 'full' },
       { path: 'my-trips', component: MyTripsComponent, pathMatch: 'full' },
       { path: 'favourites', component: FavouritesComponent, pathMatch: 'full' },
+      {
+        path: 'privacy-policy',
+        component: PrivacyPolicyComponent,
+        pathMatch: 'full',
+      },
+      { path: 'terms', component: TermsComponent, pathMatch: 'full' },
+      { path: 'contact', component: ContactComponent, pathMatch: 'full' },
       { path: '404', component: Error404Component },
       { path: '**', redirectTo: '404' },
     ],

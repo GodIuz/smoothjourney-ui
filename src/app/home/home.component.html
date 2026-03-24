@@ -8,7 +8,7 @@
         <button class="hero-btn primary" [routerLink]="['/mainapp/ai-planner']">
           Δοκιμή AI Planner
         </button>
-        <button class="hero-btn secondary" [routerLink]="['/mainapp/explore']">
+        <button class="hero-btn secondary" [routerLink]="['/mainapp/home']">
           Εξερεύνηση
         </button>
       </div>
@@ -45,9 +45,12 @@
     <div
       class="business-card"
       *ngFor="let biz of topBusinesses"
-      [routerLink]="['/business', biz.id]"
+      [routerLink]="['/mainapp/business', biz.name]"
     >
-      <div class="biz-img" [style.backgroundImage]="'url(' + biz.image + ')'">
+      <div
+        class="biz-img"
+        [style.background-image]="'url(' + getImageUrl(biz['imageUrl']) + ')'"
+      >
         <div class="biz-category">{{ biz.category }}</div>
         <div class="biz-price">{{ biz.priceLevel }}</div>
       </div>
@@ -132,7 +135,7 @@
         <div
           class="img-side"
           style="
-            background-image: url('https://images.unsplash.com/photo-1555421689-491a97ff2040?q=80&w=800');
+            background-image: url(&quot;https://images.unsplash.com/photo-1555421689-491a97ff2040?q=80&w=800&quot;);
           "
         ></div>
       </div>
@@ -145,19 +148,6 @@
           προφίλ σας.
         </p>
         <div class="icon-float"><i class="fa-solid fa-bullseye"></i></div>
-      </div>
-
-      <div class="feature-card dark">
-        <div class="badge">COMMUNITY</div>
-        <h3>Η γνώμη σας μετράει</h3>
-        <p>
-          Βοηθήστε την κοινότητα και εκπαιδεύστε το AI γράφοντας τη δική σας
-          κριτική.
-        </p>
-
-        <button class="review-btn" [routerLink]="['/reviews/create']">
-          Γράψτε Κριτική
-        </button>
       </div>
     </div>
   </div>

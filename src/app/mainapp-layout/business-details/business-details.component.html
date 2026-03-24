@@ -1,171 +1,129 @@
+<div class="loading-container" *ngIf="isLoading">
+  <i class="fa-solid fa-spinner fa-spin fa-3x text-success mb-3"></i>
+  <h4 class="text-white">Φόρτωση δεδομένων...</h4>
+</div>
+
+<div class="loading-container" *ngIf="!isLoading && !business">
+  <i class="fa-solid fa-circle-exclamation fa-3x text-danger mb-3"></i>
+  <h4 class="text-white">Η επιχείρηση δεν βρέθηκε.</h4>
+  <a routerLink="/mainapp/home" class="btn btn-outline-success mt-3">Επιστροφή</a>
+</div>
+
 <div class="page-wrapper" *ngIf="!isLoading && business">
-  <div
-    class="hero-section"
-    [style.background-image]="'url(' + getImageUrl(business.imageUrl) + ')'"
-  >
+  <div class="hero-section" [style.background-image]="'url(' + getImageUrl(business.imageUrl) + ')'">
     <a routerLink="/mainapp/home" class="btn-back">
       <i class="fa-solid fa-arrow-left fa-lg"></i>
     </a>
-
     <div class="hero-overlay"></div>
-
-    <div
-      class="hero-content container d-flex flex-column align-items-center justify-content-end pb-5"
-    >
+    <div class="hero-content container d-flex flex-column align-items-center justify-content-end pb-5">
       <span class="badge bg-success mb-3 px-4 py-2 fs-6 rounded-pill shadow-sm">
-        {{ business.categoryType }}
+        {{ business.categoryType || business.category }}
       </span>
-
-      <h1
-        class="display-3 fw-bold text-white mb-2 text-center"
-        style="text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9)"
-      >
+      <h1 class="display-3 fw-bold text-white mb-2 text-center" style="text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9)">
         {{ business.name }}
       </h1>
-
       <p class="fs-4 text-white-50 mb-0">
         <i class="fa-solid fa-location-dot text-success me-2"></i>
-        {{ business.city }}
-        <span *ngIf="business.country">, {{ business.country }}</span>
+        {{ business.city }} <span *ngIf="business.country">, {{ business.country }}</span>
       </p>
     </div>
   </div>
 
   <div class="content-container mt-5">
+    
+    <app-ai-summary [businessId]="business.id || business.businessId"></app-ai-summary>
+
     <div class="scam-alert-container" *ngIf="isScamAlertVisible">
       <div class="scam-content">
-        <div class="scam-icon">
-          <i class="fa-solid fa-triangle-exclamation"></i>
-        </div>
+        <div class="scam-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
         <div class="scam-text">
           <strong>⚠️ Προειδοποίηση Scam!</strong>
-          <p>
-            Η συγκεκριμένη επιχείρηση έχει πολύ υψηλό ποσοστό αρνητικών
-            αξιολογήσεων (1 αστέρι). Παρακαλούμε να είστε προσεκτικοί.
-          </p>
+          <p>Η συγκεκριμένη επιχείρηση έχει πολύ υψηλό ποσοστό αρνητικών αξιολογήσεων (1 αστέρι). Παρακαλούμε να είστε προσεκτικοί.</p>
         </div>
       </div>
-      <button class="close-alert-btn" (click)="closeAlert()">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+      <button class="close-alert-btn" (click)="closeAlert()"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <div class="row g-5">
-      <div class="col-lg-8"></div>
-    </div>
-    <div class="row g-5">
       <div class="col-lg-8">
+        
         <div class="custom-card mb-5">
-          <h3 class="section-title">
-            <i class="fa-solid fa-circle-info text-success me-2"></i>Πληροφορίες
-          </h3>
+          <h3 class="section-title"><i class="fa-solid fa-circle-info text-success me-2"></i>Πληροφορίες</h3>
           <p class="lead mb-4" style="line-height: 1.8; opacity: 0.9">
             {{ business.description || "Δεν υπάρχει περιγραφή." }}
           </p>
-          <div class="row g-4">
-            <div class="col-md-6">
+          
+          <div class="info-details-grid mt-4">
+            <div class="info-box">
+              <span class="info-label">Διεύθυνση</span>
+              <div class="info-value">{{ business.address || 'Μη διαθέσιμη' }}</div>
+            </div>
+            <div class="info-box">
+              <span class="info-label">Τηλέφωνο</span>
+              <div class="info-value">{{ business.phone || '-' }}</div>
+            </div>
+            <div class="info-box">
               <span class="info-label">Τιμή</span>
               <div class="info-value text-success fw-bold fs-4">
-                {{
-                  business.priceLevel ? "€".repeat(business.priceLevel) : "-"
-                }}
+                {{ business.priceLevel ? "€".repeat(business.priceLevel) : (business.priceRange || "-") }}
               </div>
+            </div>
+            <div class="info-box">
+              <span class="info-label">Mood Tags</span>
+              <div class="info-value"><span class="badge bg-dark border border-secondary">{{ business.moodTags || '-' }}</span></div>
             </div>
           </div>
         </div>
 
-        <div
-          class="custom-card mb-5 border-success border-opacity-25"
-          style="background: #191919"
-        >
+        <div class="custom-card mb-5 border-success border-opacity-25" style="background: #191919">
           <h4 class="mb-3 text-white">✍️ Γράψτε την αξιολόγησή σας</h4>
-
           <div class="mb-3">
-            <label class="text-muted small mb-2 d-block"
-              >Η Βαθμολογία σας</label
-            >
+            <label class="text-muted small mb-2 d-block">Η Βαθμολογία σας</label>
             <div class="star-rating-input fs-3">
-              <i
-                class="fa-solid fa-star c-pointer"
-                *ngFor="let star of [1, 2, 3, 4, 5]"
-                [class.text-warning]="star <= newReview.rating"
-                [class.text-secondary]="star > newReview.rating"
-                (click)="setRating(star)"
-              ></i>
+              <i class="fa-solid fa-star c-pointer" *ngFor="let star of [1, 2, 3, 4, 5]"
+                 [class.text-warning]="star <= newReview.rating"
+                 [class.text-secondary]="star > newReview.rating"
+                 (click)="setRating(star)"></i>
             </div>
           </div>
-
           <div class="mb-3">
             <textarea
-              class="form-control bg-dark text-white border-secondary"
-              rows="3"
-              placeholder="Πώς ήταν η εμπειρία σας;"
+              class="form-control review-textarea"
+              maxlength="500"
               [(ngModel)]="newReview.comment"
-            ></textarea>
+              placeholder="Πώς ήταν η εμπειρία σας; (έως 500 χαρακτήρες)"></textarea>
+            <div class="char-counter" [class.text-danger]="newReview.comment.length >= 500">
+              {{ newReview.comment.length }} / 500
+            </div>
           </div>
-
-          <button
-            class="btn btn-success fw-bold px-4"
-            (click)="submitReview()"
-            [disabled]="isSubmitting"
-          >
-            <span *ngIf="isSubmitting"
-              ><i class="fa-solid fa-spinner fa-spin"></i> Αποστολή...</span
-            >
+          <button class="btn btn-success fw-bold px-4" (click)="submitReview()" [disabled]="isSubmitting || !newReview.comment.trim()">
+            <span *ngIf="isSubmitting"><i class="fa-solid fa-spinner fa-spin"></i> Αποστολή...</span>
             <span *ngIf="!isSubmitting">Δημοσίευση Κριτικής</span>
           </button>
         </div>
 
-        <h3 class="section-title mb-4">
-          ⭐ Αξιολογήσεις
-          <span class="text-muted">({{ business.reviews?.length || 0 }})</span>
-        </h3>
-
+        <h3 class="section-title mb-4">⭐ Αξιολογήσεις <span class="text-muted">({{ business.reviews?.length || 0 }})</span></h3>
         <div class="review-list">
-          <div
-            class="custom-card mb-3 p-4"
-            *ngFor="let review of business.reviews"
-          >
+          <div class="custom-card mb-3 p-4" *ngFor="let review of business.reviews">
             <div class="d-flex justify-content-between align-items-start mb-3">
               <div class="d-flex align-items-center">
                 <div class="avatar me-3">
-                  {{
-                    (review.user?.firstName || review.userName || "U").charAt(0)
-                      | uppercase
-                  }}
+                  {{ ((review.user?.firstName || review.userName || "U").charAt(0)) | uppercase }}
                 </div>
-
                 <div>
                   <h6 class="fw-bold mb-0 text-white">
-                    {{
-                      review.user
-                        ? review.user.firstName + " " + review.user.lastName
-                        : review.userName || "Ανώνυμος"
-                    }}
+                    {{ review.user ? review.user.firstName + " " + review.user.lastName : review.userName || "Ανώνυμος" }}
                   </h6>
-                  <small class="text-muted">{{
-                    review.createdAt || review.createdDate | date: "mediumDate"
-                  }}</small>
+                  <small class="text-muted">{{ review.createdAt || review.createdDate | date: "mediumDate" }}</small>
                 </div>
               </div>
-
               <div class="text-warning">
-                <i
-                  class="fa-solid fa-star"
-                  *ngFor="let s of getStars(review.rating)"
-                ></i>
+                <i class="fa-solid fa-star" *ngFor="let s of getStars(review.rating)"></i>
               </div>
             </div>
-
-            <p class="mb-0 fst-italic opacity-75">
-              "{{ review.content || review.comment }}"
-            </p>
+            <p class="mb-0 fst-italic opacity-75">"{{ review.content || review.comment }}"</p>
           </div>
-
-          <div
-            *ngIf="!business.reviews?.length"
-            class="text-center py-5 text-muted opacity-50 border border-secondary border-dashed rounded"
-          >
+          <div *ngIf="!business.reviews?.length" class="text-center py-5 text-muted opacity-50 border border-secondary border-dashed rounded">
             <p>Δεν υπάρχουν ακόμα κριτικές. Γίνετε ο πρώτος!</p>
           </div>
         </div>
@@ -176,17 +134,12 @@
           <div class="custom-card text-center py-5">
             <h5 class="info-label mb-4">Συνολική Βαθμολογία</h5>
             <h1 class="display-1 fw-bold text-success mb-0">
-              {{ business.rating | number: "1.1-1" }}
+              {{ (business.averageRating || business.rating) | number: "1.1-1" }}
             </h1>
             <div class="text-warning fs-3 mb-4">
-              <i
-                class="fa-solid fa-star"
-                *ngFor="let s of getStars(business.rating)"
-              ></i>
+              <i class="fa-solid fa-star" *ngFor="let s of getStars(business.averageRating || business.rating)"></i>
             </div>
-            <p class="text-muted">
-              Βασισμένο σε {{ business.reviews?.length || 0 }} κριτικές
-            </p>
+            <p class="text-muted">Βασισμένο σε {{ business.reviews?.length || 0 }} κριτικές</p>
           </div>
         </div>
       </div>

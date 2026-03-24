@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import {
   HttpClient,
-  HttpClientModule,
   HttpHeaders,
   HttpErrorResponse,
 } from '@angular/common/http';
@@ -26,8 +25,6 @@ import { firstValueFrom } from 'rxjs';
 })
 export class TripMakerComponent implements OnInit {
   private http = inject(HttpClient);
-
-  // Το port είναι 7000 όπως μου ζήτησες
   private apiUrl = 'https://localhost:7000';
 
   currentStep = signal(1);
@@ -47,6 +44,8 @@ export class TripMakerComponent implements OnInit {
     startDate: '',
     endDate: '',
     totalBudget: 0,
+    mood: 'Relax',
+    description: '',
   };
 
   availableCities: string[] = [];
@@ -222,6 +221,8 @@ export class TripMakerComponent implements OnInit {
         startDate: this.tripData.startDate,
         endDate: this.tripData.endDate,
         totalBudget: this.tripData.totalBudget,
+        mood: this.tripData.mood,
+        description: this.tripData.description,
       };
 
       const tripRes = await firstValueFrom(

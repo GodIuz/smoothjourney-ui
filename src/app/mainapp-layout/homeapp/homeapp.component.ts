@@ -91,20 +91,6 @@ export class HomeappComponent implements OnInit {
     this.moodTags = Array.from(tagsSet).sort();
   }
 
-  isScam(item: any): boolean {
-    if (this.closedScams.includes(item.businessId)) return false;
-
-    const reviews = item.reviews || [];
-    if (reviews.length === 0) return false;
-
-    const oneStarReviews = reviews.filter((r: any) => r.rating === 1).length;
-    return oneStarReviews / reviews.length > 0.5;
-  }
-
-  closeScamAlert(businessId: number) {
-    this.closedScams.push(businessId);
-    localStorage.setItem('closedScams', JSON.stringify(this.closedScams));
-  }
 
   toggleHiddenGems() {
     this.showHiddenGems = !this.showHiddenGems;

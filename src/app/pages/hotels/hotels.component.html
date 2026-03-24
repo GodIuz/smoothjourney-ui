@@ -1,1 +1,80 @@
-<p>hotels works!</p>
+<div class="sj-category-page">
+  <div class="sj-category-hero text-center">
+    <div class="container">
+      <div class="sj-hero-icon-wrapper mb-3">
+        <i class="fa-solid" [ngClass]="pageInfo.icon"></i>
+      </div>
+      <h1 class="sj-main-title">
+        {{ pageInfo.title }} <span class="sj-highlight">.</span>
+      </h1>
+      <p class="sj-subtitle">{{ pageInfo.subtitle }}</p>
+    </div>
+  </div>
+
+  <div class="container py-5">
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div
+        class="spinner-border text-success"
+        role="status"
+        style="width: 3rem; height: 3rem"
+      ></div>
+      <p class="mt-3 text-muted fw-bold">Αναζήτηση επιχειρήσεων...</p>
+    </div>
+
+    <div
+      *ngIf="!isLoading && businesses.length === 0"
+      class="sj-empty-state text-center py-5"
+    >
+      <i class="fa-solid fa-store-slash display-1 text-muted mb-3"></i>
+      <h3 class="fw-bold">Δεν βρέθηκαν αποτελέσματα</h3>
+      <p class="text-muted">
+        Αυτή τη στιγμή δεν υπάρχουν καταχωρημένες επιχειρήσεις σε αυτή την
+        κατηγορία.
+      </p>
+      <a routerLink="/mainapp/home" class="sj-btn-outline mt-3"
+        >Επιστροφή στην Αρχική</a
+      >
+    </div>
+
+    <div *ngIf="!isLoading && businesses.length > 0" class="sj-business-grid">
+      <div
+        class="business-card"
+        *ngFor="let biz of businesses"
+        [routerLink]="['/mainapp/business', biz.name]"
+      >
+        <div
+          class="biz-img"
+          [style.background-image]="'url(' + getImageUrl(biz.imageUrl) + ')'"
+        >
+          <div class="biz-category">
+            {{ biz.categoryType || pageInfo.title }}
+          </div>
+          <div class="biz-price" *ngIf="biz.priceLevel">
+            {{ biz.priceLevel }}
+          </div>
+        </div>
+
+        <div class="biz-info">
+          <div class="biz-header">
+            <h3>{{ biz.name }}</h3>
+            <div class="biz-rating shadow-sm">
+              <i class="fa-solid fa-star"></i> {{ biz.rating || "N/A" }}
+            </div>
+          </div>
+
+          <p class="biz-location">
+            <i class="fa-solid fa-location-dot"></i>
+            {{ biz.city || biz.location || "Άγνωστη Τοποθεσία" }}
+          </p>
+
+          <div class="biz-footer">
+            <span>{{ biz.reviewsCount || 0 }} αξιολογήσεις</span>
+            <a class="view-btn"
+              >Δείτε περισσότερα <i class="fa-solid fa-arrow-right ms-1"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

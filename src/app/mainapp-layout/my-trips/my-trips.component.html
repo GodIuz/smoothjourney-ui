@@ -1,1 +1,109 @@
-<p>my-trips works!</p>
+<div class="sj-main-layout">
+  <div class="container sj-container">
+    <header class="sj-page-header" *ngIf="!isLoading">
+      <h1 class="sj-page-title">
+        Τα Ταξίδια Μου <span class="title-dot">.</span>
+      </h1>
+      <p class="sj-page-subtext">
+        Διαχειριστείτε τους προορισμούς και τις εμπειρίες σας.
+      </p>
+    </header>
+
+    <div class="sj-loading-state" *ngIf="isLoading">
+      <div class="spinner-ring"></div>
+      <p>Αναζήτηση των ταξιδιών σας...</p>
+    </div>
+
+    <div class="sj-error-state" *ngIf="!isLoading && hasError">
+      <i class="fa-solid fa-triangle-exclamation fa-3x mb-3 text-danger"></i>
+      <h3>Κάτι πήγε στραβά</h3>
+      <p>
+        Δεν μπορέσαμε να φορτώσουμε τα ταξίδια σας. Δοκιμάστε να ανανεώσετε τη
+        σελίδα.
+      </p>
+      <button class="sj-btn-outline" (click)="fetchMyTrips()">
+        Δοκιμή Ξανά
+      </button>
+    </div>
+
+    <section
+      class="sj-empty-state"
+      *ngIf="!isLoading && !hasError && trips.length === 0"
+    >
+      <div class="sj-empty-content">
+        <div class="sj-empty-icon-wrapper">
+          <i class="fa-solid fa-earth-europe sj-empty-icon"></i>
+          <div class="sj-icon-glow"></div>
+        </div>
+
+        <h2 class="sj-empty-title">Ο επόμενος προορισμός σας περιμένει</h2>
+        <p class="sj-empty-subtext">
+          Φαίνεται πως ο χάρτης σας είναι ακόμα άδειος. Χρησιμοποιήστε την
+          τεχνητή νοημοσύνη μας για να ανακαλύψετε το τέλειο ταξίδι.
+        </p>
+
+        <a routerLink="/mainapp/ai-planner" class="sj-btn-primary">
+          <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Δημιουργία Νέου
+          Ταξιδιού
+        </a>
+      </div>
+    </section>
+
+    <section
+      class="sj-trip-grid"
+      *ngIf="!isLoading && !hasError && trips.length > 0"
+    >
+      <div class="sj-trip-card" *ngFor="let trip of trips">
+        <div
+          class="sj-card-badge"
+          [ngClass]="
+            getTripStatus(trip.startDate) === 'upcoming'
+              ? 'badge-upcoming'
+              : 'badge-completed'
+          "
+        >
+          {{
+            getTripStatus(trip.startDate) === "upcoming"
+              ? "Προγραμματισμένο"
+              : "Ολοκληρωμένο"
+          }}
+        </div>
+
+        <div class="sj-card-image-wrapper">
+          <img
+            [src]="getImageUrl(trip.imageUrl)"
+            [alt]="trip.destination"
+            class="sj-card-image"
+          />
+          <div class="sj-card-overlay"></div>
+        </div>
+
+        <div class="sj-card-body">
+          <h3 class="sj-card-title">{{ trip.destination }}</h3>
+
+          <div class="sj-card-info">
+            <div class="sj-info-item">
+              <i class="fa-regular fa-calendar text-success"></i>
+              <span>{{ trip.startDate | date: "dd MMM yyyy" }}</span>
+            </div>
+            <div class="sj-info-item">
+              <i class="fa-solid fa-wallet text-success"></i>
+              <span>{{ trip.totalBudget }}€</span>
+            </div>
+          </div>
+
+          <div class="sj-card-mood">
+            <span class="sj-mood-tag">{{ trip.mood }}</span>
+          </div>
+
+          <a
+            [routerLink]="['/mainapp/trip', trip.destination]"
+            class="sj-btn-secondary"
+          >
+            Δείτε το πρόγραμμα <i class="fa-solid fa-arrow-right-long ms-2"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
