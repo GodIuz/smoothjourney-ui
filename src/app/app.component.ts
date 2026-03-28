@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { ToastComponent } from './shared/toast/toast.component';
 import { RefreshIndicatorComponent } from './shared/refresh-indicator/refresh-indicator.component';
 import { IdleWarningComponent } from './shared/idle-warning/idle-warning.component';
 import { AuthService } from './services/auth.service';
+import { AutoLogoutService } from './services/autologout.service';
 
 @Component({
   selector: 'app-root',
@@ -20,21 +21,12 @@ import { AuthService } from './services/auth.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  constructor(
-    private AuthService: AuthService,
-    private router: Router,
-  ) {}
+  private authService = inject(AuthService);
+  private autoLogoutService = inject(AutoLogoutService);
 
   ngOnInit() {
-    const token = localStorage.getItem('token');
-    if (
-      !token &&
-      window.location.pathname !== '/login' &&
-      window.location.pathname !== '/register'
-    ) {
-      this.router.navigate(['/login']);
-    } else if (token && window.location.pathname === '/') {
-      this.router.navigate(['/mainapp/home']);
+    if (this.authService.isLoggedIn()) {
+      this.autoLogoutService.startWatching();
     }
   }
 }

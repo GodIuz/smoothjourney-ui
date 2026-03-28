@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -11,6 +11,7 @@ import { BusinessService } from '../../services/business.service';
 import { PhotoService } from '../../services/photo.service';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { AdminService } from '../../services/admin-service.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-business-form',
@@ -31,6 +32,7 @@ import { AdminService } from '../../services/admin-service.service';
   ],
 })
 export class CreateBusinessComponent implements OnInit {
+  private toastService = inject(ToastService);
   form: FormGroup;
   isLoading = false;
   isEditMode = false;
@@ -158,6 +160,7 @@ export class CreateBusinessComponent implements OnInit {
         },
         error: (err) => {
           console.error('❌ Το ID δεν βρέθηκε:', err);
+          this.toastService.showError('❌ Το ID δεν βρέθηκε');
           this.router.navigate(['/admin/businesses']);
         },
       });
@@ -172,7 +175,7 @@ export class CreateBusinessComponent implements OnInit {
           this.form.patchValue({ imageUrl: res.url });
           this.previewUrl = 'https://localhost:7000' + res.url;
         },
-        error: (err) => alert('Το ανέβασμα απέτυχε!'),
+        error: (err) => this.toastService.showError('Το ανέβασμα απέτυχε!'),
       });
     }
   }
@@ -180,7 +183,9 @@ export class CreateBusinessComponent implements OnInit {
   onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      alert('Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία (κοκκινισμένα).');
+      this.toastService.showInfo(
+        'Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία (κοκκινισμένα).',
+      );
       return;
     }
 

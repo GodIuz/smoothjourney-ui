@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-reviews',
@@ -11,6 +12,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class ReviewsComponent implements OnInit {
   private http = inject(HttpClient);
+  private toastService = inject(ToastService);
   reviews = signal<any[]>([]);
   isLoading = signal(true);
 
@@ -56,13 +58,12 @@ export class ReviewsComponent implements OnInit {
         .delete(`${this.apiUrl}/delete-review/${id}`, { headers })
         .subscribe({
           next: () => {
-            // Ενημέρωση του signal αφαιρώντας τη διεγραμμένη κριτική
             this.reviews.update((prev) => prev.filter((r) => r.id !== id));
             console.log(`Review ${id} deleted successfully.`);
           },
           error: (err) => {
             console.error('Σφάλμα κατά τη διαγραφή:', err);
-            alert(
+            this.toastService.showError(
               'Δεν ήταν δυνατή η διαγραφή της κριτικής. Ελέγξτε τα δικαιώματά σας.',
             );
           },

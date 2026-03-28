@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProfileService } from '../../services/profile.service';
+import { ToastService } from '../../services/toast.service';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -15,6 +16,7 @@ import { HttpClient } from '@angular/common/http';
 export class ProfileComponent implements OnInit {
   private profileService = inject(ProfileService);
   private http = inject(HttpClient);
+  private toastService = inject(ToastService);
   myReviews: any[] = [];
   user: any = {};
   isLoading = false;
@@ -53,6 +55,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.error('❌ Error loading profile:', err);
+        this.toastService.showError('Σφάλμα κατά τη φόρτωση του προφίλ.');
         this.isLoading = false;
       },
     });
@@ -62,13 +65,13 @@ export class ProfileComponent implements OnInit {
     this.isLoading = true;
     this.profileService.updateProfile(this.user).subscribe({
       next: (res) => {
-        alert('Το προφίλ ενημερώθηκε επιτυχώς!');
+        this.toastService.showSuccess('Το προφίλ ενημερώθηκε επιτυχώς!');
         this.isLoading = false;
         this.activeTab = 'overview';
       },
       error: (err) => {
         console.error(err);
-        alert('Σφάλμα κατά την ενημέρωση.');
+        this.toastService.showError('Σφάλμα κατά την ενημέρωση.');
         this.isLoading = false;
       },
     });
@@ -91,6 +94,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.error('❌ Σφάλμα κατά τη φόρτωση των κριτικών:', err);
+        this.toastService.showError('Σφάλμα κατά τη φόρτωση των κριτικών.');
         this.isLoadingReviews = false;
       },
     });
@@ -101,19 +105,19 @@ export class ProfileComponent implements OnInit {
   }
 
   changePassword() {
-    // 1. Έλεγχος αν τα πεδία είναι γεμάτα
     if (
       !this.passwordData.currentPassword ||
       !this.passwordData.newPassword ||
       !this.passwordData.confirmPassword
     ) {
-      alert('Παρακαλώ συμπληρώστε όλα τα πεδία.');
+      this.toastService.showError('Παρακαλώ συμπληρώστε όλα τα πεδία.');
       return;
     }
 
-    // 2. Έλεγχος αν ταυτίζονται οι νέοι κωδικοί
     if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-      alert('Ο νέος κωδικός και η επιβεβαίωση δεν ταιριάζουν!');
+      this.toastService.showError(
+        'Ο νέος κωδικός και η επιβεβαίωση δεν ταιριάζουν!',
+      );
       return;
     }
 
@@ -126,7 +130,7 @@ export class ProfileComponent implements OnInit {
 
     this.http.post(`${this.apiUrl}/Auth/change-password`, payload).subscribe({
       next: (res: any) => {
-        alert('Ο κωδικός σας άλλαξε επιτυχώς!');
+        this.toastService.showSuccess('Ο κωδικός σας άλλαξε επιτυχώς!');
         this.passwordData = {
           currentPassword: '',
           newPassword: '',
@@ -136,7 +140,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.error('Σφάλμα:', err);
-        alert(err.error?.message || 'Σφάλμα κατά την αλλαγή κωδικού.');
+        this.toastService.showError('Σφάλμα κατά την αλλαγή κωδικού.');
         this.isLoadingPassword = false;
       },
     });

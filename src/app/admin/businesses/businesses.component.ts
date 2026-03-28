@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { BusinessService } from '../../services/business.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-admin-businesses',
@@ -12,6 +13,7 @@ import { BusinessService } from '../../services/business.service';
 })
 export class BusinessesComponent implements OnInit {
   private businessService = inject(BusinessService);
+  private toastService = inject(ToastService);
 
   businesses = signal<any[]>([]);
   isLoading = signal(false);
@@ -42,6 +44,7 @@ export class BusinessesComponent implements OnInit {
       },
       error: (err) => {
         console.error('API Error:', err);
+        this.toastService.showError('❌ API Error');
         this.isLoading.set(false);
       },
     });
@@ -72,7 +75,7 @@ export class BusinessesComponent implements OnInit {
         next: () => {
           this.businesses.update((prev) => prev.filter((b) => b.id !== id));
         },
-        error: (err) => alert('Σφάλμα κατά τη διαγραφή.'),
+        error: (err) => this.toastService.showError('Σφάλμα κατά τη διαγραφή.'),
       });
     }
   }

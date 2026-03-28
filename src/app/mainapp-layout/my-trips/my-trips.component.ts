@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Trip } from '../interfaces/trip.interface';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-my-trips',
@@ -12,6 +13,7 @@ import { Trip } from '../interfaces/trip.interface';
 })
 export class MyTripsComponent implements OnInit {
   private http = inject(HttpClient);
+  private toastService = inject(ToastService);
   private apiUrl = 'https://localhost:7000';
   trips: Trip[] = [];
   isLoading: boolean = true;
@@ -32,6 +34,9 @@ export class MyTripsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Σφάλμα κατά τη φόρτωση των ταξιδιών:', err);
+        this.toastService.showError(
+          'Σφάλμα κατά τη φόρτωση των ταξιδιών. Παρακαλώ δοκιμάστε ξανά αργότερα.',
+        );
         this.hasError = true;
         this.isLoading = false;
       },

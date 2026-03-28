@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { BusinessService } from '../../services/business.service';
+import { ToastService } from '../../services/toast.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -13,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class HomeappComponent implements OnInit {
   private businessService = inject(BusinessService);
+  private toastService = inject(ToastService);
   private apiUrl = 'https://localhost:7000';
   searchTerm: string = '';
   rawData: any[] = [];
@@ -90,7 +92,6 @@ export class HomeappComponent implements OnInit {
     });
     this.moodTags = Array.from(tagsSet).sort();
   }
-
 
   toggleHiddenGems() {
     this.showHiddenGems = !this.showHiddenGems;
@@ -220,7 +221,7 @@ export class HomeappComponent implements OnInit {
   toggleFavorite(event: Event, businessId: number) {
     event.stopPropagation();
     if (!localStorage.getItem('token')) {
-      alert('Login required');
+      this.toastService.showInfo('Login required');
       return;
     }
 

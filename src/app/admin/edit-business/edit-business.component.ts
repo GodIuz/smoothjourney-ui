@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -10,6 +10,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BusinessService } from '../../services/business.service';
 import { PhotoService } from '../../services/photo.service';
 import { AdminService } from '../../services/admin-service.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-edit-business',
@@ -19,6 +20,7 @@ import { AdminService } from '../../services/admin-service.service';
   styleUrl: './edit-business.component.css',
 })
 export class EditBusinessComponent implements OnInit {
+  private toastService = inject(ToastService);
   form: FormGroup;
   businessId: number = 0;
   previewUrl: string | null = null;
@@ -172,7 +174,7 @@ export class EditBusinessComponent implements OnInit {
           this.form.patchValue({ imageUrl: res.url });
           this.previewUrl = this.getImageUrl(res.url);
         },
-        error: () => alert('Upload failed'),
+        error: () => this.toastService.showError('Upload failed'),
       });
     }
   }
@@ -187,12 +189,14 @@ export class EditBusinessComponent implements OnInit {
 
     this.adminService.updateBusiness(this.businessId, dto).subscribe({
       next: () => {
-        alert('Επιτυχία!');
+        this.toastService.showSuccess('Επιτυχία!');
         this.router.navigate(['/admin/businesses']);
       },
       error: (err) => {
         console.error(err);
-        alert('Σφάλμα κατά την ενημέρωση. Ελέγξτε την κονσόλα.');
+        this.toastService.showError(
+          'Σφάλμα κατά την ενημέρωση. Ελέγξτε την κονσόλα.',
+        );
       },
     });
   }

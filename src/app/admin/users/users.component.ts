@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../../services/user-service.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-users',
@@ -12,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class UsersComponent implements OnInit {
   private userService = inject(UserService);
-
+  private toastService = inject(ToastService);
   users: any[] = [];
   selectedUser: any = null;
   isLoading = false;
@@ -57,12 +58,12 @@ export class UsersComponent implements OnInit {
           if (index !== -1) {
             this.users[index] = { ...this.editingUser };
           }
-          alert('Τα στοιχεία ενημερώθηκαν!');
+          this.toastService.showError('Τα στοιχεία ενημερώθηκαν!');
           this.closeEditModal();
         },
         error: (err) => {
           console.error(err);
-          alert('Σφάλμα κατά την ενημέρωση.');
+          this.toastService.showError('Σφάλμα κατά την ενημέρωση.');
         },
       });
   }
@@ -76,9 +77,12 @@ export class UsersComponent implements OnInit {
       this.userService.promoteToAdmin(user.userId).subscribe({
         next: () => {
           user.role = 'Admin';
-          alert(`Ο χρήστης ${user.userName} είναι πλέον Admin!`);
+          this.toastService.showError(
+            `Ο χρήστης ${user.userName} είναι πλέον Admin!`,
+          );
         },
-        error: (err) => alert('Κάτι πήγε στραβά με την αναβάθμιση.'),
+        error: (err) =>
+          this.toastService.showError('Κάτι πήγε στραβά με την αναβάθμιση.'),
       });
     }
   }
@@ -89,7 +93,7 @@ export class UsersComponent implements OnInit {
         next: () => {
           this.users = this.users.filter((u) => u.userId !== id);
         },
-        error: () => alert('Σφάλμα διαγραφής.'),
+        error: () => this.toastService.showError('Σφάλμα διαγραφής.'),
       });
     }
   }

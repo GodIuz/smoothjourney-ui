@@ -34,6 +34,7 @@ import { TripMakerComponent } from './trip-maker/trip-maker.component';
 import { AiTripPlannerComponent } from './mainapp-layout/ai-trip-planner/ai-trip-planner.component';
 import { TripDetailsComponent } from './mainapp-layout/trip-details/trip-details.component';
 import { MessagesComponent } from './admin/messages/messages.component';
+import { guestGuard } from './guards/guest.guard';
 
 export const routes: Routes = [
   {
@@ -97,14 +98,26 @@ export const routes: Routes = [
     component: LandingLayoutComponent,
     children: [
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
+      { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+      {
+        path: 'register',
+        component: RegisterComponent,
+        canActivate: [guestGuard],
+      },
       { path: 'contact', component: ContactComponent },
       { path: 'privacy-policy', component: PrivacyPolicyComponent },
       { path: 'cookie-policy', component: CookiePolicyComponent },
       { path: 'terms', component: TermsComponent },
-      { path: 'forgot-password', component: ForgotPasswordComponent },
-      { path: 'reset-password', component: ResetPasswordComponent },
+      {
+        path: 'forgot-password',
+        component: ForgotPasswordComponent,
+        canActivate: [guestGuard],
+      },
+      {
+        path: 'reset-password',
+        component: ResetPasswordComponent,
+        canActivate: [guestGuard],
+      },
       { path: 'hotels', component: HotelsComponent },
       { path: 'restaurants', component: RestaurantsComponent },
       { path: 'attractions', component: AttractionsComponent },

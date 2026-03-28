@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ContactMessage } from '../interfaces/contactmessage.interface';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-messages',
@@ -12,6 +13,7 @@ import { ContactMessage } from '../interfaces/contactmessage.interface';
 })
 export class MessagesComponent implements OnInit {
   private http = inject(HttpClient);
+  private toastService = inject(ToastService);
   messages = signal<ContactMessage[]>([]);
   isLoading = signal(true);
 
@@ -35,6 +37,7 @@ export class MessagesComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error fetching messages:', err);
+          this.toastService.showError('Error fetching messages');
           this.isLoading.set(false);
         },
       });
@@ -49,7 +52,7 @@ export class MessagesComponent implements OnInit {
         next: () => {
           this.messages.update((msgs) => msgs.filter((m) => m.id !== id));
         },
-        error: (err) => alert('Σφάλμα κατά τη διαγραφή.'),
+        error: (err) => this.toastService.showError('Σφάλμα κατά τη διαγραφή.'),
       });
     }
   }

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AutoLogoutService } from '../../services/autologout.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-idle-warning',
@@ -9,25 +10,18 @@ import { AutoLogoutService } from '../../services/autologout.service';
   templateUrl: './idle-warning.component.html',
   styleUrls: ['./idle-warning.component.css'],
 })
-export class IdleWarningComponent implements OnInit {
-  isVisible = false;
-  countdown = 60;
-
-  constructor(private AutoLogoutService: AutoLogoutService) {}
-
-  ngOnInit() {
-    this.AutoLogoutService.showWarning$.subscribe(
-      (visible) => (this.isVisible = visible),
-    );
-    this.AutoLogoutService.countdown$.subscribe(
-      (time) => (this.countdown = time),
-    );
-  }
+export class IdleWarningComponent {
+  private autoLogoutService = inject(AutoLogoutService);
+  isVisible = toSignal(this.autoLogoutService.showWarning$, {
+    initialValue: false,
+  });
+  countdown = toSignal(this.autoLogoutService.countdown$, { initialValue: 60 });
 
   stay() {
-    this.AutoLogoutService.keepSessionAlive();
+    this.autoLogoutService.keepSessionAlive();
   }
+
   logout() {
-    this.AutoLogoutService.resetTimer();
+    this.autoLogoutService.logoutUser();
   }
 }

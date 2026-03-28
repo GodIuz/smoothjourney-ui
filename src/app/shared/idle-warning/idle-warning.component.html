@@ -1,12 +1,30 @@
-<div class="idle-overlay" *ngIf="isVisible">
-  <div class="idle-modal">
-    <div class="icon">⌛</div>
-    <h3>Αδράνεια Λογαριασμού</h3>
-    <p>Φαίνεται ότι είστε ανενεργός. Η συνεδρία σας λήγει σε:</p>
-    <div class="timer">{{ countdown }}s</div>
-    <div class="actions">
-      <button class="stay-btn" (click)="stay()">Παραμονή</button>
-      <button class="logout-btn" (click)="logout()">Αποσύνδεση</button>
+@if (isVisible()) {
+  <div
+    class="sj-idle-overlay animate__animated animate__fadeIn"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="idle-title"
+  >
+    <div class="sj-idle-modal animate__animated animate__zoomIn">
+      <div class="sj-idle-icon">
+        <i class="fa-solid fa-hourglass-half fa-bounce"></i>
+      </div>
+
+      <h3 id="idle-title" class="text-white mt-3">Αδράνεια Λογαριασμού</h3>
+      <p class="text-muted text-center mt-2">
+        Φαίνεται ότι είστε ανενεργός. Η συνεδρία σας λήγει σε:
+      </p>
+
+      <div class="sj-timer">{{ countdown() }}<span>s</span></div>
+
+      <div class="sj-actions">
+        <button class="sj-btn sj-btn-stay" (click)="stay()">
+          <i class="fa-solid fa-check me-2"></i> Παραμονή
+        </button>
+        <button class="sj-btn sj-btn-logout" (click)="logout()">
+          Αποσύνδεση <i class="fa-solid fa-right-from-bracket ms-2"></i>
+        </button>
+      </div>
     </div>
   </div>
-</div>
+}

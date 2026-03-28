@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private http = inject(HttpClient);
+  private toastService = inject(ToastService);
   returnUrl: string = '/mainapp/home';
 
   loginObj = {
@@ -67,8 +69,8 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         console.error('Σφάλμα σύνδεσης:', err);
-        this.errorMessage =
-          err.error?.message || err.error || 'Λάθος στοιχεία σύνδεσης.';
+        this.errorMessage = err.error?.message || err.error;
+        this.toastService.showError('Λάθος στοιχεία σύνδεσης.');
         this.isLoading = false;
       },
     });

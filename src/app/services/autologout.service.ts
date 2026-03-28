@@ -1,92 +1,82 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, Observable } from 'rxjs';
+import { BehaviorSubject, fromEvent, merge, Subscription, timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AutoLogoutService {
-  private readonly IDLE_LIMIT = 14 * 60 * 1000;
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private readonly IDLE_TIME = 15 * 60 * 1000;
   private readonly COUNTDOWN_TIME = 60;
-  private timerId: any;
+  private showWarningSubject = new BehaviorSubject<boolean>(false);
+  public showWarning$ = this.showWarningSubject.asObservable();
+  private countdownSubject = new BehaviorSubject<number>(this.COUNTDOWN_TIME);
+  public countdown$ = this.countdownSubject.asObservable();
+  private activitySubscription: Subscription | null = null;
   private countdownInterval: any;
-  private showWarningSource = new Subject<boolean>();
-  public showWarning$ = this.showWarningSource.asObservable();
 
-  private countdownSource = new Subject<number>();
-  public countdown$ = this.countdownSource.asObservable();
+  startWatching() {
+    this.stopWatching();
 
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-    private ngZone: NgZone,
-  ) {
-    this.setupActivityListeners();
-    this.startTimer();
-  }
+    if (!this.authService.isLoggedIn()) return;
 
-  private setupActivityListeners() {
-    this.ngZone.runOutsideAngular(() => {
-      const events = ['mousemove', 'keydown', 'click', 'wheel', 'touchstart'];
-      events.forEach((event) => {
-        window.addEventListener(event, () => this.resetTimer());
+    const activityEvents$ = merge(
+      fromEvent(document, 'mousemove'),
+      fromEvent(document, 'keydown'),
+      fromEvent(document, 'click'),
+      fromEvent(document, 'scroll'),
+    );
+
+    this.activitySubscription = activityEvents$
+      .pipe(switchMap(() => timer(this.IDLE_TIME)))
+      .subscribe(() => {
+        this.triggerWarning();
       });
-    });
   }
 
-  public resetTimer() {
-    if (this.countdownInterval) return;
-
-    this.clearTimers();
-    this.startTimer();
+  stopWatching() {
+    if (this.activitySubscription) {
+      this.activitySubscription.unsubscribe();
+    }
+    clearInterval(this.countdownInterval);
   }
 
-  private startTimer() {
-    this.timerId = setTimeout(() => {
-      this.ngZone.run(() => this.initiateCountdown());
-    }, this.IDLE_LIMIT);
-  }
+  private triggerWarning() {
+    if (this.activitySubscription) {
+      this.activitySubscription.unsubscribe();
+    }
 
-  private initiateCountdown() {
-    this.showWarningSource.next(true);
+    this.showWarningSubject.next(true);
     let timeLeft = this.COUNTDOWN_TIME;
-    this.countdownSource.next(timeLeft);
+    this.countdownSubject.next(timeLeft);
 
     this.countdownInterval = setInterval(() => {
       timeLeft--;
-      this.countdownSource.next(timeLeft);
+      this.countdownSubject.next(timeLeft);
 
       if (timeLeft <= 0) {
-        this.forceLogout();
+        this.logoutUser();
       }
     }, 1000);
   }
 
-  public keepSessionAlive() {
-    this.authService
-      .refreshToken({
-        refreshToken: localStorage.getItem('refreshToken') || '',
-      })
-      .subscribe({
-        next: () => {
-          this.showWarningSource.next(false);
-          this.clearTimers();
-          this.startTimer();
-        },
-        error: () => this.forceLogout(),
-      });
+  keepSessionAlive() {
+    clearInterval(this.countdownInterval);
+    this.showWarningSubject.next(false);
+    this.startWatching();
   }
 
-  public forceLogout() {
-    this.clearTimers();
-    this.showWarningSource.next(false);
+  logoutUser() {
+    this.stopWatching();
+    this.showWarningSubject.next(false);
     this.authService.logout();
   }
 
-  private clearTimers() {
-    if (this.timerId) clearTimeout(this.timerId);
-    if (this.countdownInterval) clearInterval(this.countdownInterval);
-    this.countdownInterval = null;
+  resetTimer() {
+    this.keepSessionAlive();
   }
 }

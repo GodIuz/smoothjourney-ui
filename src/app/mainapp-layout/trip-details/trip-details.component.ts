@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-trip-details',
@@ -13,6 +14,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 export class TripDetailsComponent implements OnInit {
   private http = inject(HttpClient);
   private route = inject(ActivatedRoute);
+  private toastService = inject(ToastService);
   private apiUrl = 'https://localhost:7000';
 
   trip: any = null;
@@ -44,6 +46,7 @@ export class TripDetailsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Σφάλμα κατά τη φόρτωση λεπτομερειών:', err);
+        this.toastService.showError('Σφάλμα κατά τη φόρτωση λεπτομερειών.');
         this.hasError = true;
         this.isLoading = false;
       },
