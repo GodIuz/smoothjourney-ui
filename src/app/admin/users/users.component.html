@@ -1,301 +1,154 @@
-<div class="container-fluid py-5">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="fw-bold text-dark mb-0">👥 Διαχείριση Χρηστών</h2>
-      <p class="text-muted small mt-1">
-        Επεξεργασία, Προαγωγή και Διαγραφή χρηστών.
+<div class="sj-users-wrapper animate__animated animate__fadeIn">
+  <div class="sj-page-header">
+    <div class="header-content">
+      <h1 class="sj-title">
+        Διαχείριση <span class="sj-accent">Χρηστών</span>
+      </h1>
+      <p class="sj-subtitle">
+        Συνολικά: {{ users.length }} εγγεγραμμένοι χρήστες.
       </p>
     </div>
-    <span class="badge bg-primary fs-6 shadow-sm"
-      >{{ users.length }} Εγγεγραμμένοι</span
-    >
+    <div class="header-actions">
+      <button
+        class="sj-refresh-btn"
+        (click)="loadUsers()"
+        [disabled]="isLoading"
+      >
+        <i class="fa-solid fa-rotate" [class.fa-spin]="isLoading"></i>
+      </button>
+    </div>
   </div>
 
-  <div *ngIf="isLoading" class="text-center my-5">
-    <div class="spinner-border text-primary" role="status"></div>
-  </div>
-
-  <div *ngIf="!isLoading" class="card shadow-sm">
-    <div class="table-responsive">
-      <table class="table mb-0 text-nowrap align-middle">
-        <thead class="bg-light">
-          <tr>
-            <th class="ps-4">User Info</th>
-            <th>Role</th>
-            <th>Contact</th>
-            <th>Full Name</th>
-            <th>Location</th>
-            <th>Bio Data</th>
-            <th class="text-end pe-4">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of users">
-            <td class="ps-4">
-              <div class="d-flex align-items-center">
-                <div
-                  class="avatar-circle text-white me-2"
-                  [ngClass]="user.role === 'Admin' ? 'bg-danger' : 'bg-primary'"
-                >
-                  <span
-                    *ngIf="user.firstName && user.lastName"
-                    style="font-size: 0.85rem"
-                  >
-                    {{ user.firstName.charAt(0) | uppercase
-                    }}{{ user.lastName.charAt(0) | uppercase }}
-                  </span>
-                  <span *ngIf="!user.firstName || !user.lastName">
-                    {{ user.userName?.charAt(0) | uppercase }}
-                  </span>
+  <div class="sj-users-list mt-5">
+    @if (isLoading) {
+      <div class="sj-loader text-center py-5">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2 text-muted">Φόρτωση χρηστών...</p>
+      </div>
+    } @else {
+      <div class="row g-4">
+        @for (user of users; track user.userId) {
+          <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="sj-user-card text-center">
+              <div class="sj-avatar-wrapper mx-auto mb-3">
+                <div class="sj-avatar">
+                  {{
+                    user.userName ? user.userName.charAt(0).toUpperCase() : "U"
+                  }}
                 </div>
-                <div>
-                  <div class="fw-bold text-dark">{{ user.userName }}</div>
-                  <small
-                    class="text-muted"
-                    *ngIf="user.firstName && user.lastName"
-                  >
-                    {{ user.firstName }} {{ user.lastName }}
-                  </small>
-                </div>
+                @if (user.role === "Admin") {
+                  <span class="sj-role-icon admin" title="Administrator">
+                    <i class="fa-solid fa-shield-halved"></i>
+                  </span>
+                }
               </div>
-            </td>
 
-            <td>
-              <span
-                class="badge rounded-pill"
-                [ngClass]="user.role === 'Admin' ? 'bg-danger' : 'bg-success'"
+              <h3 class="sj-user-name mb-1">
+                {{ user.userName || "Unknown User" }}
+              </h3>
+              <p class="sj-user-email text-muted small mb-2">
+                {{ user.email || "Χωρίς Email" }}
+              </p>
+
+              <div
+                class="sj-badge mb-4"
+                [ngClass]="
+                  user.role === 'Admin' ? 'sj-badge-admin' : 'sj-badge-user'
+                "
               >
                 {{ user.role || "User" }}
-              </span>
-            </td>
-
-            <td class="text-muted">{{ user.email }}</td>
-
-            <td>{{ user.firstName }} {{ user.lastName }}</td>
-
-            <td>
-              <div *ngIf="user.city || user.country">
-                {{ user.city }}<span *ngIf="user.city && user.country">, </span
-                >{{ user.country }}
               </div>
-              <span *ngIf="!user.city && !user.country" class="text-muted"
-                >-</span
-              >
-            </td>
 
-            <td>
-              <small class="d-block text-muted"
-                >Born: {{ user.dateOfBirth | date: "dd/MM/yyyy" }}</small
+              <div
+                class="sj-card-actions border-top border-secondary pt-3 d-flex justify-content-center gap-2"
               >
-              <small class="d-block text-muted"
-                >Gen: {{ user.gender || "-" }}</small
-              >
-            </td>
-
-            <td class="text-end pe-4">
-              <button
-                class="btn btn-action btn-outline-primary me-2"
-                (click)="openEditModal(user)"
-                title="Επεξεργασία"
-              >
-                ✏️
-              </button>
-
-              <button
-                *ngIf="user.role !== 'Admin'"
-                class="btn btn-action btn-outline-warning me-2"
-                (click)="makeAdmin(user)"
-                title="Προαγωγή σε Admin"
-              >
-                👑
-              </button>
-
-              <button
-                class="btn btn-action btn-outline-danger"
-                (click)="onDelete(user.userId)"
-                title="Διαγραφή"
-              >
-                🗑️
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-<div
-  class="modal fade"
-  [class.show]="editingUser"
-  [style.display]="editingUser ? 'block' : 'none'"
-  tabindex="-1"
->
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content border-0 shadow-lg" *ngIf="editingUser">
-      <div class="modal-header bg-primary text-white px-4">
-        <div>
-          <h5 class="modal-title fw-bold mb-1">✏️ Επεξεργασία Προφίλ</h5>
-          <p class="mb-0 small opacity-75">
-            Χρήστης: {{ editingUser.userName }}
-          </p>
-        </div>
-        <button
-          type="button"
-          class="btn-close btn-close-white"
-          (click)="closeEditModal()"
-        ></button>
-      </div>
-
-      <div class="modal-body p-4 bg-light-subtle">
-        <form>
-          <h6 class="text-primary fw-bold mb-3 text-uppercase small ls-1">
-            👤 Προσωπικα Στοιχεια
-          </h6>
-          <div class="row g-3 mb-4">
-            <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted"
-                >First Name</label
-              >
-              <div class="input-group">
-                <span class="input-group-text bg-white text-muted"
-                  ><i class="bi bi-person"></i
-                ></span>
-                <input
-                  type="text"
-                  class="form-control fw-medium"
-                  [(ngModel)]="editingUser.firstName"
-                  name="firstName"
-                  placeholder="Όνομα"
-                />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted"
-                >Last Name</label
-              >
-              <div class="input-group">
-                <span class="input-group-text bg-white text-muted"
-                  ><i class="bi bi-person-fill"></i
-                ></span>
-                <input
-                  type="text"
-                  class="form-control fw-medium"
-                  [(ngModel)]="editingUser.lastName"
-                  name="lastName"
-                  placeholder="Επώνυμο"
-                />
-              </div>
-            </div>
-          </div>
-
-          <h6 class="text-primary fw-bold mb-3 text-uppercase small ls-1">
-            📍 Τοποθεσια & Επαφη
-          </h6>
-          <div class="row g-3 mb-3">
-            <div class="col-12">
-              <label class="form-label fw-bold small text-muted"
-                >Email Address</label
-              >
-              <div class="input-group">
-                <span class="input-group-text bg-white text-muted">✉️</span>
-                <input
-                  type="email"
-                  class="form-control fw-medium"
-                  [(ngModel)]="editingUser.email"
-                  name="email"
-                  placeholder="name@example.com"
-                />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted">City</label>
-              <div class="input-group">
-                <span class="input-group-text bg-white text-muted">🏙️</span>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="editingUser.city"
-                  name="city"
-                  placeholder="Πόλη"
-                />
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted">Country</label>
-              <div class="input-group">
-                <span class="input-group-text bg-white text-muted">🌍</span>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="editingUser.country"
-                  name="country"
-                  placeholder="Χώρα"
-                />
-              </div>
-            </div>
-          </div>
-
-          <hr class="my-4 text-muted opacity-25" />
-
-          <div class="row g-3 align-items-end">
-            <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted">Gender</label>
-              <div class="input-group">
-                <span class="input-group-text bg-white text-muted">⚧</span>
-                <select
-                  class="form-select fw-medium pointer"
-                  [(ngModel)]="editingUser.gender"
-                  name="gender"
+                <button
+                  class="sj-action-btn edit"
+                  (click)="openEditModal(user)"
+                  title="Επεξεργασία"
                 >
-                  <option value="" disabled>Επιλογή φύλου</option>
-                  <option value="Male">Άνδρας (Male)</option>
-                  <option value="Female">Γυναίκα (Female)</option>
-                  <option value="Other">Άλλο (Other)</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold small text-muted"
-                >Date of Birth</label
-              >
-              <div class="input-group">
-                <span class="input-group-text bg-white text-muted">📅</span>
-                <input
-                  type="date"
-                  class="form-control fw-medium pointer text-muted"
-                  [(ngModel)]="editingUser.dateOfBirth"
-                  name="dob"
-                />
+                  <i class="fa-solid fa-pencil"></i>
+                </button>
+
+                @if (user.role !== "Admin") {
+                  <button
+                    class="sj-action-btn promote"
+                    (click)="makeAdmin(user)"
+                    title="Ορισμός ως Admin"
+                  >
+                    <i class="fa-solid fa-crown"></i>
+                  </button>
+                }
+
+                <button
+                  class="sj-action-btn delete"
+                  (click)="onDelete(user.userId)"
+                  title="Διαγραφή"
+                >
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
               </div>
             </div>
           </div>
-        </form>
+        } @empty {
+          <div class="col-12 text-center py-5">
+            <div
+              class="sj-empty-state card bg-dark p-5 rounded-4 border-dashed"
+            >
+              <i class="fa-solid fa-users opacity-25 fs-1 mb-3"></i>
+              <p class="text-muted m-0 fs-5">Δεν βρέθηκαν χρήστες.</p>
+            </div>
+          </div>
+        }
       </div>
+    }
+  </div>
 
-      <div
-        class="modal-footer bg-light px-4 py-3 border-top-0 rounded-bottom-4"
-      >
-        <button
-          type="button"
-          class="btn btn-outline-secondary px-3 fw-medium"
-          (click)="closeEditModal()"
+  @if (editingUser) {
+    <div class="sj-modal-overlay animate__animated animate__fadeIn">
+      <div class="sj-modal-content animate__animated animate__zoomIn">
+        <div
+          class="sj-modal-header border-bottom border-secondary mb-4 pb-3 d-flex justify-content-between align-items-center"
         >
-          Ακύρωση
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary px-4 fw-bold shadow-sm"
-          (click)="saveUser()"
+          <h3 class="m-0 text-white">
+            <i class="fa-solid fa-user-pen sj-accent me-2"></i> Επεξεργασία
+            Χρήστη
+          </h3>
+          <button class="sj-btn-close" (click)="closeEditModal()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="sj-modal-body">
+          <div class="mb-3">
+            <label class="sj-form-label">Όνομα Χρήστη (Username)</label>
+            <input
+              type="text"
+              class="form-control sj-input"
+              [(ngModel)]="editingUser.userName"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="sj-form-label">Email</label>
+            <input
+              type="email"
+              class="form-control sj-input"
+              [(ngModel)]="editingUser.email"
+            />
+          </div>
+        </div>
+
+        <div
+          class="sj-modal-footer mt-4 pt-3 border-top border-secondary d-flex justify-content-end gap-3"
         >
-          💾 Αποθήκευση Αλλαγών
-        </button>
+          <button class="sj-btn-outline" (click)="closeEditModal()">
+            Ακύρωση
+          </button>
+          <button class="sj-btn-submit" (click)="saveUser()">
+            <i class="fa-solid fa-save me-2"></i> Αποθήκευση
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  }
 </div>
-
-<div
-  class="modal-backdrop fade show"
-  *ngIf="editingUser"
-  style="background-color: rgba(0, 0, 0, 0.6)"
-></div>

@@ -1,78 +1,179 @@
-.admin-main-content {
-  padding-left: 20px;
-  width: 100%;
+:host {
+  display: block;
+  background-color: #0f1113;
+  min-height: 100vh;
+  padding: 40px;
+  color: #e0e0e0;
 }
 
-.table thead th {
-  font-size: 0.75rem;
-  letter-spacing: 0.5px;
-  font-weight: 700;
-  color: #64748b;
-  text-transform: uppercase;
-  border-bottom: 1px solid #e2e8f0;
+.sj-reviews-wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
 }
 
-.table tbody td {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  font-size: 0.9rem;
+.sj-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid #2a2d30;
+  padding-bottom: 20px;
 }
 
-.rating-badge {
-  padding: 5px 12px;
-  border-radius: 8px;
+.sj-title {
   font-weight: 800;
-  font-size: 0.8rem;
+  font-size: 2.5rem;
+  color: #fff;
+  margin: 0;
+}
+.sj-accent {
+  color: #34e0a1;
+}
+.sj-subtitle {
+  color: #838d96;
+  margin: 5px 0 0;
 }
 
-.rating-high {
-  background: #ecfdf5;
-  color: #10b981;
+.sj-refresh-btn {
+  background: #16191c;
+  border: 1px solid #343a40;
+  color: #34e0a1;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
 }
-.rating-mid {
-  background: #fffbeb;
-  color: #f59e0b;
-}
-.rating-low {
-  background: #fef2f2;
-  color: #ef4444;
+.sj-refresh-btn:hover {
+  background: #34e0a1;
+  color: #000;
 }
 
-.avatar-circle {
-  width: 32px;
-  height: 32px;
-  background: #64748b;
-  color: white;
+.sj-review-card {
+  background: #16191c;
+  border: 1px solid #24282c;
+  border-radius: 20px;
+  padding: 25px;
+  transition:
+    transform 0.3s,
+    border-color 0.3s;
+}
+
+.sj-review-card:hover {
+  transform: translateY(-5px);
+  border-color: #34e0a155;
+}
+
+.sj-avatar {
+  width: 45px;
+  height: 45px;
+  background: #1c2025;
+  border: 1px solid #2a2d30;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
-  font-weight: bold;
+  color: #34e0a1;
+  font-size: 1.2rem;
 }
 
-.bg-danger-soft {
-  background-color: rgba(239, 68, 68, 0.1);
-  font-size: 0.7rem;
+.sj-user-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+.sj-business-name {
+  color: #838d96;
 }
 
-.text-truncate-2 {
+.sj-rating-badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.sj-rating-high {
+  background: rgba(52, 224, 161, 0.1);
+  color: #34e0a1;
+  border: 1px solid rgba(52, 224, 161, 0.2);
+}
+.sj-rating-mid {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+.sj-rating-low {
+  background: rgba(255, 77, 77, 0.1);
+  color: #ff4d4d;
+  border: 1px solid rgba(255, 77, 77, 0.2);
+}
+
+.sj-quote-icon {
+  font-size: 1.5rem;
+  color: #2a2d30;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.sj-review-text {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0;
   display: -webkit-box;
-  .text-truncate-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.border-secondary {
+  border-color: #2a2d30 !important;
+}
+
+.sj-action-btn {
+  background: #1c2025;
+  border: 1px solid #333;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sj-action-btn.delete {
+  color: #ff4d4d;
+}
+.sj-action-btn.delete:hover {
+  background: #ff4d4d;
+  color: #fff;
+  border-color: #ff4d4d;
+}
+.border-dashed {
+  border-style: dashed !important;
+  border-color: #2a2d30 !important;
+}
+
+@media (max-width: 991px) {
+  :host {
+    padding: 20px;
   }
-  background-color: rgba(239, 68, 68, 0.02) !important;
-}
-
-.stat-box {
-  min-width: 120px;
-  text-align: center;
-}
-
-.card {
-  border: 1px solid #e2e8f0;
+  .sj-title {
+    font-size: 2rem;
+  }
+  .sj-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .header-actions {
+    margin-top: 15px;
+    width: 100%;
+    text-align: right;
+  }
 }

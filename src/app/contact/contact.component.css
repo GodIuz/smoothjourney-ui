@@ -1,5 +1,7 @@
+/* contact.component.css */
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@600;700;800&display=swap");
 
+/* --- GLOBAL HOST STYLES --- */
 :host {
   display: block;
   background-color: #121212;
@@ -14,10 +16,12 @@ h3,
 h4 {
   font-family: "Poppins", sans-serif;
 }
+
 .sj-highlight {
   color: #34e0a1;
 }
 
+/* --- HERO SECTION --- */
 .sj-contact-hero {
   padding: 80px 0 60px 0;
   background: linear-gradient(180deg, #161616 0%, #121212 100%);
@@ -70,6 +74,7 @@ h4 {
   margin: 0 auto;
 }
 
+/* --- QUICK CONTACT CARDS --- */
 .sj-content-wrapper {
   margin-top: -30px;
   position: relative;
@@ -112,19 +117,35 @@ h4 {
   margin-bottom: 20px;
 }
 
-.sj-link {
-  color: #34e0a1;
-  font-weight: 700;
-  text-decoration: none;
-  font-size: 1.05rem;
-  transition: color 0.2s;
+/* =========================================
+   --- THE "NUCLEAR" FIX FOR LINKS ---
+   Force Green (Static) and White (Hover)
+   ========================================= */
+
+/* 1. ΣΤΑΘΕΡΗ ΚΑΤΑΣΤΑΣΗ: Στοχεύουμε το tag 'a' με την κλάση,
+   visited, link, και active για να επιβάλουμε το ΠΡΑΣΙΝΟ */
+a.sj-link,
+a.sj-link:link,
+a.sj-link:visited,
+a.sj-link:active {
+  color: #34e0a1 !important; /* Το πράσινο highlight χρώμα σου */
+  text-decoration: none !important; /* Αφαίρεση υπογράμμισης */
+  font-weight: 700 !important;
+  transition: all 0.3s ease !important;
+  display: inline-block;
+  outline: none !important;
+  border: none !important;
 }
 
-.sj-link:hover {
-  color: #fff;
-  text-decoration: underline;
+/* 2. HOVER ΚΑΤΑΣΤΑΣΗ: Επιβάλλουμε το ΑΣΠΡΟ όταν το ποντίκι
+   είναι από πάνω */
+a.sj-link:hover {
+  color: #ffffff !important; /* ΑΣΠΡΟ στο hover */
+  text-decoration: underline !important; /* Προσθήκη υπογράμμισης στο hover (προαιρετικό, αλλιώς βάλτε none) */
+  transform: translateY(-2px); /* Μικρή κίνηση προς τα πάνω */
 }
 
+/* --- FORM SECTION --- */
 .sj-form-container {
   background-color: #1a1a1a;
   border-radius: 24px;
@@ -150,19 +171,18 @@ h4 {
 }
 
 .sj-input,
-.sj-input-icon {
+.form-select.sj-input {
   background-color: #121212 !important;
   border: 1px solid #333 !important;
   color: #fff !important;
+  padding: 14px 20px;
+  font-size: 1rem;
   transition: all 0.3s ease;
 }
 
-.sj-input {
-  padding: 14px 20px;
-  font-size: 1rem;
-}
-
 .sj-input-icon {
+  background-color: #121212 !important;
+  border: 1px solid #333 !important;
   color: #64748b !important;
   padding-left: 20px;
   padding-right: 15px;
@@ -177,6 +197,7 @@ h4 {
 .sj-textarea:focus {
   border-color: #34e0a1 !important;
   box-shadow: 0 0 0 4px rgba(52, 224, 161, 0.1) !important;
+  outline: none;
 }
 
 .input-group:focus-within .sj-input-icon i {
@@ -188,9 +209,10 @@ h4 {
   min-height: 120px;
 }
 
+/* --- SUBMIT BUTTON --- */
 .sj-btn-submit {
   background: linear-gradient(135deg, #34e0a1 0%, #1abc9c 100%);
-  color: #000;
+  color: #000 !important;
   border: none;
   padding: 16px 30px;
   border-radius: 14px;
@@ -202,15 +224,18 @@ h4 {
 
 .sj-btn-submit:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(52, 224, 161, 0.2);
+  box-shadow: 0 10px 20px rgba(52, 224, 161, 0.3);
+  filter: brightness(1.1);
 }
 
 .sj-btn-submit:disabled {
-  background: #333;
-  color: #777;
+  background: #333 !important;
+  color: #777 !important;
   cursor: not-allowed;
+  transform: none;
 }
 
+/* --- OFFICE INFO --- */
 .sj-office-container {
   padding: 20px;
 }
@@ -261,6 +286,7 @@ h4 {
   line-height: 1.6;
 }
 
+/* --- MAP --- */
 .sj-map-wrapper {
   border-radius: 16px;
   overflow: hidden;
@@ -268,64 +294,7 @@ h4 {
   border: 1px solid #333;
 }
 
-.social-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: #1a1a1a;
-  border: 1px solid #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #e0e0e0;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.social-btn:hover {
-  background: #34e0a1;
-  border-color: #34e0a1;
-  color: #000;
-  transform: translateY(-3px);
-}
-
-.alert-success {
-  background-color: rgba(52, 224, 161, 0.1);
-  border: 1px solid rgba(52, 224, 161, 0.3);
-  color: #e0e0e0;
-  border-radius: 14px;
-  padding: 20px;
-}
-.alert-success i {
-  color: #34e0a1;
-}
-
-@media (max-width: 991px) {
-  .sj-main-title {
-    font-size: 2.8rem;
-  }
-  .sj-contact-card {
-    margin-bottom: 20px;
-  }
-  .sj-content-wrapper {
-    margin-top: 30px;
-  }
-  .sj-form-container {
-    padding: 30px 20px;
-  }
-  .sj-office-container {
-    padding: 0;
-    margin-top: 30px;
-  }
-}
-
-.sj-social-row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
+/* --- SOCIALS --- */
 .social-btn {
   width: 40px;
   height: 40px;
@@ -345,4 +314,34 @@ h4 {
   border-color: #34e0a1;
   color: #000;
   transform: translateY(-3px);
+}
+
+/* --- ALERTS --- */
+.alert-success {
+  background-color: rgba(52, 224, 161, 0.1) !important;
+  border: 1px solid rgba(52, 224, 161, 0.3) !important;
+  color: #fff !important;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.alert-success i {
+  color: #34e0a1;
+}
+
+/* --- MEDIA QUERIES --- */
+@media (max-width: 991px) {
+  .sj-main-title {
+    font-size: 2.8rem;
+  }
+  .sj-content-wrapper {
+    margin-top: 30px;
+  }
+  .sj-form-container {
+    padding: 30px 20px;
+  }
+  .sj-office-container {
+    padding: 0;
+    margin-top: 30px;
+  }
 }

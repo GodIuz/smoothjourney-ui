@@ -33,6 +33,7 @@ import { FavouritesComponent } from './mainapp-layout/favourites/favourites.comp
 import { TripMakerComponent } from './trip-maker/trip-maker.component';
 import { AiTripPlannerComponent } from './mainapp-layout/ai-trip-planner/ai-trip-planner.component';
 import { TripDetailsComponent } from './mainapp-layout/trip-details/trip-details.component';
+import { MessagesComponent } from './admin/messages/messages.component';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,7 @@ export const routes: Routes = [
       { path: 'privacy-policy', component: PrivacyPolicyComponent },
       { path: 'terms', component: TermsComponent },
       { path: 'reviews', component: ReviewsComponent },
+      { path: 'messages', component: MessagesComponent },
       { path: '404', component: Error404Component },
       { path: '**', redirectTo: '404' },
     ],

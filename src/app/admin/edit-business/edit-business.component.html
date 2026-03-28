@@ -1,180 +1,258 @@
-<div class="container py-5">
-  <div class="d-flex align-items-center justify-content-between mb-4">
-    <div>
-      <h2 class="fw-bold text-dark mb-1">✏️ Επεξεργασία Επιχείρησης</h2>
-      <p class="text-muted">ID: {{ businessId }}</p>
+<div class="sj-edit-wrapper animate__animated animate__fadeIn">
+  <div class="sj-page-header">
+    <div class="header-content">
+      <h1 class="sj-title">
+        Επεξεργασία <span class="sj-accent">Καταχώρησης</span>
+      </h1>
+      <p class="sj-subtitle">
+        Ενημερώστε τα στοιχεία της επιχείρησης ID: {{ businessId }}
+      </p>
     </div>
-    <a routerLink="/admin/businesses" class="btn btn-light border shadow-sm">
-      <i class="fa fa-arrow-left me-2"></i> Πίσω
-    </a>
+    <div class="header-actions">
+      <button class="sj-btn-outline" [routerLink]="['/admin/businesses']">
+        <i class="fa-solid fa-arrow-left me-2"></i> Επιστροφή
+      </button>
+    </div>
   </div>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="row g-4">
-      <div class="col-lg-8">
-        <div class="card shadow-sm border-0 rounded-4 mb-4">
-          <div class="card-body p-4">
-            <h5 class="fw-bold text-primary mb-3">Βασικά Στοιχεία</h5>
+  <div class="sj-form-container mt-4">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="sj-card mb-4">
+            <h3 class="sj-card-title border-bottom border-secondary pb-3 mb-4">
+              <i class="fa-solid fa-image me-2 sj-accent"></i> Φωτογραφία
+            </h3>
 
-            <div class="form-floating mb-3">
-              <input
-                type="text"
-                class="form-control"
-                id="name"
-                formControlName="name"
-              />
-              <label for="name">Όνομα</label>
-            </div>
-
-            <div class="row g-3">
-              <div class="col-md-6">
-                <div class="form-floating">
-                  <select class="form-select" formControlName="category">
-                    <option *ngFor="let cat of categories" [value]="cat">
-                      {{ cat }}
-                    </option>
-                  </select>
-                  <label>Κατηγορία</label>
-                </div>
+            <div class="sj-image-upload-wrapper text-center">
+              <div class="sj-preview-container mb-3">
+                @if (previewUrl) {
+                  <img
+                    [src]="previewUrl"
+                    alt="Preview"
+                    class="sj-img-preview"
+                  />
+                } @else {
+                  <div class="sj-img-placeholder">
+                    <i class="fa-solid fa-camera opacity-25"></i>
+                  </div>
+                }
               </div>
-              <div class="col-md-6">
-                <div class="form-floating">
-                  <select class="form-select" formControlName="categoryType">
-                    <option *ngFor="let type of availableTypes" [value]="type">
-                      {{ type }}
-                    </option>
-                  </select>
-                  <label>Τύπος</label>
-                </div>
+
+              <div class="upload-btn-wrapper">
+                <button type="button" class="sj-btn-secondary w-100">
+                  <i class="fa-solid fa-cloud-arrow-up me-2"></i> Ανέβασμα
+                  Εικόνας
+                </button>
+                <input
+                  type="file"
+                  (change)="onFileSelected($event)"
+                  accept="image/*"
+                />
               </div>
-            </div>
-
-            <div class="form-floating mt-3">
-              <textarea
-                class="form-control"
-                style="height: 100px"
-                formControlName="description"
-              ></textarea>
-              <label>Περιγραφή</label>
-            </div>
-
-            <div class="form-floating mt-3">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="moodTags"
-              />
-              <label>Mood Tags</label>
+              <small class="text-muted d-block mt-2"
+                >Αποδεκτά αρχεία: JPG, PNG, WEBP</small
+              >
             </div>
           </div>
-        </div>
 
-        <div class="card shadow-sm border-0 rounded-4">
-          <div class="card-body p-4">
-            <h5 class="fw-bold text-primary mb-3">Τοποθεσία</h5>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <input
-                  type="text"
-                  class="form-control p-3"
-                  placeholder="Διεύθυνση"
-                  formControlName="address"
-                />
-              </div>
-              <div class="col-md-3">
-                <input
-                  type="text"
-                  class="form-control p-3"
-                  placeholder="Πόλη"
-                  formControlName="city"
-                />
-              </div>
-              <div class="col-md-3">
-                <input
-                  type="text"
-                  class="form-control p-3"
-                  placeholder="Χώρα"
-                  formControlName="country"
-                />
-              </div>
-              <div class="col-12">
-                <input
-                  type="text"
-                  class="form-control p-3"
-                  placeholder="Τηλέφωνο"
-                  formControlName="phone"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          <div class="sj-card">
+            <h3 class="sj-card-title border-bottom border-secondary pb-3 mb-4">
+              <i class="fa-solid fa-tags me-2 sj-accent"></i> Ειδικές Ετικέτες
+            </h3>
 
-      <div class="col-lg-4">
-        <div class="card shadow-sm border-0 rounded-4 mb-4">
-          <div class="card-body p-4 text-center">
-            <h6 class="fw-bold text-muted mb-3">Εικόνα Εξωφύλλου</h6>
-            <div class="mb-3" *ngIf="previewUrl">
-              <img [src]="previewUrl" class="img-fluid rounded shadow-sm" />
-            </div>
-            <input
-              type="file"
-              (change)="onFileSelected($event)"
-              class="form-control"
-            />
-          </div>
-        </div>
-
-        <div class="card shadow-sm border-0 rounded-4">
-          <div class="card-body p-4">
-            <label class="form-label fw-bold">Επίπεδο Τιμής</label>
-            <select class="form-select mb-3" formControlName="priceLevel">
-              <option [ngValue]="1">€ (Οικονομικό)</option>
-              <option [ngValue]="2">€€ (Μέτριο)</option>
-              <option [ngValue]="3">€€€ (Ακριβό)</option>
-              <option [ngValue]="4">€€€€ (Luxury)</option>
-            </select>
-
-            <div class="form-check form-switch mb-2">
+            <div class="form-check form-switch sj-custom-switch mb-3">
               <input
                 class="form-check-input"
                 type="checkbox"
+                id="hiddenGem"
                 formControlName="isHiddenGem"
               />
-              <label class="form-check-label">Hidden Gem</label>
+              <label class="form-check-label text-white" for="hiddenGem">
+                <i class="fa-solid fa-gem text-info me-1"></i> Hidden Gem
+              </label>
+              <small class="d-block text-muted"
+                >Εμφανίζεται στις ειδικές προτάσεις της εφαρμογής.</small
+              >
             </div>
-            <div class="form-check form-switch mb-4">
+
+            <div
+              class="form-check form-switch sj-custom-switch sj-switch-danger border-top border-secondary pt-3"
+            >
               <input
                 class="form-check-input"
                 type="checkbox"
+                id="scam"
                 formControlName="isSuspectedScam"
               />
-              <label class="form-check-label text-danger">Suspected Scam</label>
+              <label class="form-check-label text-danger fw-bold" for="scam">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i> Suspected
+                Scam
+              </label>
+              <small class="d-block text-muted"
+                >Επισημαίνει την επιχείρηση ως ύποπτη.</small
+              >
             </div>
+          </div>
+        </div>
 
-            <div class="mt-4">
-              <button
-                type="submit"
-                class="btn btn-primary w-100 py-3 fw-bold shadow-sm btn-hover-scale d-flex align-items-center justify-content-center gap-2"
-                [class.opacity-50]="form.invalid"
-                [style.cursor]="form.invalid ? 'not-allowed' : 'pointer'"
-              >
-                <i class="fa fa-sync-alt"></i>
+        <div class="col-lg-8">
+          <div class="sj-card h-100">
+            <h3 class="sj-card-title border-bottom border-secondary pb-3 mb-4">
+              <i class="fa-solid fa-circle-info me-2 sj-accent"></i> Πληροφορίες
+              Επιχείρησης
+            </h3>
 
-                <span>Ενημέρωση</span>
-              </button>
+            <div class="row g-3">
+              <div class="col-12 mb-2">
+                <label class="sj-form-label">Όνομα Καταχώρησης *</label>
+                <input
+                  type="text"
+                  class="form-control sj-input"
+                  formControlName="name"
+                  placeholder="π.χ. To Στέκι του Γιάννη"
+                />
+                <div
+                  *ngIf="form.get('name')?.touched && form.get('name')?.invalid"
+                  class="text-danger small mt-1"
+                >
+                  Το όνομα είναι υποχρεωτικό.
+                </div>
+              </div>
 
-              <div
-                *ngIf="form.invalid && form.touched"
-                class="text-center mt-2 text-danger small fade-in"
-              >
-                <i class="fa fa-exclamation-circle me-1"></i>
-                Διορθώστε τα κοκκινισμένα πεδία για να συνεχίσετε.
+              <div class="col-md-6 mb-2">
+                <label class="sj-form-label">Βασική Κατηγορία *</label>
+                <select class="form-select sj-input" formControlName="category">
+                  <option value="" disabled>Επιλέξτε...</option>
+                  <option *ngFor="let cat of categories" [value]="cat">
+                    {{ cat }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="sj-form-label">Τύπος *</label>
+                <select
+                  class="form-select sj-input"
+                  formControlName="categoryType"
+                >
+                  <option value="" disabled>Επιλέξτε τύπο...</option>
+                  <option *ngFor="let type of availableTypes" [value]="type">
+                    {{ type }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-md-4 mb-2">
+                <label class="sj-form-label">Χώρα *</label>
+                <input
+                  type="text"
+                  class="form-control sj-input"
+                  formControlName="country"
+                  placeholder="π.χ. Ελλάδα"
+                />
+              </div>
+              <div class="col-md-4 mb-2">
+                <label class="sj-form-label">Πόλη *</label>
+                <input
+                  type="text"
+                  class="form-control sj-input"
+                  formControlName="city"
+                  placeholder="π.χ. Αθήνα"
+                />
+              </div>
+              <div class="col-md-4 mb-2">
+                <label class="sj-form-label">Διεύθυνση *</label>
+                <input
+                  type="text"
+                  class="form-control sj-input"
+                  formControlName="address"
+                  placeholder="Οδός & Αριθμός"
+                />
+              </div>
+
+              <div class="col-md-6 mb-2">
+                <label class="sj-form-label">Τηλέφωνο *</label>
+                <div class="input-group">
+                  <span class="input-group-text sj-input-icon"
+                    ><i class="fa-solid fa-phone"></i
+                  ></span>
+                  <input
+                    type="text"
+                    class="form-control sj-input"
+                    formControlName="phone"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="sj-form-label">Mood Tags *</label>
+                <div class="input-group">
+                  <span class="input-group-text sj-input-icon"
+                    ><i class="fa-solid fa-hashtag"></i
+                  ></span>
+                  <input
+                    type="text"
+                    class="form-control sj-input"
+                    formControlName="moodTags"
+                    placeholder="π.χ. Ρομαντικό, Οικογενειακό"
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-2">
+                <label class="sj-form-label">Σύμβολο Τιμής *</label>
+                <select
+                  class="form-select sj-input"
+                  formControlName="priceRange"
+                >
+                  <option value="€">€ (Φθηνό)</option>
+                  <option value="€€">€€ (Μέτριο)</option>
+                  <option value="€€€">€€€ (Ακριβό)</option>
+                  <option value="€€€€">€€€€ (Πολυτελές)</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="sj-form-label">Επίπεδο Τιμής (1-4) *</label>
+                <input
+                  type="number"
+                  class="form-control sj-input"
+                  formControlName="priceLevel"
+                  min="1"
+                  max="4"
+                />
+              </div>
+
+              <div class="col-12 mb-4">
+                <label class="sj-form-label">Περιγραφή *</label>
+                <textarea
+                  class="form-control sj-input"
+                  formControlName="description"
+                  rows="5"
+                  placeholder="Γράψτε λίγα λόγια για την επιχείρηση..."
+                ></textarea>
+                <div
+                  class="text-end small mt-1"
+                  [class.text-danger]="
+                    form.get('description')?.value?.length > 500
+                  "
+                >
+                  {{ form.get("description")?.value?.length || 0 }} / 500
+                </div>
+              </div>
+
+              <div class="col-12 border-top border-secondary pt-4 text-end">
+                <button
+                  type="submit"
+                  class="sj-btn-submit"
+                  [disabled]="form.invalid"
+                >
+                  <i class="fa-solid fa-floppy-disk me-2"></i> Αποθήκευση
+                  Αλλαγών
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

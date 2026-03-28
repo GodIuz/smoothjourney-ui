@@ -1,86 +1,132 @@
-.container-fluid {
-  background-color: #f8f9fa;
+:host {
+  display: block;
+  background-color: #0f1113;
   min-height: 100vh;
+  padding: 40px;
+  color: #e0e0e0;
 }
 
-.table {
-  margin-bottom: 0;
+.sj-businesses-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.table thead th {
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
-  padding: 1rem;
-  background-color: #f1f5f9;
-  border-bottom: 1px solid #e2e8f0;
+/* Header */
+.sj-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid #2a2d30;
+  padding-bottom: 20px;
 }
 
-.table tbody tr {
-  transition: all 0.2s ease;
+.sj-title {
+  font-weight: 800;
+  font-size: 2.5rem;
+  color: #fff;
+  margin: 0;
+}
+.sj-accent {
+  color: #34e0a1;
 }
 
-.table tbody tr:hover {
-  background-color: #f8fafc;
-  transform: scale(1.002);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+.sj-add-btn {
+  background: linear-gradient(135deg, #34e0a1 0%, #1abc9c 100%);
+  color: #000;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.sj-refresh-btn {
+  background: #16191c;
+  border: 1px solid #343a40;
+  color: #34e0a1;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+}
+
+/* Cards */
+.sj-biz-card {
+  background: #16191c;
+  border: 1px solid #24282c;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.sj-biz-card:hover {
+  transform: translateY(-8px);
+  border-color: #34e0a188;
+}
+
+.sj-biz-cover {
   position: relative;
-  z-index: 10;
+  height: 200px;
+  width: 100%;
+  background-color: #1a1d21;
 }
 
-.table td {
-  padding: 1rem;
-  vertical-align: middle;
-  border-bottom: 1px solid #f1f5f9;
-  color: #475569;
-}
-
-.object-fit-cover {
+.sj-cover-img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border: 1px solid #e2e8f0;
+  display: block;
 }
 
-.badge {
-  padding: 0.5em 0.8em;
-  font-weight: 600;
-  font-size: 0.75rem;
-  border-radius: 6px;
+.sj-badge-gem {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(52, 224, 161, 0.2);
+  color: #34e0a1;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(52, 224, 161, 0.3);
 }
 
-.gem-icon {
-  filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.5));
-  animation: pulse 2s infinite;
+.sj-biz-name {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.sj-biz-rating {
+  color: #ffc107;
+  font-weight: 700;
+}
+.sj-price {
+  color: #34e0a1;
+  font-weight: 700;
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
+.sj-action-btn {
+  background: #1c2025;
+  border: 1px solid #333;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.btn-sm {
-  border-radius: 6px;
-  padding: 0.4rem 0.6rem;
+.sj-action-btn.edit {
+  color: #cbd5e1;
+}
+.sj-action-btn.edit:hover {
+  background: #34e0a1;
+  color: #000;
 }
 
-.btn-outline-primary:hover {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
-  color: white;
+.sj-action-btn.delete {
+  color: #ff4d4d;
+}
+.sj-action-btn.delete:hover {
+  background: #ff4d4d;
+  color: #fff;
 }
 
-.btn-outline-danger:hover {
-  background-color: #ef4444;
-  border-color: #ef4444;
-  color: white;
+.border-secondary {
+  border-color: #333 !important;
 }

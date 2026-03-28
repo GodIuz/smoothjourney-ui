@@ -1,19 +1,19 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-reviews',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule],
   templateUrl: './reviews.component.html',
   styleUrl: './reviews.component.css',
 })
 export class ReviewsComponent implements OnInit {
   private http = inject(HttpClient);
+  reviews = signal<any[]>([]);
+  isLoading = signal(true);
 
-  reviews: any[] = [];
-  isLoading = true;
   private apiUrl = 'https://localhost:7000/Reviews';
 
   ngOnInit() {
@@ -28,18 +28,18 @@ export class ReviewsComponent implements OnInit {
   }
 
   loadReviews() {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const headers = this.getAuthHeaders();
 
     this.http.get<any[]>(`${this.apiUrl}/all-reviews`, { headers }).subscribe({
       next: (data) => {
-        console.log('Reviews loaded:', data);
-        this.reviews = data;
-        this.isLoading = false;
+        console.log('📦 Reviews loaded:', data);
+        this.reviews.set(data);
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Σφάλμα κατά τη φόρτωση των κριτικών:', err);
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
     });
   }
@@ -47,7 +47,7 @@ export class ReviewsComponent implements OnInit {
   deleteReview(id: number) {
     if (
       confirm(
-        'Προσοχή! Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την κακόβουλη κριτική;',
+        'Προσοχή! Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την κριτική;',
       )
     ) {
       const headers = this.getAuthHeaders();
@@ -56,7 +56,8 @@ export class ReviewsComponent implements OnInit {
         .delete(`${this.apiUrl}/delete-review/${id}`, { headers })
         .subscribe({
           next: () => {
-            this.reviews = this.reviews.filter((r) => r.id !== id);
+            // Ενημέρωση του signal αφαιρώντας τη διεγραμμένη κριτική
+            this.reviews.update((prev) => prev.filter((r) => r.id !== id));
             console.log(`Review ${id} deleted successfully.`);
           },
           error: (err) => {
@@ -69,13 +70,9 @@ export class ReviewsComponent implements OnInit {
     }
   }
 
-  getStars(rating: number): number[] {
-    return Array(Math.round(rating)).fill(0);
-  }
-
   getRatingClass(rating: number): string {
-    if (rating >= 4) return 'rating-high';
-    if (rating >= 2.5) return 'rating-mid';
-    return 'rating-low';
+    if (rating >= 4) return 'sj-rating-high';
+    if (rating >= 2.5) return 'sj-rating-mid';
+    return 'sj-rating-low';
   }
 }

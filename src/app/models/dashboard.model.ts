@@ -1,4 +1,6 @@
 export interface BusinessSummary {
+  isHiddenGem: any;
+  isSuspectedScam: any;
   id: number;
   name: string;
   category: string;
@@ -15,13 +17,7 @@ export interface DashboardStats {
   totalBusinesses: number;
   newReviews: number;
   pendingRequests: number;
-  
-  // Γράφημα
-  trafficData: { 
-    month: string; 
-    value: number 
-  }[];
-  
+
   recentActivity: {
     name: string;
     role: string;

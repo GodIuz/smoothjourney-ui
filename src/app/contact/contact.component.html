@@ -1,8 +1,8 @@
 <div class="sj-contact-page">
   <div class="sj-contact-hero text-center">
-    <div class="container">
+    <div class="container border-0">
       <span class="sj-top-tag"
-        ><i class="fa-solid fa-headset me-2"></i> 24/7 Υποστηριξη</span
+        ><i class="fa-solid fa-headset me-2"></i> 24/7 Υποστήριξη</span
       >
       <h1 class="sj-main-title">
         Είμαστε εδώ για εσάς <span class="sj-highlight">.</span>
@@ -23,9 +23,9 @@
           </div>
           <h3>Υποστήριξη</h3>
           <p>Για τεχνικά θέματα και βοήθεια με τον λογαριασμό σας.</p>
-          <a href="mailto:support@smoothjourney.com" class="sj-link"
-            >support&#64;smoothjourney.com</a
-          >
+          <a href="mailto:support&#64;smoothjourney.com" class="sj-link">
+            support&#64;smoothjourney.com
+          </a>
         </div>
       </div>
       <div class="col-md-4">
@@ -33,7 +33,7 @@
           <div class="sj-card-icon"><i class="fa-solid fa-handshake"></i></div>
           <h3>Συνεργασίες</h3>
           <p>Για επιχειρήσεις που θέλουν να ενταχθούν στην πλατφόρμα μας.</p>
-          <a href="mailto:partners@smoothjourney.com" class="sj-link"
+          <a href="mailto:partners&#64;smoothjourney.com" class="sj-link"
             >partners&#64;smoothjourney.com</a
           >
         </div>
@@ -68,14 +68,14 @@
           </div>
 
           <form
-            #contactForm="ngForm"
+            [formGroup]="contactForm"
             (ngSubmit)="onSubmit()"
             [class.d-none]="isSuccess()"
           >
             <div class="row g-4 mb-4">
               <div class="col-md-6">
                 <label class="sj-form-label"
-                  >Ονοματεπώνυμο <span class="text-danger">*</span></label
+                  >Όνομα <span class="text-danger">*</span></label
                 >
                 <div class="input-group">
                   <span class="input-group-text sj-input-icon"
@@ -84,30 +84,55 @@
                   <input
                     type="text"
                     class="form-control sj-input"
-                    name="name"
-                    [(ngModel)]="formData.name"
-                    required
-                    placeholder="π.χ. Γιάννης Παππάς"
+                    formControlName="firstName"
+                    placeholder="π.χ. Γιάννης"
+                    [class.is-invalid]="
+                      contactForm.get('firstName')?.invalid &&
+                      contactForm.get('firstName')?.touched
+                    "
                   />
                 </div>
               </div>
               <div class="col-md-6">
                 <label class="sj-form-label"
-                  >Email <span class="text-danger">*</span></label
+                  >Επώνυμο <span class="text-danger">*</span></label
                 >
                 <div class="input-group">
                   <span class="input-group-text sj-input-icon"
-                    ><i class="fa-regular fa-envelope"></i
+                    ><i class="fa-regular fa-user"></i
                   ></span>
                   <input
-                    type="email"
+                    type="text"
                     class="form-control sj-input"
-                    name="email"
-                    [(ngModel)]="formData.email"
-                    required
-                    placeholder="name@example.com"
+                    formControlName="lastName"
+                    placeholder="π.χ. Παππάς"
+                    [class.is-invalid]="
+                      contactForm.get('lastName')?.invalid &&
+                      contactForm.get('lastName')?.touched
+                    "
                   />
                 </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="sj-form-label"
+                >Email <span class="text-danger">*</span></label
+              >
+              <div class="input-group">
+                <span class="input-group-text sj-input-icon"
+                  ><i class="fa-regular fa-envelope"></i
+                ></span>
+                <input
+                  type="email"
+                  class="form-control sj-input"
+                  formControlName="email"
+                  placeholder="name@example.com"
+                  [class.is-invalid]="
+                    contactForm.get('email')?.invalid &&
+                    contactForm.get('email')?.touched
+                  "
+                />
               </div>
             </div>
 
@@ -119,12 +144,7 @@
                 <span class="input-group-text sj-input-icon"
                   ><i class="fa-solid fa-layer-group"></i
                 ></span>
-                <select
-                  class="form-select sj-input"
-                  name="subject"
-                  [(ngModel)]="formData.subject"
-                  required
-                >
+                <select class="form-select sj-input" formControlName="subject">
                   <option value="general">Γενική Ερώτηση</option>
                   <option value="support">Τεχνική Υποστήριξη</option>
                   <option value="business">Επιχειρηματική Συνεργασία</option>
@@ -139,17 +159,28 @@
               >
               <textarea
                 class="form-control sj-input sj-textarea"
-                name="message"
-                [(ngModel)]="formData.message"
-                required
+                formControlName="messageBody"
                 rows="5"
                 placeholder="Πώς μπορούμε να σας βοηθήσουμε;"
+                [class.is-invalid]="
+                  contactForm.get('messageBody')?.invalid &&
+                  contactForm.get('messageBody')?.touched
+                "
               ></textarea>
+
+              <div
+                *ngIf="contactForm.get('messageBody')?.errors?.['pattern']"
+                class="text-danger small mt-2 animate__animated animate__shakeX"
+              >
+                <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                Προειδοποίηση: Ανιχνεύτηκε απαγορευμένο περιεχόμενο (Prompt
+                Injection).
+              </div>
             </div>
 
             <button
               type="submit"
-              class="sj-btn-submit w-100"
+              class="sj-btn-submit w-100 shadow-lg"
               [disabled]="contactForm.invalid || isSubmitting()"
             >
               <span *ngIf="isSubmitting()"
@@ -161,6 +192,7 @@
                 Μηνύματος</span
               >
             </button>
+
             <p class="text-muted small mt-3 text-center">
               <i class="fa-solid fa-lock me-1"></i> Τα δεδομένα σας
               προστατεύονται σύμφωνα με την Πολιτική Απορρήτου μας.
@@ -198,13 +230,12 @@
 
           <div class="sj-map-wrapper mt-4">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25164.71746271911!2d23.714571994247547!3d37.9740446700547!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a1bd1f067043f1%3A0x2736354576668ddd!2sAthens%2C%20Greece!5e0!3m2!1sen!2sus!4v1695200000000!5m2!1sen!2sus"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3144.89!2d23.72!3d37.98!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDU4JzQ4LjAiTiAyM8KwNDMnMTIuMCJF!5e0!3m2!1sen!2sgr!4v1620000000000!5m2!1sen!2sgr"
               width="100%"
               height="250"
               style="border: 0; border-radius: 16px"
               allowfullscreen=""
               loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
             >
             </iframe>
           </div>
@@ -213,10 +244,12 @@
             <span
               class="d-block mb-3 fw-bold text-uppercase text-muted"
               style="letter-spacing: 1px; font-size: 0.8rem"
-              >Ακολουθηστε Μας</span
+              >Ακολουθήστε Μας</span
             >
             <div class="d-flex gap-3">
-              <a href="https://facebook.com/smoothjourneyapp" class="social-btn"
+              <a
+                href="https://www.facebook.com/smoothjourneyapp"
+                class="social-btn"
                 ><i class="fa-brands fa-facebook-f"></i
               ></a>
               <a
@@ -224,13 +257,13 @@
                 class="social-btn"
                 ><i class="fa-brands fa-instagram"></i
               ></a>
-              <a href="https://twitter.com/smoothjourneyapp" class="social-btn"
+              <a href="https://twitter.com/smoothjourney.gr" class="social-btn"
                 ><i class="fa-brands fa-twitter"></i
               ></a>
-              <a href="https://tiktok.com/smoothjourney.gr" class="social-btn"
+              <a href="https://tiktok.com/@smoothjourney.gr" class="social-btn"
                 ><i class="fa-brands fa-tiktok"></i
               ></a>
-              <a href="https://threads.com/smoothjourney.gr" class="social-btn"
+              <a href="https://www.threads.com/smoothjourney" class="social-btn"
                 ><i class="fa-brands fa-threads"></i
               ></a>
             </div>

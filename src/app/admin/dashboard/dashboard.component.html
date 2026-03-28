@@ -1,61 +1,122 @@
-<div class="dashboard-container">
-  <div class="d-header">
-    <h1>Dashboard</h1>
-  </div>
-
-  <div class="stats-grid">
-    <div class="stat-card" *ngFor="let item of stats" [ngClass]="item.border">
-      <div class="card-body">
-        <div class="text-column">
-          <div class="stat-title" [style.color]="item.color">
-            {{ item.title }}
-          </div>
-          <div class="stat-value">{{ item.value }}</div>
-        </div>
-        <div class="icon-column">
-          <i [class]="item.icon"></i>
-        </div>
-      </div>
+<div class="sj-dashboard-wrapper animate__animated animate__fadeIn">
+  <div class="sj-page-header">
+    <div class="header-content">
+      <h1 class="sj-title">Κεντρικός <span class="sj-accent">Πίνακας</span></h1>
+      <p class="sj-subtitle">
+        Σύνοψη και στατιστικά στοιχεία της πλατφόρμας Smooth Journey.
+      </p>
+    </div>
+    <div class="header-actions">
+      <button class="sj-refresh-btn" (click)="fetchDashboardData()">
+        <i class="fa-solid fa-rotate"></i>
+      </button>
     </div>
   </div>
 
-  <div class="content-row">
-    <div class="card list-card">
-      <div class="card-header">
-        <h6>Νέες Επιχειρήσεις</h6>
-      </div>
-      <div class="card-body p-0">
-        <div class="list-container">
-          <div class="list-item" *ngFor="let item of latestBusinesses">
-            <div class="item-icon-wrapper">
-              <div
-                class="img-circle"
-                *ngIf="item.imageUrl && item.imageUrl !== 'null'"
-                [style.background-image]="'url(' + item.imageUrl + ')'"
-              ></div>
-              <div
-                class="icon-circle"
-                *ngIf="!item.imageUrl || item.imageUrl === 'null'"
-                [ngClass]="getCategoryClass(item.category)"
-              >
-                <i [class]="getCategoryIcon(item.category)"></i>
-              </div>
-            </div>
-
-            <div class="item-details">
-              <span class="item-name">{{ item.name }}</span>
-              <span class="item-sub"
-                >{{ item.category }} • {{ item.city }}</span
-              >
-            </div>
-
-            <div class="item-status">
-              <span class="rating-badge">
-                <i class="fa-solid fa-star"></i>
-                {{ item.rating | number: "1.1-1" }}
-              </span>
-            </div>
+  <div class="row g-4 mt-2">
+    @for (stat of stats; track stat.title) {
+      <div class="col-md-4">
+        <div class="sj-stat-card">
+          <div class="sj-stat-icon" [style.color]="stat.color">
+            <i [class]="stat.icon"></i>
           </div>
+          <div class="sj-stat-info">
+            <h3 class="sj-stat-value">{{ stat.value }}</h3>
+            <p class="sj-stat-title">{{ stat.title }}</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="row mt-5 g-4">
+    <div class="col-12">
+      <div class="sj-card">
+        <div
+          class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3"
+        >
+          <h3 class="sj-card-title m-0">
+            <i class="fa-solid fa-clock-rotate-left sj-accent me-2"></i>
+            Τελευταίες Καταχωρήσεις
+          </h3>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table sj-table align-middle">
+            <thead>
+              <tr>
+                <th>ΕΠΙΧΕΙΡΗΣΗ</th>
+                <th>ΚΑΤΗΓΟΡΙΑ</th>
+                <th>RATING</th>
+                <th>ΚΑΤΑΣΤΑΣΗ</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (biz of latestBusinesses; track biz.id) {
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="sj-icon-box">
+                        <i [class]="getCategoryIcon(biz.category)"></i>
+                      </div>
+                      <div class="ms-3">
+                        <h6 class="m-0 text-white fw-bold">{{ biz.name }}</h6>
+                        <small class="text-muted">{{
+                          biz.city || "Άγνωστη Τοποθεσία"
+                        }}</small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span
+                      class="sj-badge"
+                      [ngClass]="getCategoryClass(biz.category)"
+                    >
+                      {{ biz.category || "Γενική" }}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="sj-rating-stars">
+                      <i
+                        *ngFor="let star of getStars(biz.rating)"
+                        class="fa-solid fa-star text-warning"
+                      ></i>
+                      <span class="ms-2 text-white">{{
+                        biz.rating | number: "1.1-1"
+                      }}</span>
+                    </div>
+                  </td>
+
+                  <td>
+                    @if (biz.isSuspectedScam) {
+                      <span class="sj-badge sj-badge-danger"
+                        ><i class="fa-solid fa-triangle-exclamation me-1"></i>
+                        Scam</span
+                      >
+                    } @else if (biz.isHiddenGem) {
+                      <span class="sj-badge sj-badge-info"
+                        ><i class="fa-solid fa-gem me-1"></i> Gem</span
+                      >
+                    } @else {
+                      <span class="sj-badge sj-badge-success"
+                        ><i class="fa-solid fa-check me-1"></i> Ενεργή</span
+                      >
+                    }
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="text-center py-5">
+                    <p class="text-muted m-0">
+                      Δεν βρέθηκαν πρόσφατες καταχωρήσεις.
+                    </p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

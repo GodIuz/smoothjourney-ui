@@ -1,128 +1,105 @@
-<div class="container-fluid p-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="fw-bold text-dark">🏢 Διαχείριση Καταχωρήσεων</h2>
-      <p class="text-muted">
-        Δείτε και επεξεργαστείτε τις επιχειρήσεις και τα αξιοθέατα.
+<div class="sj-businesses-wrapper animate__animated animate__fadeIn">
+  <div class="sj-page-header">
+    <div class="header-content">
+      <h1 class="sj-title">
+        Διαχείριση <span class="sj-accent">Καταχωρήσεων</span>
+      </h1>
+      <p class="sj-subtitle">
+        Συνολικά: {{ businesses().length }} καταχωρήσεις.
       </p>
     </div>
-    <a routerLink="/admin/businesses/create" class="btn btn-success shadow-sm">
-      <i class="fa fa-plus me-2"></i> Νέα Καταχώρηση
-    </a>
-  </div>
-
-  <div *ngIf="isLoading" class="text-center py-5">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-2 text-muted">Φόρτωση δεδομένων...</p>
-  </div>
-
-  <div *ngIf="!isLoading" class="card shadow-sm border-0">
-    <div class="card-body p-0">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="bg-light text-secondary">
-          <tr>
-            <th class="ps-4">Cover</th>
-            <th>Όνομα</th>
-            <th>Κατηγορία / Τύπος</th>
-            <th>Τοποθεσία</th>
-            <th>Τιμή</th>
-            <th>Rating</th>
-            <th class="text-center">Hidden Gem</th>
-            <th class="text-end pe-4">Ενέργειες</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let b of businesses">
-            <td class="ps-4">
-              <img
-                [src]="getImageUrl(b.imageUrl)"
-                (error)="handleImageError($event)"
-                class="rounded object-fit-cover shadow-sm"
-                width="60"
-                height="40"
-                alt="cover"
-              />
-            </td>
-
-            <td class="fw-bold text-dark">{{ b.name }}</td>
-
-            <td>
-              <div class="d-flex flex-column">
-                <span
-                  class="badge bg-primary bg-opacity-10 text-primary mb-1"
-                  style="width: fit-content"
-                >
-                  {{ b.category }}
-                </span>
-                <small class="text-muted fst-italic">{{
-                  b.categoryType
-                }}</small>
-              </div>
-            </td>
-
-            <td>
-              <i class="fa fa-map-marker-alt text-danger me-1 small"></i>
-              {{ b.city }}, {{ b.country }}
-            </td>
-
-            <td>
-              <span
-                class="fw-bold text-success"
-                title="Level {{ b.priceLevel }}"
-              >
-                {{ "€".repeat(b.priceLevel) }}
-              </span>
-              <span class="text-muted opacity-25">{{
-                "€".repeat(4 - b.priceLevel)
-              }}</span>
-            </td>
-
-            <td>
-              <div class="d-flex align-items-center">
-                <i class="fa fa-star text-warning me-1"></i>
-                <span class="fw-bold">{{
-                  b.averageRating | number: "1.1-1"
-                }}</span>
-              </div>
-            </td>
-
-            <td class="text-center">
-              <i
-                *ngIf="b.isHiddenGem"
-                class="fa fa-gem text-info fa-lg gem-icon"
-                title="Hidden Gem"
-              ></i>
-              <span *ngIf="!b.isHiddenGem" class="text-muted opacity-25"
-                >-</span
-              >
-            </td>
-
-            <td class="text-end pe-4">
-              <a
-                [routerLink]="['/admin/businesses/edit', b.businessId]"
-                class="btn btn-sm btn-outline-primary me-2"
-                title="Edit"
-              >
-                <i class="fa fa-pencil"></i>
-              </a>
-              <button
-                class="btn btn-sm btn-outline-danger"
-                (click)="onDelete(b.businessId)"
-                title="Delete"
-              >
-                <i class="fa fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-
-          <tr *ngIf="businesses.length === 0">
-            <td colspan="8" class="text-center py-5 text-muted">
-              <i class="fa fa-folder-open fa-2x mb-3 d-block opacity-50"></i>
-              Δεν βρέθηκαν καταχωρήσεις. Πατήστε "Νέα Καταχώρηση" για αρχή!
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="header-actions">
+      <button class="sj-add-btn" [routerLink]="['/admin/businesses/create']">
+        <i class="fa-solid fa-plus me-2"></i> Νέα Καταχώρηση
+      </button>
+      <button
+        class="sj-refresh-btn ms-3"
+        (click)="loadBusinesses()"
+        [disabled]="isLoading()"
+      >
+        <i class="fa-solid fa-rotate" [class.fa-spin]="isLoading()"></i>
+      </button>
     </div>
+  </div>
+
+  <div class="sj-businesses-list mt-5">
+    @if (isLoading()) {
+      <div class="sj-loader text-center py-5">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2 text-muted">Φόρτωση δεδομένων...</p>
+      </div>
+    } @else {
+      <div class="row g-4">
+        @for (biz of businesses(); track biz.id) {
+          <div class="col-md-6 col-lg-4">
+            <div class="sj-biz-card">
+              <div class="sj-biz-cover">
+                <img
+                  [src]="biz.coverImage"
+                  class="sj-cover-img"
+                  alt="{{ biz.name }}"
+                  (error)="handleImageError($event)"
+                />
+
+                @if (biz.isHiddenGem) {
+                  <span class="sj-badge-gem" title="Hidden Gem">
+                    <i class="fa-solid fa-gem"></i>
+                  </span>
+                }
+              </div>
+
+              <div class="sj-biz-body p-4">
+                <div
+                  class="d-flex justify-content-between align-items-start mb-2"
+                >
+                  <h3 class="sj-biz-name m-0">{{ biz.name }}</h3>
+                  <div class="sj-biz-rating">
+                    <i class="fa-solid fa-star text-warning me-1"></i>
+                    <span>{{ biz.averageRating | number: "1.1-1" }}</span>
+                  </div>
+                </div>
+
+                <div class="sj-biz-meta mb-3">
+                  <div class="small text-muted mb-1">
+                    <i class="fa-solid fa-building me-1"></i>
+                    {{ biz.categoryType || biz.categoryName }}
+                  </div>
+                  <div class="small opacity-75 mb-1">
+                    <i class="fa-solid fa-location-dot me-1"></i> {{ biz.city }}
+                  </div>
+                  <div class="sj-price">
+                    {{ biz.priceRange }}
+                  </div>
+                </div>
+
+                <div
+                  class="sj-biz-actions pt-3 border-top border-secondary mt-3 d-flex justify-content-end gap-2"
+                >
+                  <button
+                    class="sj-action-btn edit"
+                    [routerLink]="['/admin/businesses/edit', biz.id]"
+                  >
+                    <i class="fa-solid fa-pencil"></i>
+                  </button>
+                  <button
+                    class="sj-action-btn delete"
+                    (click)="deleteBusiness(biz.id)"
+                  >
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <div class="col-12 text-center py-5">
+            <div class="sj-empty-state card bg-dark p-5 rounded-4">
+              <i class="fa-solid fa-map-marked-alt opacity-25 fs-1"></i>
+              <p class="text-muted m-0 mt-3">Δεν βρέθηκαν καταχωρήσεις.</p>
+            </div>
+          </div>
+        }
+      </div>
+    }
   </div>
 </div>

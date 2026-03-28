@@ -1,1 +1,74 @@
-<p>messages works!</p>
+<div class="sj-messages-wrapper animate__animated animate__fadeIn">
+  <div class="sj-page-header">
+    <div class="header-content">
+      <h1 class="sj-title">
+        Εισερχόμενα <span class="sj-accent">Μηνύματα</span>
+      </h1>
+      <p class="sj-subtitle">Συνολικά μηνύματα: {{ messages().length }}</p>
+    </div>
+    <div class="header-actions">
+      <button
+        class="sj-refresh-btn"
+        (click)="loadMessages()"
+        [disabled]="isLoading()"
+      >
+        <i class="fa-solid fa-rotate" [class.fa-spin]="isLoading()"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="sj-messages-list">
+    @if (isLoading()) {
+      <div class="sj-loader">
+        <div class="spinner-border text-primary"></div>
+      </div>
+    } @else {
+      @for (msg of messages(); track msg.id) {
+        <div class="sj-msg-card">
+          <div class="sj-msg-side">
+            <div class="sj-avatar-icon">
+              <i class="fa-solid fa-envelope-open"></i>
+            </div>
+          </div>
+
+          <div class="sj-msg-main">
+            <div class="sj-msg-top">
+              <div class="sj-sender-info">
+                <h3 class="sj-sender-name">
+                  {{ msg.firstName }} {{ msg.lastName }}
+                </h3>
+                <span class="sj-sender-email">{{ msg.email }}</span>
+              </div>
+              <div class="sj-msg-meta">
+                <span class="sj-badge">{{ msg.subject }}</span>
+                <span class="sj-date"
+                  ><i class="fa-regular fa-calendar me-1"></i>
+                  {{ msg.createdAt | date: "dd/MM/yyyy HH:mm" }}</span
+                >
+              </div>
+            </div>
+
+            <div class="sj-msg-body">
+              <p>{{ msg.messageBody }}</p>
+            </div>
+
+            <div class="sj-msg-actions">
+              <button
+                class="sj-delete-btn"
+                (click)="deleteMessage(msg.id)"
+                title="Διαγραφή"
+              >
+                <i class="fa-solid fa-trash-can"></i> <span>Διαγραφή</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="sj-empty-state">
+          <i class="fa-solid fa-inbox"></i>
+          <p>Δεν υπάρχουν μηνύματα στη βάση δεδομένων.</p>
+        </div>
+      }
+    }
+  </div>
+</div>
