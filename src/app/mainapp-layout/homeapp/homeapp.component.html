@@ -111,7 +111,7 @@
           <label>Τιμή</label>
           <div class="price-row">
             <button
-              *ngFor="let p of [1, 2, 3, 4, 5]"
+              *ngFor="let p of [0, 1, 2, 3, 4, 5]"
               [class.active]="selectedFilters.priceLevel === p"
               (click)="
                 selectedFilters.priceLevel =
@@ -119,7 +119,7 @@
                 applyFilters()
               "
             >
-              {{ "€".repeat(p) }}
+              {{ p === 0 ? "Δωρεάν" : "€".repeat(p) }}
             </button>
           </div>
         </div>
@@ -166,9 +166,10 @@
                 "
               ></i>
             </div>
-            <span class="price-badge" *ngIf="item.priceLevel">{{
-              getPriceSymbol(item.priceLevel)
-            }}</span>
+            
+            <span class="price-badge" *ngIf="item.priceLevel !== null && item.priceLevel !== undefined">
+              {{ getPriceSymbol(item.priceLevel || 0) }}
+            </span>
           </div>
 
           <div class="card-info">

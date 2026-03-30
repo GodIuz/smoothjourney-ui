@@ -54,28 +54,46 @@
           </p>
           
           <div class="info-details-grid mt-4">
-            <div class="info-box">
-              <span class="info-label">Διεύθυνση</span>
+            <a [href]="'https://www.google.com/maps/search/?api=1&query=' + business.address + ',' + business.city" 
+               target="_blank" class="info-box interactive">
+              <span class="info-label"><i class="fa-solid fa-map-location-dot me-2"></i>Διεύθυνση</span>
               <div class="info-value">{{ business.address || 'Μη διαθέσιμη' }}</div>
-            </div>
+            </a>
+            
+            <a *ngIf="business.phone" [href]="'tel:' + business.phone" class="info-box interactive">
+              <span class="info-label"><i class="fa-solid fa-phone me-2"></i>Τηλέφωνο</span>
+              <div class="info-value">{{ business.phone }}</div>
+            </a>
+            
             <div class="info-box">
-              <span class="info-label">Τηλέφωνο</span>
-              <div class="info-value">{{ business.phone || '-' }}</div>
-            </div>
-            <div class="info-box">
-              <span class="info-label">Τιμή</span>
-              <div class="info-value text-success fw-bold fs-4">
-                {{ business.priceLevel ? "€".repeat(business.priceLevel) : (business.priceRange || "-") }}
+              <span class="info-label"><i class="fa-solid fa-wallet me-2"></i>Τιμή</span>
+              <div class="info-value fw-bold fs-4">
+                @if (business.priceLevel === 0 || business.priceRange === 'Free' || business.priceRange === 'Δωρεάν') {
+                  <span class="text-free"><i class="fa-solid fa-gift me-2"></i>Δωρεάν</span>
+                } @else if (business.priceLevel > 0) {
+                  <span class="text-success">{{ "€".repeat(business.priceLevel) }}</span>
+                } @else {
+                  <span class="text-muted fs-6">Μη διαθέσιμη</span>
+                }
               </div>
             </div>
+
             <div class="info-box">
-              <span class="info-label">Mood Tags</span>
-              <div class="info-value"><span class="badge bg-dark border border-secondary">{{ business.moodTags || '-' }}</span></div>
+              <span class="info-label"><i class="fa-solid fa-tags me-2"></i>Mood Tags</span>
+              <div class="info-value tags-container">
+                @if (business.moodTags) {
+                  @for (tag of business.moodTags.split(','); track tag) {
+                    <span class="badge-custom">{{ tag.trim() }}</span>
+                  }
+                } @else {
+                  <span class="text-muted">-</span>
+                }
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="custom-card mb-5 border-success border-opacity-25" style="background: #191919">
+        <div class="custom-card mb-5 review-form-card">
           <h4 class="mb-3 text-white">✍️ Γράψτε την αξιολόγησή σας</h4>
           <div class="mb-3">
             <label class="text-muted small mb-2 d-block">Η Βαθμολογία σας</label>
@@ -87,11 +105,8 @@
             </div>
           </div>
           <div class="mb-3">
-            <textarea
-              class="form-control review-textarea"
-              maxlength="500"
-              [(ngModel)]="newReview.comment"
-              placeholder="Πώς ήταν η εμπειρία σας; (έως 500 χαρακτήρες)"></textarea>
+            <textarea class="form-control review-textarea" maxlength="500"
+              [(ngModel)]="newReview.comment" placeholder="Πώς ήταν η εμπειρία σας;"></textarea>
             <div class="char-counter" [class.text-danger]="newReview.comment.length >= 500">
               {{ newReview.comment.length }} / 500
             </div>
@@ -114,7 +129,7 @@
                   <h6 class="fw-bold mb-0 text-white">
                     {{ review.user ? review.user.firstName + " " + review.user.lastName : review.userName || "Ανώνυμος" }}
                   </h6>
-                  <small class="text-muted">{{ review.createdAt || review.createdDate | date: "mediumDate" }}</small>
+                  <small class="text-muted">{{ (review.createdAt || review.createdDate) | date: "mediumDate" }}</small>
                 </div>
               </div>
               <div class="text-warning">
@@ -122,9 +137,6 @@
               </div>
             </div>
             <p class="mb-0 fst-italic opacity-75">"{{ review.content || review.comment }}"</p>
-          </div>
-          <div *ngIf="!business.reviews?.length" class="text-center py-5 text-muted opacity-50 border border-secondary border-dashed rounded">
-            <p>Δεν υπάρχουν ακόμα κριτικές. Γίνετε ο πρώτος!</p>
           </div>
         </div>
       </div>

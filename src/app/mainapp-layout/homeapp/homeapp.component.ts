@@ -16,16 +16,19 @@ export class HomeappComponent implements OnInit {
   private businessService = inject(BusinessService);
   private toastService = inject(ToastService);
   private apiUrl = 'https://localhost:7000';
+  
   searchTerm: string = '';
   rawData: any[] = [];
   filteredBusinesses: any[] = [];
   favoriteIds: number[] = [];
+  
   cities: string[] = [];
   countries: string[] = [];
   categoryTypes: string[] = [];
   moodTags: string[] = [];
   showHiddenGems: boolean = false;
   closedScams: number[] = [];
+  
   selectedFilters = {
     category: '',
     cities: {} as any,
@@ -77,6 +80,7 @@ export class HomeappComponent implements OnInit {
     this.cities = [
       ...new Set(this.rawData.map((b) => b.city).filter(Boolean)),
     ].sort();
+    
     this.countries = [
       ...new Set(this.rawData.map((b) => b.country).filter(Boolean)),
     ].sort();
@@ -147,10 +151,11 @@ export class HomeappComponent implements OnInit {
       );
     }
 
-    if (this.selectedFilters.priceLevel)
+    if (this.selectedFilters.priceLevel !== null) {
       result = result.filter(
-        (b) => b.priceLevel === this.selectedFilters.priceLevel,
+        (b) => (b.priceLevel || 0) === this.selectedFilters.priceLevel,
       );
+    }
 
     if (this.selectedFilters.minRating > 0)
       result = result.filter(
@@ -173,7 +178,7 @@ export class HomeappComponent implements OnInit {
         case 'rating_desc':
           return b.calculatedRating - a.calculatedRating;
         case 'price_asc':
-          return (a.priceLevel || 99) - (b.priceLevel || 99);
+          return (a.priceLevel || 0) - (b.priceLevel || 0);
         case 'price_desc':
           return (b.priceLevel || 0) - (a.priceLevel || 0);
         case 'newest':
@@ -206,6 +211,7 @@ export class HomeappComponent implements OnInit {
   }
 
   getPriceSymbol(level: number): string {
+    if (level === 0) return 'Δωρεάν';
     return level ? '€'.repeat(level) : '';
   }
 
@@ -221,7 +227,7 @@ export class HomeappComponent implements OnInit {
   toggleFavorite(event: Event, businessId: number) {
     event.stopPropagation();
     if (!localStorage.getItem('token')) {
-      this.toastService.showInfo('Login required');
+      this.toastService.showInfo('Απαιτείται σύνδεση για τα αγαπημένα.');
       return;
     }
 

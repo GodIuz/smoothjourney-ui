@@ -1,151 +1,52 @@
 <nav class="navbar">
-  <a routerLink="/mainapp/home" class="logo"> Smooth <b>Journey</b> </a>
+  <div class="nav-container">
+    <a routerLink="/mainapp/home" class="logo"> Smooth <span>Journey</span> </a>
 
-  <ul class="nav-links" [class.active]="isMenuOpen">
-    <li>
-      <a
-        routerLink="/mainapp/home"
-        routerLinkActive="active"
-        (click)="toggleMenu()"
-      >
-        Home
-      </a>
-    </li>
-
-    <div class="nav-item-container">
-      <div class="dropdown tools-nav-dropdown">
-        <button class="nav-link-btn" type="button">
-          <i class="fa-solid fa-toolbox me-1"></i>
-          Εργαλεία
+    <ul class="nav-links" [class.active]="isMenuOpen">
+      <li><a routerLink="/mainapp/home" routerLinkActive="active">Αρχική</a></li>
+      
+      <li class="dropdown">
+        <button class="nav-link-btn">
+          <i class="fa-solid fa-toolbox me-1"></i> Εργαλεία
           <i class="fa-solid fa-chevron-down ms-1 icon-small"></i>
         </button>
-
         <ul class="dropdown-content">
           <li>
-            <a
-              routerLink="/mainapp/ai-planner"
-              routerLinkActive="active"
-              class="drop-link"
-              (click)="toggleMenu()"
-            >
-              <div class="drop-icon"><i class="fa-solid fa-robot"></i></div>
-              <div class="drop-text">
-                <strong>AI Planner</strong>
-                <span>Έξυπνος προγραμματισμός</span>
-              </div>
+            <a routerLink="/mainapp/ai-planner" class="drop-link" (click)="isMenuOpen = false">
+              <i class="fa-solid fa-robot"></i>
+              <div class="drop-text"><strong>AI Planner</strong><span>Smart planning</span></div>
             </a>
           </li>
           <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a
-              routerLink="/mainapp/trip-maker"
-              routerLinkActive="active"
-              class="drop-link"
-              (click)="toggleMenu()"
-            >
-              <div class="drop-icon">
-                <i class="fa-solid fa-map-location-dot"></i>
-              </div>
-              <div class="drop-text">
-                <strong>Trip Maker</strong>
-                <span>Δημιουργία διαδρομής</span>
-              </div>
+            <a routerLink="/mainapp/trip-maker" class="drop-link" (click)="isMenuOpen = false">
+              <i class="fa-solid fa-map-location-dot"></i>
+              <div class="drop-text"><strong>Trip Maker</strong><span>Manual route</span></div>
             </a>
           </li>
         </ul>
+      </li>
+    </ul>
+
+    <div class="user-section">
+      <div class="user-dropdown-wrapper" (click)="toggleUserDropdown($event)">
+        <div class="user-pill">
+          <div class="avatar">{{ username.charAt(0) | uppercase }}</div>
+          <span class="username">{{ username }}</span>
+          <i class="fa-solid fa-caret-down"></i>
+        </div>
+        
+        <div class="dropdown-menu" *ngIf="isUserDropdownOpen">
+          <a routerLink="/mainapp/profile"><i class="fa-solid fa-user me-2"></i>Προφίλ</a>
+          <a routerLink="/mainapp/favourites"><i class="fa-solid fa-heart me-2"></i>Αγαπημένα</a>
+          <a routerLink="/mainapp/my-trips"><i class="fa-solid fa-suitcase-rolling me-2"></i>Ταξίδια</a>
+          <hr>
+          <a (click)="onLogout()" class="logout-link"><i class="fa-solid fa-right-from-bracket me-2"></i>Αποσύνδεση</a>
+        </div>
+      </div>
+      
+      <div class="burger" (click)="toggleMenu()">
+        <i class="fa-solid" [ngClass]="isMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
       </div>
     </div>
-
-    <li class="mobile-user-menu">
-      <div
-        class="user-trigger mobile-trigger"
-        (click)="toggleMobileUserDropdown()"
-      >
-        <span
-          >Γεια σου, <strong>{{ username }}</strong
-          >!</span
-        >
-        <i
-          class="fa-solid"
-          [ngClass]="
-            isMobileUserDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'
-          "
-        ></i>
-      </div>
-
-      <ul
-        class="mobile-dropdown-content"
-        [class.open]="isMobileUserDropdownOpen"
-      >
-        <li>
-          <a routerLink="/mainapp/profile" (click)="toggleMenu()">
-            <i class="fa-solid fa-user"></i> Προφίλ
-          </a>
-        </li>
-        <li>
-          <a routerLink="/mainapp/favourites" (click)="toggleMenu()">
-            <i class="fa-solid fa-heart"></i> Αγαπημένα
-          </a>
-        </li>
-        <li>
-          <a routerLink="/mainapp/my-trips" (click)="toggleMenu()">
-            <i class="fa-solid fa-suitcase-rolling"></i> Τα Ταξίδια μου
-          </a>
-        </li>
-        <li>
-          <hr class="dropdown-divider" />
-        </li>
-        <li>
-          <a
-            (click)="onLogout(); toggleMenu()"
-            class="dropdown-logout"
-            style="cursor: pointer"
-          >
-            <i class="fa-solid fa-right-from-bracket"></i> Αποσύνδεση
-          </a>
-        </li>
-      </ul>
-    </li>
-  </ul>
-
-  <div class="desktop-actions">
-    <div class="user-dropdown-container">
-      <div class="user-trigger" (click)="toggleUserDropdown()">
-        <span
-          >Γεια σου, <strong>{{ username }}</strong
-          >!</span
-        >
-        <i class="fa-solid fa-caret-down"></i>
-      </div>
-
-      <div class="dropdown-menu" *ngIf="isUserDropdownOpen">
-        <a routerLink="/mainapp/profile" (click)="isUserDropdownOpen = false">
-          <i class="fa-solid fa-user"></i> Προφίλ
-        </a>
-
-        <a
-          routerLink="/mainapp/favourites"
-          (click)="isUserDropdownOpen = false"
-        >
-          <i class="fa-solid fa-heart"></i> Αγαπημένα
-        </a>
-
-        <a routerLink="/mainapp/my-trips" (click)="isUserDropdownOpen = false">
-          <i class="fa-solid fa-suitcase-rolling"></i> Τα Ταξίδια μου
-        </a>
-
-        <div class="dropdown-divider"></div>
-
-        <a (click)="onLogout()" class="dropdown-logout" style="cursor: pointer">
-          <i class="fa-solid fa-right-from-bracket"></i> Αποσύνδεση
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="burger" (click)="toggleMenu()">
-    <i class="fa-solid fa-bars"></i>
   </div>
 </nav>

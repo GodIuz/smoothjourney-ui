@@ -14,6 +14,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-trip-maker',
@@ -25,6 +26,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class TripMakerComponent implements OnInit {
   private http = inject(HttpClient);
+  private router = inject(Router); 
   private apiUrl = 'https://localhost:7000';
 
   currentStep = signal(1);
@@ -76,9 +78,7 @@ export class TripMakerComponent implements OnInit {
   ngOnInit() {
     this.http.get<any[]>(`${this.apiUrl}/Business/all`).subscribe({
       next: (data) => {
-        console.log('Όλα τα μαγαζιά φορτώθηκαν επιτυχώς:', data);
         this.allBusinesses = data;
-
         const cities = data
           .map((b) => b.city)
           .filter((c) => c && c.trim() !== '');
@@ -91,10 +91,7 @@ export class TripMakerComponent implements OnInit {
     });
   }
 
-  showNotif(
-    message: string,
-    type: 'success' | 'error' | 'warning' = 'success',
-  ) {
+  showNotif(message: string, type: 'success' | 'error' | 'warning' = 'success') {
     this.notification.set({ message, type });
     if (type === 'success') {
       setTimeout(() => this.closeNotification(), 3000);
@@ -133,17 +130,13 @@ export class TripMakerComponent implements OnInit {
     this.goToStep(3);
 
     this.availableBusinesses = this.allBusinesses.filter(
-      (b) =>
-        b.city && b.city.toLowerCase() === this.tripData.city.toLowerCase(),
+      (b) => b.city && b.city.toLowerCase() === this.tripData.city.toLowerCase(),
     );
 
     this.isLoadingBusinesses.set(false);
 
     if (this.availableBusinesses.length === 0) {
-      this.showNotif(
-        `Δεν βρέθηκαν επιχειρήσεις για: ${this.tripData.city}.`,
-        'warning',
-      );
+      this.showNotif(`Δεν βρέθηκαν επιχειρήσεις για: ${this.tripData.city}.`, 'warning');
     }
   }
 
@@ -184,10 +177,7 @@ export class TripMakerComponent implements OnInit {
     ]);
 
     if (this.budgetPercent() > 100) {
-      this.showNotif(
-        'Προσοχή: Μόλις ξεπεράσατε τον προϋπολογισμό σας!',
-        'warning',
-      );
+      this.showNotif('Προσοχή: Μόλις ξεπεράσατε τον προϋπολογισμό σας!', 'warning');
     }
   }
 
@@ -208,8 +198,7 @@ export class TripMakerComponent implements OnInit {
     this.isSaving.set(true);
 
     try {
-      const token =
-        localStorage.getItem('token') || localStorage.getItem('jwt');
+      const token = localStorage.getItem('token') || localStorage.getItem('jwt');
       let headers = new HttpHeaders();
       if (token) {
         headers = headers.set('Authorization', `Bearer ${token}`);
@@ -226,38 +215,35 @@ export class TripMakerComponent implements OnInit {
       };
 
       const tripRes = await firstValueFrom(
-        this.http.post<any>(`${this.apiUrl}/Trips/create-manual`, tripDto, {
-          headers,
-        }),
+        this.http.post<any>(`${this.apiUrl}/Trips/create-manual`, tripDto, { headers })
       );
 
       const savedTripId = tripRes.tripId;
       this.tripData.tripId = savedTripId;
-      for (const item of this.selectedItems()) {
+      const newItems = [...this.selectedItems()];
+
+      for (let i = 0; i < newItems.length; i++) {
         const itemDto = {
           tripId: savedTripId,
-          businessId: item.businessId,
-          title: item.name,
-          description: item.categoryType || 'Δραστηριότητα',
+          businessId: newItems[i].businessId,
+          title: newItems[i].name,
+          description: newItems[i].categoryType || 'Δραστηριότητα',
           scheduledTime: this.tripData.startDate,
-          cost: item.estimatedCost,
+          cost: newItems[i].estimatedCost,
         };
 
-        await firstValueFrom(
-          this.http.post<any>(`${this.apiUrl}/Trips/add-item`, itemDto, {
-            headers,
-          }),
+        const itemRes = await firstValueFrom(
+          this.http.post<any>(`${this.apiUrl}/Trips/add-item`, itemDto, { headers })
         );
+        newItems[i].tripItemId = itemRes.tripItemId; 
       }
 
+      this.selectedItems.set(newItems);
       this.showNotif('Το ταξίδι αποθηκεύτηκε επιτυχώς!', 'success');
       this.goToStep(4);
     } catch (error: any) {
       console.error('Σφάλμα:', error);
-      this.showNotif(
-        'Πρόβλημα κατά την αποθήκευση: ' + (error.error || error.statusText),
-        'error',
-      );
+      this.showNotif('Πρόβλημα κατά την αποθήκευση: ' + (error.error || error.statusText), 'error');
     } finally {
       this.isSaving.set(false);
     }
@@ -267,5 +253,34 @@ export class TripMakerComponent implements OnInit {
     const current = this.selectedItems();
     current[index].visited = !current[index].visited;
     this.selectedItems.set([...current]);
+  }
+
+  async saveTrackerProgress() {
+    this.isSaving.set(true);
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('jwt');
+      let headers = new HttpHeaders();
+      if (token) headers = headers.set('Authorization', `Bearer ${token}`);
+
+      const updatePayload = this.selectedItems().map(item => ({
+        tripItemId: item.tripItemId || 0,
+        isVisited: item.visited
+      }));
+
+      await firstValueFrom(
+        this.http.post(`${this.apiUrl}/Trips/update-tracker`, updatePayload, { headers })
+      );
+
+      this.showNotif('Η πρόοδος αποθηκεύτηκε!', 'success');
+      setTimeout(() => {
+        this.router.navigate(['/mainapp/my-trips']);
+      }, 1500);
+
+    } catch (error) {
+      console.error('Σφάλμα Tracker:', error);
+      this.showNotif('Σφάλμα κατά την αποθήκευση προόδου.', 'error');
+    } finally {
+      this.isSaving.set(false);
+    }
   }
 }

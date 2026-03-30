@@ -107,6 +107,10 @@ export class AiTripPlannerComponent implements OnInit {
         city: this.tripData.city,
         mood: this.tripData.mood,
         days: days,
+        startDate: this.tripData.startDate,
+        endDate: this.tripData.endDate,
+        totalBudget: this.tripData.totalBudget,
+        numberOfPeople: 2 
       };
 
       const res = await firstValueFrom(
@@ -123,7 +127,9 @@ export class AiTripPlannerComponent implements OnInit {
     } catch (error: any) {
       console.error('AI Error:', error);
       this.isGeneratingAi.set(false);
-      this.showNotif('Αποτυχία παραγωγής πλάνου από το AI.', 'error');
+      const errorMsg = error.error?.details || error.error || 'Αποτυχία παραγωγής πλάνου από το AI.';
+      this.showNotif(typeof errorMsg === 'string' ? errorMsg : 'Αποτυχία παραγωγής πλάνου.', 'error');
+      
       this.goToStep(2);
     }
   }

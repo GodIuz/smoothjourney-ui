@@ -1,363 +1,141 @@
-/* --- ΚΕΝΤΡΙΚΟ NAVBAR --- */
 .navbar {
+  background-color: #16191c;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 5000;
+  border-bottom: 1px solid #2d3238;
+}
+
+.nav-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1a1a1a;
-  padding: 15px 5%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* --- LOGO --- */
 .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.6rem;
+  font-weight: 800;
   color: #fff;
   text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
+.logo span { color: #34e0a1; }
 
-.logo b {
-  color: #34e0a1;
-}
-
-/* --- LINKS ΚΑΙ NAV-LINKS --- */
 .nav-links {
-  list-style: none;
   display: flex;
-  align-items: center;
+  list-style: none; /* Αφαιρεί τις βούλες */
   gap: 25px;
   margin: 0;
   padding: 0;
 }
 
-.nav-links li a,
-.nav-link-btn {
+.nav-links li a, .nav-link-btn {
+  color: #94a3b8;
   text-decoration: none;
-  color: #e0e0e0;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.95rem;
-  transition: all 0.3s ease;
+  background: none;
+  border: none;
   cursor: pointer;
+  padding: 10px 15px;
   display: flex;
   align-items: center;
-  background: transparent;
-  border: none;
-  padding: 8px 12px;
 }
 
-.nav-links li a:hover,
-.nav-links li a.active,
-.tools-nav-dropdown:hover .nav-link-btn {
-  color: #34e0a1;
-}
+.nav-links a.active, .nav-links a:hover { color: #34e0a1; }
 
-/* --- TOOLS DROPDOWN LOGIC (Desktop) --- */
-.nav-item-container {
-  position: relative;
-}
-
-.tools-nav-dropdown {
-  position: relative;
-}
-
+/* Dropdowns */
+.dropdown { position: relative; }
 .dropdown-content {
-  display: none;
   position: absolute;
   top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #1a1a1a;
-  min-width: 240px;
-  border: 1px solid #333;
+  left: 0;
+  background: #1c2024;
+  border: 1px solid #2d3238;
   border-radius: 12px;
-  list-style: none;
-  padding: 10px 0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-  z-index: 2000;
-  margin-top: 5px;
+  min-width: 240px;
+  display: none;
+  padding: 10px;
+  list-style: none; /* Αφαιρεί τις βούλες */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+.dropdown:hover .dropdown-content { display: block; }
 
-/* Εμφάνιση στο Hover */
-.tools-nav-dropdown:hover .dropdown-content {
-  display: block;
-  animation: fadeIn 0.2s ease-out;
-}
-
-/* Στυλ των links μέσα στο dropdown */
 .drop-link {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
-  color: #e0e0e0;
+  gap: 15px;
+  padding: 12px;
+  color: #e2e8f0;
   text-decoration: none;
-  transition: background 0.2s;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.drop-link:hover {
-  background-color: rgba(52, 224, 161, 0.1);
-  color: #34e0a1;
-}
-
-.drop-icon {
-  width: 35px;
-  height: 35px;
-  background: rgba(52, 224, 161, 0.1);
-  color: #34e0a1;
   border-radius: 8px;
+}
+.drop-link:hover { background: rgba(52, 224, 161, 0.1); }
+
+/* User Profile Section */
+.user-section { display: flex; align-items: center; gap: 15px; }
+
+.user-dropdown-wrapper { position: relative; cursor: pointer; }
+
+.user-pill {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-right: 15px;
-  font-size: 1.1rem;
+  gap: 10px;
+  background: rgba(255,255,255,0.05);
+  padding: 6px 15px;
+  border-radius: 50px;
+  transition: 0.3s;
 }
+.user-pill:hover { background: rgba(255,255,255,0.1); }
 
-.drop-text {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.drop-text strong {
-  font-size: 0.95rem;
-  display: block;
-  color: #fff;
-}
-
-.drop-text span {
-  font-size: 0.75rem;
-  color: #888;
-}
-
-.dropdown-divider {
-  height: 1px;
-  background-color: #333;
-  margin: 8px 0;
-  border: none;
-}
-
-/* --- USER DROPDOWN --- */
-.desktop-actions {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.user-trigger {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  color: #e0e0e0;
-  padding: 8px 12px;
-  border-radius: 20px;
-  transition: background 0.3s;
-}
-
-.user-trigger:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #34e0a1;
+.avatar {
+  width: 30px; height: 30px;
+  background: #34e0a1; color: #121212;
+  border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-weight: bold;
 }
 
 .dropdown-menu {
   position: absolute;
-  top: 120%;
+  top: 130%;
   right: 0;
-  background-color: #1a1a1a;
-  min-width: 200px;
-  border: 1px solid #333;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
+  background: #1c2024;
+  border: 1px solid #2d3238;
+  border-radius: 12px;
+  width: 220px;
   padding: 10px 0;
-  z-index: 2000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .dropdown-menu a {
   display: flex;
   align-items: center;
-  gap: 10px;
   padding: 12px 20px;
-  color: #e0e0e0;
+  color: #e2e8f0;
   text-decoration: none;
   transition: 0.2s;
 }
+.dropdown-menu a:hover { background: #34e0a1; color: #121212; }
 
-.dropdown-menu a:hover {
-  background-color: #34e0a1;
-  color: #000;
-}
+.logout-link:hover { background: #ff4d4d !important; color: white !important; }
 
-.dropdown-logout:hover {
-  background-color: #ff4d4d !important;
-  color: white !important;
-}
+.burger { display: none; font-size: 1.5rem; color: #fff; cursor: pointer; }
 
-.burger {
-  display: none;
-  cursor: pointer;
-  font-size: 1.5rem;
-  color: #fff;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-@media (max-width: 768px) {
+@media (max-width: 991px) {
   .nav-links {
-    position: absolute;
-    right: 0;
-    height: 100vh;
-    top: 100%;
-    background-color: #1a1a1a;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 75%;
-    transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
-    padding-top: 40px;
-    border-left: 1px solid #333;
-    overflow-y: auto;
-    gap: 15px;
+    position: fixed; top: 75px; right: -100%; 
+    width: 280px; height: calc(100vh - 75px);
+    background: #16191c; flex-direction: column; 
+    padding: 40px 20px; transition: 0.4s;
+    border-left: 1px solid #2d3238;
   }
-
-  .nav-links.active {
-    transform: translateX(0%);
-  }
-
-  .nav-item-container {
-    width: 100%;
-  }
-
-  .tools-nav-dropdown .dropdown-content {
-    position: static;
-    display: block;
-    transform: none;
-    background-color: rgba(255, 255, 255, 0.03);
-    border: none;
-    box-shadow: none;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .nav-link-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .drop-link {
-    justify-content: center;
-  }
-
-  .desktop-actions {
-    display: none;
-  }
-
-  .mobile-actions {
-    display: flex;
-    margin-top: 20px;
-    padding-bottom: 40px;
-  }
-
-  .review-btn {
-    background-color: #34e0a1;
-    color: black;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-weight: bold;
-    border: none;
-  }
-
-  .burger {
-    display: block;
-  }
-}
-
-/* --- Κρύβουμε το Mobile User Menu στο Desktop --- */
-.mobile-user-menu {
-  display: none;
-}
-
-/* --- ΠΡΟΣΘΗΚΕΣ ΓΙΑ TO MOBILE MENU ΣΤΟ @MEDIA QUERY --- */
-@media (max-width: 768px) {
-  /* Εμφάνιση του Mobile User Menu */
-  .mobile-user-menu {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    border-top: 1px solid #333; /* Διαχωριστική γραμμή από τα Εργαλεία */
-    margin-top: 10px;
-    padding-top: 10px;
-  }
-
-  .mobile-trigger {
-    justify-content: center; /* Κεντράρισμα του "Γεια σου χρήστη" */
-    padding: 15px;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  /* Το μενού που ανοίγει από κάτω (Αρχικά κρυμμένο) */
-  .mobile-dropdown-content {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: none;
-    background-color: rgba(
-      255,
-      255,
-      255,
-      0.03
-    ); /* Ελαφρύ φόντο για να ξεχωρίζει */
-    width: 100%;
-  }
-
-  /* Όταν προστίθεται η κλάση .open μέσω TypeScript, εμφανίζεται */
-  .mobile-dropdown-content.open {
-    display: block;
-    animation: fadeIn 0.2s ease-out;
-  }
-
-  /* Τα links του Mobile User Menu */
-  .mobile-dropdown-content li a {
-    display: flex;
-    padding: 15px 20px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    color: #e0e0e0;
-    transition: color 0.3s;
-  }
-
-  .mobile-dropdown-content li a:hover {
-    color: #34e0a1;
-  }
-
-  .mobile-dropdown-content .dropdown-logout {
-    color: #ff4d4d !important;
-  }
-}
-.mobile-dropdown-content .dropdown-logout:hover {
-  background-color: #ff4d4d !important;
+  .nav-links.active { right: 0; }
+  .burger { display: block; }
+  .dropdown-content { position: static; display: block; background: none; border: none; box-shadow: none; }
 }
