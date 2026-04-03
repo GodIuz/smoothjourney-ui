@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { BusinessService } from '../../services/business.service';
 import { CommonModule } from '@angular/common';
 
@@ -10,12 +10,10 @@ import { CommonModule } from '@angular/common';
 })
 export class AiSummaryComponent implements OnInit {
   @Input() businessId!: number;
-
+  private businessService = inject(BusinessService);
   summary: string = '';
   isLoading: boolean = true;
   hasError: boolean = false;
-
-  constructor(private businessService: BusinessService) {}
 
   ngOnInit(): void {
     this.loadAiSummary();

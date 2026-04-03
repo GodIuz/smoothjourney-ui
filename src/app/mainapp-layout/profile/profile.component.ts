@@ -17,13 +17,16 @@ export class ProfileComponent implements OnInit {
   private profileService = inject(ProfileService);
   private http = inject(HttpClient);
   private toastService = inject(ToastService);
-  myReviews: any[] = [];
+
   user: any = {};
-  isLoading = false;
+  myReviews: any[] = [];
   activeTab: string = 'overview';
+  isLoading = false;
   isLoadingReviews = false;
   isLoadingPassword = false;
+  isVerified = false; // Αυτό ελέγχει το loading του button
   reviewsLoaded = false;
+
   private apiUrl = 'https://localhost:7000';
   passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' };
 
@@ -35,44 +38,87 @@ export class ProfileComponent implements OnInit {
     this.isLoading = true;
     this.profileService.getMyProfile().subscribe({
       next: (data: any) => {
-        console.log('📦 Data from API:', data);
         this.user = data;
-        const rawRegistered = data.createOn || data.createOn;
-        const rawDob = data.dateOfBirth || data.DateOfBirth;
+        // Συγχρονισμός ημερομηνιών βάσει των πεδίων του API (createAt / dateOfBirth)
+        const rawRegistered = data.createAt || data.createOn;
+        const rawDob = data.dateOfBirth;
 
-        if (rawRegistered) {
-          this.user.registeredOn = new Date(rawRegistered);
-          console.log('✅ Converted RegisteredOn:', this.user.registeredOn);
-        } else {
-          console.warn('⚠️ RegisteredOn is MISSING from API response');
-        }
-
-        if (rawDob) {
-          this.user.dateOfBirth = new Date(rawDob);
-        }
+        if (rawRegistered) this.user.registeredOn = new Date(rawRegistered);
+        if (rawDob) this.user.dateOfBirth = new Date(rawDob);
 
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('❌ Error loading profile:', err);
         this.toastService.showError('Σφάλμα κατά τη φόρτωση του προφίλ.');
         this.isLoading = false;
       },
     });
   }
 
+  sendVerification() {
+    this.isVerified = true; // Ξεκινάει το spinner
+    const url = `${this.apiUrl}/Auth/send-verification-email`;
+    const payload = { email: this.user.email };
+
+    this.http.post(url, payload).subscribe({
+      next: (res: any) => {
+        this.toastService.showSuccess(res.message || 'Το email στάλθηκε!');
+
+        if (res.message && res.message.includes('ήδη επαληθευτεί')) {
+          this.user.emailConfirmed = true;
+        }
+
+        this.isVerified = false; // Σταματάει το spinner
+      },
+      error: (err) => {
+        const errorMsg = err.error?.message || 'Αποτυχία αποστολής email.';
+        this.toastService.showError(errorMsg);
+        this.isVerified = false;
+      }
+    });
+  }
+
   updateProfile() {
     this.isLoading = true;
     this.profileService.updateProfile(this.user).subscribe({
-      next: (res) => {
+      next: () => {
         this.toastService.showSuccess('Το προφίλ ενημερώθηκε επιτυχώς!');
         this.isLoading = false;
         this.activeTab = 'overview';
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         this.toastService.showError('Σφάλμα κατά την ενημέρωση.');
         this.isLoading = false;
+      },
+    });
+  }
+
+  changePassword() {
+    if (!this.passwordData.currentPassword || !this.passwordData.newPassword || !this.passwordData.confirmPassword) {
+      this.toastService.showError('Παρακαλώ συμπληρώστε όλα τα πεδία.');
+      return;
+    }
+    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
+      this.toastService.showError('Ο νέος κωδικός και η επιβεβαίωση δεν ταιριάζουν!');
+      return;
+    }
+
+    this.isLoadingPassword = true;
+    const payload = {
+      currentPassword: this.passwordData.currentPassword,
+      newPassword: this.passwordData.newPassword,
+    };
+
+    this.http.post(`${this.apiUrl}/Auth/change-password`, payload).subscribe({
+      next: (res: any) => {
+        this.toastService.showSuccess(res.message || 'Ο κωδικός άλλαξε επιτυχώς!');
+        this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' };
+        this.isLoadingPassword = false;
+      },
+      error: (err) => {
+        const errorMsg = err.error?.message || 'Σφάλμα κατά την αλλαγή κωδικού.';
+        this.toastService.showError(errorMsg);
+        this.isLoadingPassword = false;
       },
     });
   }
@@ -92,8 +138,7 @@ export class ProfileComponent implements OnInit {
         this.isLoadingReviews = false;
         this.reviewsLoaded = true;
       },
-      error: (err) => {
-        console.error('❌ Σφάλμα κατά τη φόρτωση των κριτικών:', err);
+      error: () => {
         this.toastService.showError('Σφάλμα κατά τη φόρτωση των κριτικών.');
         this.isLoadingReviews = false;
       },
@@ -102,47 +147,5 @@ export class ProfileComponent implements OnInit {
 
   getStarsArray(): number[] {
     return [1, 2, 3, 4, 5];
-  }
-
-  changePassword() {
-    if (
-      !this.passwordData.currentPassword ||
-      !this.passwordData.newPassword ||
-      !this.passwordData.confirmPassword
-    ) {
-      this.toastService.showError('Παρακαλώ συμπληρώστε όλα τα πεδία.');
-      return;
-    }
-
-    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-      this.toastService.showError(
-        'Ο νέος κωδικός και η επιβεβαίωση δεν ταιριάζουν!',
-      );
-      return;
-    }
-
-    this.isLoadingPassword = true;
-
-    const payload = {
-      currentPassword: this.passwordData.currentPassword,
-      newPassword: this.passwordData.newPassword,
-    };
-
-    this.http.post(`${this.apiUrl}/Auth/change-password`, payload).subscribe({
-      next: (res: any) => {
-        this.toastService.showSuccess('Ο κωδικός σας άλλαξε επιτυχώς!');
-        this.passwordData = {
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: '',
-        };
-        this.isLoadingPassword = false;
-      },
-      error: (err) => {
-        console.error('Σφάλμα:', err);
-        this.toastService.showError('Σφάλμα κατά την αλλαγή κωδικού.');
-        this.isLoadingPassword = false;
-      },
-    });
   }
 }

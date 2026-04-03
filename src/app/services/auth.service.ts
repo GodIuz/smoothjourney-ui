@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   verifyEmail(token: string) {
-    return this.http.post<any>(`${this.baseUrl}/verify`, { token: token });
+    return this.http.post<any>(`${this.baseUrl}/verify-email`, { token: token });
   }
 
   storeToken(token: string, rememberMe: boolean) {

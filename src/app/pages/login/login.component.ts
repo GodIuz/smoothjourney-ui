@@ -1,9 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule} from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -16,7 +15,7 @@ import { ToastService } from '../../services/toast.service';
 export class LoginComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private http = inject(HttpClient);
+  private auth = inject(AuthService);
   private toastService = inject(ToastService);
   returnUrl: string = '/mainapp/home';
 
@@ -29,7 +28,6 @@ export class LoginComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string = '';
 
-  constructor(private auth: AuthService) {}
 
   ngOnInit(): void {
     this.returnUrl =
