@@ -48,7 +48,7 @@ export class MyTripsComponent implements OnInit {
   }
 
   getImageUrl(path: string | undefined): string {
-    if (!path) return 'assets/images/placeholder.jpg';
+    if (!path) return '/src/assets/images/placeholder.jpg';
     if (path.startsWith('http')) return path;
     return `${this.apiUrl}${path.startsWith('/') ? '' : '/'}${path}`;
   }
