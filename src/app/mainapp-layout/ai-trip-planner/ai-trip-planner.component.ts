@@ -135,34 +135,42 @@ export class AiTripPlannerComponent implements OnInit {
   }
 
   async saveAiTrip() {
-    if (!this.generatedPlan) return;
+  if (!this.generatedPlan) return;
 
-    this.isSaving.set(true);
+  this.isSaving.set(true);
 
-    try {
-      const tripDto = {
-        title: this.tripData.title,
-        city: this.tripData.city,
-        startDate: this.tripData.startDate,
-        endDate: this.tripData.endDate,
-        totalBudget: this.tripData.totalBudget,
-        mood: this.tripData.mood,
-        description: this.tripData.description,
-        days: this.generatedPlan.days,
-      };
+  try {
+    const tripDto = {
+      title: this.tripData.title,
+      city: this.tripData.city,
+      startDate: this.tripData.startDate,
+      endDate: this.tripData.endDate,
+      totalBudget: this.tripData.totalBudget,
+      mood: this.tripData.mood,
+      description: this.tripData.description,
+      days: this.generatedPlan.days.map((d: any) => ({
+        day: d.day,
+        activities: d.activities.map((a: any) => ({
+          title: a.title,
+          description: a.description,
+          eta: a.eta || a.time || ''
+        }))
+      })),
+    };
 
-      await firstValueFrom(
-        this.http.post<any>(`${this.apiUrl}/Trips/save-ai-trip`, tripDto),
-      );
-      this.showNotif('Το ταξίδι αποθηκεύτηκε επιτυχώς!', 'success');
-      setTimeout(() => {
-        this.router.navigate(['/mainapp/my-trips']);
-      }, 1500);
-    } catch (error: any) {
-      console.error('Σφάλμα αποθήκευσης:', error);
-      this.showNotif('Πρόβλημα κατά την αποθήκευση.', 'error');
-    } finally {
-      this.isSaving.set(false);
-    }
+    await firstValueFrom(
+      this.http.post<any>(`${this.apiUrl}/Trips/save-ai-trip`, tripDto),
+    );
+    
+    this.showNotif('Το ταξίδι αποθηκεύτηκε επιτυχώς!', 'success');
+    setTimeout(() => {
+      this.router.navigate(['/mainapp/my-trips']);
+    }, 1500);
+  } catch (error: any) {
+    console.error('Σφάλμα αποθήκευσης:', error);
+    this.showNotif('Πρόβλημα κατά την αποθήκευση.', 'error');
+  } finally {
+    this.isSaving.set(false);
   }
+}
 }

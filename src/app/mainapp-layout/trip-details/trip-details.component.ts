@@ -36,11 +36,25 @@ export class TripDetailsComponent implements OnInit {
       next: (trips) => {
         const decodedName = decodeURIComponent(name).toLowerCase();
 
-        this.trip = trips.find(
+        const foundTrip = trips.find(
           (t) =>
             (t.destination && t.destination.toLowerCase() === decodedName) ||
             (t.title && t.title.toLowerCase() === decodedName),
         );
+
+        if (foundTrip) {
+          if (foundTrip.activities) {
+            foundTrip.activities = foundTrip.activities.map((activity: any) => {
+              console.log('Activity Data:', activity);
+
+              return {
+                ...activity,
+                time: activity.eta || activity.eTA || activity.ETA || activity.time || '---'
+              };
+            });
+          }
+          this.trip = foundTrip;
+        }
 
         this.isLoading = false;
       },
